@@ -101,25 +101,24 @@ const Hero = () => {
       <div ref={targetRef} className="w-full flex justify-center">
         <motion.div
           style={{ width, borderRadius }}
-          className="relative shrink-0 h-[50vh] min-h-[400px] md:h-[70vh] bg-[#141413] overflow-hidden group"
+          className="relative shrink-0 bg-[#141413] overflow-hidden group py-24"
         >
           {/* Placeholder for stunning 3D visual. A subtle dark gradient for now */}
-          <div className="absolute inset-0 bg-gradient-to-br from-[#2A2A2A] to-[#0A0A0A] opacity-90 transition-transform duration-1000 group-hover:scale-105">
-            {/* Abstract geometric shapes to simulate a 3D visual */}
+          {/* <div className="absolute inset-0 bg-gradient-to-br from-[#2A2A2A] to-[#0A0A0A] opacity-90 transition-transform duration-1000 group-hover:scale-105">
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-[#3A3A3A]/20 blur-3xl rounded-full"></div>
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 md:w-96 md:h-96 border border-white/10 rounded-full animate-[spin_60s_linear_infinite]"></div>
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 md:w-[32rem] md:h-[32rem] border border-white/5 rounded-full animate-[spin_90s_linear_infinite_reverse]"></div>
-          </div>
+          </div> */}
 
-          <div className="absolute top-8 md:top-12 inset-x-0 text-center px-4">
-            <p className="text-white/60 text-xs md:text-sm font-sans tracking-[0.2em] uppercase mb-4">Feature</p>
-            <h2 className="text-3xl md:text-5xl lg:text-7xl font-serif text-white/90 uppercase tracking-wide opacity-90 mix-blend-overlay">
+          <div className="inset-x-0 text-center px-4">
+            <p className="text-[#F0EEE6] text-xs md:text-sm font-sans tracking-[0.2em] uppercase mb-4">Feature</p>
+            <h2 className="text-3xl md:text-5xl lg:text-7xl font-serif text-[#F0EEE6] uppercase tracking-wide">
               Scaling at the<br /><span className="italic font-light">speed of thought</span>
             </h2>
           </div>
         </motion.div>
-      </div>
-    </section>
+      </div >
+    </section >
   );
 };
 
@@ -149,13 +148,13 @@ const ServicesGrid = () => {
   ];
 
   return (
-    <section className="py-24 border-t border-[#D1D0C9] max-w-[1400px] mx-auto px-6 md:px-12">
-      <h2 className="text-sm font-sans font-bold tracking-[0.1em] uppercase mb-12 text-[#141413]">Our Expertise</h2>
+    <section className="py-6 max-w-[1400px] mx-auto px-6 md:px-12">
+      <h2 className="text-lg font-bold uppercase mb-12 text-[#141413]">Our Expertise</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {services.map((service, index) => (
-          <div key={index} className="bg-[#EBE9E0] rounded-xl border border-[#D1D0C9] p-8 md:p-10 flex flex-col h-full hover:-translate-y-1 hover:shadow-lg transition-all duration-300 group">
-            <h3 className="text-2xl md:text-[1.75rem] font-serif text-[#141413] leading-tight mb-4 group-hover:text-black/80 transition-colors">
+          <div key={index} className="bg-[#E3DACC] rounded-xl p-8 md:p-10 flex flex-col h-full">
+            <h3 className="text-2xl md:text-[1.75rem] font-serif text-[#141413] leading-tight mb-4">
               {service.title}
             </h3>
             <p className="text-sm md:text-base font-sans leading-relaxed text-[#141413]/80 mb-16 flex-grow">
@@ -177,7 +176,7 @@ const ServicesGrid = () => {
                 </div>
               </div>
 
-              <button className="bg-[#141413] text-white px-5 py-2 rounded-full text-sm font-medium flex items-center space-x-2 hover:bg-black/80 hover:pl-6 transition-all duration-300">
+              <button className="bg-[#141413] text-white px-5 py-2 rounded-lg text-sm font-medium flex items-center space-x-2 hover:bg-black/80 transition-all duration-300 cursor-pointer">
                 <span>{service.buttonText}</span>
                 <ArrowRight size={14} className="opacity-70 transition-transform group-hover:translate-x-1" />
               </button>
