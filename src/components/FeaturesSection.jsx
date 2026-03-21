@@ -65,11 +65,11 @@ const FeaturesSection = () => {
 
           {/* Flex-1 strictly allocates the ENTIRE remaining 100vh height specifically to the image wrapper, preventing overlap! */}
           <div className="w-full flex-[1_1_100%] min-h-0 relative flex justify-center items-start pointer-events-none z-0 mt-4 md:mt-8">
-             {/* Massive 90% width ensures majestic layout presence. Object-top forcibly aligns the head perfectly under the text, while cleanly bleeding the remaining body length completely out the bottom barrier. */}
+             {/* Massive 90% width ensures majestic layout presence. Absolute top-0 anchors the head to the flex sub-frame directly. */}
             <motion.img
               src="/ai-robot-front-transparent.png"
               alt="AI Robot Front Facing"
-              className="w-[140%] sm:w-[120%] md:w-[100%] lg:w-[90%] max-w-[1300px] h-auto object-cover object-top relative z-0 origin-top drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
+              className="absolute top-0 w-[140%] sm:w-[120%] md:w-[100%] lg:w-[90%] max-w-[1300px] h-auto object-cover object-top z-0 origin-top drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
               style={{ y: imageY, scale: imageScale }}
             />
           </div>
