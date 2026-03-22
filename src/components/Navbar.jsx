@@ -15,7 +15,7 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className={`fixed top-0 w-full z-50 transition-all duration-300 border-b border-transparent ${isScrolled ? 'bg-[#141414] py-4 border-white/5' : 'bg-transparent py-8'}`}>
+      <nav className={`fixed top-0 w-full z-50 transition-all duration-300 border-b border-transparent ${isScrolled ? 'bg-[#141414]/85 backdrop-blur-md py-4 border-white/5' : 'bg-transparent py-8'}`}>
         <div className="max-w-[1600px] mx-auto px-6 md:px-12 flex justify-between items-center text-sm font-sans font-medium relative">
           
           {/* Left: Logo */}
