@@ -1,5 +1,6 @@
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
+import BorderGlow from './BorderGlow';
 
 const ServicesGrid = () => {
   const services = [
@@ -32,34 +33,43 @@ const ServicesGrid = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {services.map((service, index) => (
-          <div key={index} className="bg-[#272727] rounded p-8 md:p-10 flex flex-col h-full hover:bg-[#2a2a2a] transition-colors border border-transparent hover:border-[#FF5555]/30">
-            <h3 className="text-2xl md:text-[1.75rem] font-serif text-[#FFFFFF] leading-tight mb-4">
-              {service.title}
-            </h3>
-            <p className="text-sm md:text-base font-sans leading-relaxed text-[#A9A9A9] mb-16 flex-grow">
-              {service.body}
-            </p>
+          <BorderGlow
+            key={index}
+            className="h-full transition-colors"
+            backgroundColor="#272727"
+            glowColor="358 100 67"
+            colors={['#FF5555', '#FF8888', '#FF2222']}
+            borderRadius={4}
+          >
+            <div className="p-8 md:p-10 flex flex-col h-full w-full">
+              <h3 className="text-2xl md:text-[1.75rem] font-serif text-[#FFFFFF] leading-tight mb-4">
+                {service.title}
+              </h3>
+              <p className="text-sm md:text-base font-sans leading-relaxed text-[#A9A9A9] mb-16 flex-grow">
+                {service.body}
+              </p>
 
-            <div className="mt-auto">
-              <div className="h-[1px] w-full bg-[#FFFFFF]/10 mb-4"></div>
+              <div className="mt-auto">
+                <div className="h-[1px] w-full bg-[#FFFFFF]/10 mb-4"></div>
 
-              <div className="flex justify-between text-xs font-sans text-[#A9A9A9] mb-8 uppercase tracking-wider">
-                <div className="flex flex-col space-y-2">
-                  <span className="font-semibold text-[10px] text-[#FFFFFF]">Date</span>
-                  <span>{service.date}</span>
+                <div className="flex justify-between text-xs font-sans text-[#A9A9A9] mb-8 uppercase tracking-wider">
+                  <div className="flex flex-col space-y-2">
+                    <span className="font-semibold text-[10px] text-[#FFFFFF]">Date</span>
+                    <span>{service.date}</span>
+                  </div>
+                  <div className="flex flex-col space-y-2 text-right">
+                    <span className="font-semibold text-[10px] text-[#FFFFFF]">Category</span>
+                    <span>{service.category}</span>
+                  </div>
                 </div>
-                <div className="flex flex-col space-y-2 text-right">
-                  <span className="font-semibold text-[10px] text-[#FFFFFF]">Category</span>
-                  <span>{service.category}</span>
-                </div>
+
+                <a href="#contact" className="bg-[#FF5555] text-white px-5 py-2.5 rounded text-sm font-sans font-bold flex items-center justify-between hover:bg-white hover:text-[#141414] transition-colors duration-300 w-fit gap-3 cursor-pointer relative z-10">
+                  <span>{service.buttonText}</span>
+                  <ArrowRight size={14} />
+                </a>
               </div>
-
-              <a href="#contact" className="bg-[#FF5555] text-white px-5 py-2.5 rounded text-sm font-sans font-bold flex items-center justify-between hover:bg-white hover:text-[#141414] transition-colors duration-300 w-fit gap-3 cursor-pointer">
-                <span>{service.buttonText}</span>
-                <ArrowRight size={14} />
-              </a>
             </div>
-          </div>
+          </BorderGlow>
         ))}
       </div>
     </section>

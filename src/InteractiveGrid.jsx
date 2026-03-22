@@ -80,6 +80,14 @@ const InteractiveGrid = () => {
 
     const draw = (time) => {
       if (!time) time = performance.now();
+
+      // Skip expensive canvas operations if nothing changed
+      if (activeCells.size === 0 && scrollY === draw.lastScrollY) {
+        rafId = requestAnimationFrame(draw);
+        return;
+      }
+      draw.lastScrollY = scrollY;
+
       ctx.clearRect(0, 0, width, height);
 
       const pixelOffset = (scrollY * parallaxFactor) % gridSize;

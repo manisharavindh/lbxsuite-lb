@@ -9,18 +9,18 @@ const Hero = () => {
         {/* === Desktop Layout (md and above) === */}
         <div className="hidden md:flex w-full items-center relative h-full">
           {/* Left Studio Text */}
-          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-32 pb-12">
+          {/* <div className="absolute left-0 top-1/2 -translate-y-1/2 w-32 pb-12">
             <p className="text-[11px] lg:text-xs uppercase tracking-[0.15em] leading-[1.6] text-[#A9A9A9] font-sans font-medium">
               Creative<br />studio
             </p>
-          </div>
+          </div> */}
 
           {/* Right Top Arrow */}
-          <div className="absolute right-0 top-[18%] lg:top-[20%] z-20">
+          {/* <div className="absolute right-0 top-[18%] lg:top-[20%] z-20">
             <div className="w-16 h-16 flex justify-center items-center group cursor-pointer hover:scale-110 transition-transform">
               <ArrowUpRight size={56} className="text-[#A9A9A9] group-hover:text-[#FF5555] transition-colors lg:w-[64px] lg:h-[64px]" strokeWidth={2.5} />
             </div>
-          </div>
+          </div> */}
 
           {/* Center Main Staggered Typography */}
           <div className="w-full flex justify-center relative">
@@ -40,7 +40,7 @@ const Hero = () => {
                   <p className="text-[11px] lg:text-[14px] font-sans text-[#A9A9A9] leading-relaxed font-medium mb-6">
                     The first full-stack Web3 creative agency integrating AI technology to deliver best-in-class client experience.
                   </p>
-                  
+
                   {/* Funnel Element */}
                   <a href="#contact" className="bg-[#FF5555] text-white px-5 py-2.5 rounded text-sm font-sans font-bold hover:bg-white hover:text-[#141414] transition-colors duration-300 inline-flex items-center gap-2 shadow-lg shadow-[#FF5555]/20">
                     Book an Intro Call
