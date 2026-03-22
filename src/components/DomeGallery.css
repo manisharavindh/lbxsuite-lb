@@ -18,6 +18,7 @@
   cursor: grab;
   z-index: 10;
 }
+
 .sphere-main:active {
   cursor: grabbing;
 }
@@ -45,9 +46,7 @@
   position: absolute;
   transform-origin: center;
   backface-visibility: hidden;
-  transform: rotateY(calc((360deg / var(--segments-x)) * (var(--offset-x) + (var(--item-size-x) - 1) / 2)))
-             rotateX(calc((360deg / var(--segments-y)) * (var(--offset-y) - (var(--item-size-y) - 1) / 2)))
-             translateZ(var(--radius));
+  transform: rotateY(calc((360deg / var(--segments-x)) * (var(--offset-x) + (var(--item-size-x) - 1) / 2))) rotateX(calc((360deg / var(--segments-y)) * (var(--offset-y) - (var(--item-size-y) - 1) / 2))) translateZ(var(--radius));
   will-change: transform;
 }
 
@@ -145,7 +144,7 @@
 .enlarge {
   pointer-events: auto;
   border-radius: var(--enlarge-radius, 30px);
-  box-shadow: 0 30px 80px rgba(0,0,0,0.8);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8);
   border: 1px solid rgba(255, 255, 255, 0.1);
   overflow: hidden;
   z-index: 60;

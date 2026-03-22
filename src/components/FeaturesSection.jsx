@@ -43,15 +43,13 @@ const FeaturesSection = () => {
       </div>
 
       {/* Explicit strict 100vh container to guarantee bounding */}
-      <div ref={containerRef} className="w-full flex justify-center h-[100vh]">
+      {/* <div ref={containerRef} className="w-full flex justify-center h-[100vh]">
         <motion.div
           className="relative bg-[#272727] overflow-hidden flex flex-col items-center pt-10 md:pt-14 lg:pt-20 border-y border-white/5 shadow-2xl h-full w-full"
           style={{ clipPath: containerClipPath }}
         >
-          {/* Subtle grid pattern inside card for depth */}
           <div className="absolute inset-0 z-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none opacity-50"></div>
 
-          {/* Fixed text container. Using 'vw' bounds guarantees absolute immunity against text line-break reflowing when the parent div artificially widens from 90vw to 100vw on mobile! */}
           <div className="text-center z-10 relative flex flex-col items-center shrink-0 w-[85vw] max-w-[320px] sm:max-w-[450px] md:max-w-[650px] lg:max-w-[800px] mb-2 md:mb-6">
             <p className="text-[#FF5555] text-[10px] md:text-xs font-sans tracking-[0.2em] uppercase mb-2 md:mb-4 font-bold">Autonomy</p>
             <h3 className="text-3xl md:text-4xl lg:text-[4rem] font-serif text-[#FFFFFF] uppercase tracking-wide leading-[1.1] md:leading-tight">
@@ -62,9 +60,7 @@ const FeaturesSection = () => {
             </p>
           </div>
 
-          {/* Flex-1 strictly allocates the ENTIRE remaining 100vh height specifically to the image wrapper, preventing overlap! */}
           <div className="w-full flex-[1_1_100%] min-h-0 relative flex justify-center items-start pointer-events-none z-0 mt-4 md:mt-8">
-            {/* Massive 90% width ensures majestic layout presence. Absolute top-0 anchors the head to the flex sub-frame directly. */}
             <motion.img
               src="/ai-robot-front-transparent.png"
               alt="AI Robot Front Facing"
@@ -73,7 +69,7 @@ const FeaturesSection = () => {
             />
           </div>
         </motion.div>
-      </div>
+      </div> */}
     </section>
   );
 };

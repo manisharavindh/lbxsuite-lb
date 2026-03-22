@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight } from 'lucide-react';
+import AnimatedButton from './AnimatedButton';
 import BorderGlow from './BorderGlow';
 
 const ServicesGrid = () => {
@@ -63,10 +63,9 @@ const ServicesGrid = () => {
                   </div>
                 </div>
 
-                <a href="#contact" className="bg-[#FF5555] text-white px-5 py-2.5 rounded text-sm font-sans font-bold flex items-center justify-between hover:bg-white hover:text-[#141414] transition-colors duration-300 w-fit gap-3 cursor-pointer relative z-10">
-                  <span>{service.buttonText}</span>
-                  <ArrowRight size={14} />
-                </a>
+                <AnimatedButton href="#contact" size="sm" className="relative z-10 w-fit">
+                  {service.buttonText}
+                </AnimatedButton>
               </div>
             </div>
           </BorderGlow>

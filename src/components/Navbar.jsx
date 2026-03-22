@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X, ArrowRight } from 'lucide-react';
+import AnimatedButton from './AnimatedButton';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -28,9 +29,9 @@ const Navbar = () => {
             <a href="#services" className="hover:text-[#A9A9A9] transition-colors">Services</a>
             <a href="#features" className="hover:text-[#A9A9A9] transition-colors">Work</a>
             <a href="#contact" className="hover:text-[#A9A9A9] transition-colors">Company</a>
-            <a href="#contact" className="bg-[#FF5555] text-white px-5 py-2.5 rounded font-bold hover:bg-white hover:text-[#141414] transition-all duration-300 ml-2">
+            <AnimatedButton href="#contact" size="sm" variant="nav" className="ml-2">
               Start a Project
-            </a>
+            </AnimatedButton>
           </div>
 
           {/* Mobile Menu Toggle */}
@@ -52,10 +53,10 @@ const Navbar = () => {
               </a>
             ))}
             <div className="pt-8">
-              <a href="#contact" className="inline-flex bg-[#FF5555] text-white px-8 py-4 rounded text-lg font-sans font-bold hover:bg-white hover:text-[#141414] transition-all duration-300 w-max items-center space-x-3" onClick={() => setMobileMenuOpen(false)}>
-                <span>Start a Project</span>
+              <AnimatedButton href="#contact" size="lg" onClick={() => setMobileMenuOpen(false)} className="w-max">
+                Start a Project
                 <ArrowRight size={20} />
-              </a>
+              </AnimatedButton>
             </div>
           </div>
         </div>

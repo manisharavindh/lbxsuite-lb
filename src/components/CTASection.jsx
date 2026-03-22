@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, ArrowUpRight } from 'lucide-react';
+import AnimatedButton from './AnimatedButton';
 
 const CTASection = () => {
   const links = [
@@ -18,10 +18,9 @@ const CTASection = () => {
           <p className="text-[#A9A9A9] font-sans md:text-lg mb-12 max-w-md">
             We funnel ambitious ideas into high-performance software. Book an introductory call with our technical leads today.
           </p>
-          <a href="mailto:hello@lbxsuite.com" className="bg-[#FF5555] text-white px-8 py-4 rounded text-lg font-sans font-bold flex items-center justify-center gap-3 hover:bg-white hover:text-[#141414] transition-colors duration-300 w-fit shadow-lg shadow-[#FF5555]/20">
+          <AnimatedButton href="mailto:hello@lbxsuite.com" size="lg" className="shadow-lg shadow-[#FF5555]/20 w-fit">
             Book an Intro Call
-            <ArrowUpRight size={20} />
-          </a>
+          </AnimatedButton>
         </div>
 
         <div className="flex flex-col mt-2 lg:mt-0">

@@ -32,3 +32,27 @@ h1, h2, h3, h4, h5, h6 {
   background-color: var(--color-accent);
   color: var(--color-text-primary);
 }
+
+/* ===== Animated Button — Vertical ticker hover ===== */
+
+.anim-btn {
+  position: relative;
+  overflow: hidden;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+/* Slider: GPU-accelerated, fast and smooth */
+.anim-btn-slider {
+  display: flex;
+  flex-direction: column;
+  will-change: transform;
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.anim-btn:hover .anim-btn-slider {
+  transform: translateY(-50%) translateZ(0);
+}

@@ -1,4 +1,5 @@
 import React from 'react';
+import AnimatedButton from './AnimatedButton';
 import { ArrowUpRight } from 'lucide-react';
 
 const Hero = () => {
@@ -9,18 +10,18 @@ const Hero = () => {
         {/* === Desktop Layout (md and above) === */}
         <div className="hidden md:flex w-full items-center relative h-full">
           {/* Left Studio Text */}
-          {/* <div className="absolute left-0 top-1/2 -translate-y-1/2 w-32 pb-12">
+          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-32 pb-12">
             <p className="text-[11px] lg:text-xs uppercase tracking-[0.15em] leading-[1.6] text-[#A9A9A9] font-sans font-medium">
               Creative<br />studio
             </p>
-          </div> */}
+          </div>
 
           {/* Right Top Arrow */}
-          {/* <div className="absolute right-0 top-[18%] lg:top-[20%] z-20">
+          <div className="absolute right-0 top-[18%] lg:top-[20%] z-20">
             <div className="w-16 h-16 flex justify-center items-center group cursor-pointer hover:scale-110 transition-transform">
-              <ArrowUpRight size={56} className="text-[#A9A9A9] group-hover:text-[#FF5555] transition-colors lg:w-[64px] lg:h-[64px]" strokeWidth={2.5} />
+              <ArrowUpRight size={56} className="text-[#fff] group-hover:text-[#fff] transition-colors lg:w-[64px] lg:h-[64px]" strokeWidth={2.5} />
             </div>
-          </div> */}
+          </div>
 
           {/* Center Main Staggered Typography */}
           <div className="w-full flex justify-center relative">
@@ -42,10 +43,9 @@ const Hero = () => {
                   </p>
 
                   {/* Funnel Element */}
-                  <a href="#contact" className="bg-[#FF5555] text-white px-5 py-2.5 rounded text-sm font-sans font-bold hover:bg-white hover:text-[#141414] transition-colors duration-300 inline-flex items-center gap-2 shadow-lg shadow-[#FF5555]/20">
+                  <AnimatedButton href="#contact" size="sm" className="shadow-lg">
                     Book an Intro Call
-                    <ArrowUpRight size={16} />
-                  </a>
+                  </AnimatedButton>
                 </div>
               </div>
 
@@ -65,20 +65,34 @@ const Hero = () => {
             <p className="text-[13px] sm:text-[14px] font-sans text-[#A9A9A9] leading-[1.6] font-medium mb-6">
               The first full-stack Web3 creative agency integrating AI technology to deliver best-in-class client experience.
             </p>
-            <a href="#contact" className="bg-[#FF5555] text-white px-6 py-3 rounded text-sm font-sans font-bold hover:bg-white hover:text-[#141414] transition-colors duration-300 inline-flex items-center gap-2">
+            <AnimatedButton href="#contact" size="md">
               Book an Intro Call
-              <ArrowUpRight size={16} />
-            </a>
+            </AnimatedButton>
           </div>
         </div>
       </div>
 
       {/* Simple Scroll Down Text */}
-      <div className="absolute bottom-10 md:bottom-12 left-1/2 -translate-x-1/2 z-10 cursor-pointer opacity-80 hover:opacity-100 transition-opacity duration-300">
+      <div className="absolute bottom-10 md:bottom-12 left-1/2 -translate-x-1/2 z-20 cursor-pointer opacity-80 hover:opacity-100 transition-opacity duration-300">
         <span className="font-sans text-[8px] md:text-[10px] tracking-[0.25em] md:tracking-[0.3em] text-[#A9A9A9] uppercase font-medium whitespace-nowrap">
           Scroll TO EXPLORE
         </span>
       </div>
+
+      {/* 
+        Foreground shadow overlay to smoothly blend the hero into the proceeding Webworks Grid Section 
+      */}
+      <style>{`
+        .hero-vignette-bottom {
+          box-shadow: inset 0 -40px 60px -10px #141414;
+        }
+        @media (min-width: 768px) {
+          .hero-vignette-bottom {
+            box-shadow: inset 0 -80px 100px -20px #141414;
+          }
+        }
+      `}</style>
+      <div className="absolute inset-x-0 bottom-0 h-32 md:h-48 z-10 pointer-events-none hero-vignette-bottom" />
     </section>
   );
 };
