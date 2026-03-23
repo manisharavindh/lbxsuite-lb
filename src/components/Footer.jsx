@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import AnimatedButton from './AnimatedButton';
 import { Twitter, Linkedin, Github } from 'lucide-react';
 
@@ -35,7 +36,7 @@ const Footer = () => {
           <div className="grid grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-12 text-xs md:text-sm font-sans">
             <div className="flex flex-col space-y-4">
               <h4 className="text-white font-bold mb-2 uppercase tracking-widest text-[10px]">Explore</h4>
-              <a href="#" className="text-[#A9A9A9] hover:text-white transition-colors">Blog</a>
+              <Link to="/blog" className="text-[#A9A9A9] hover:text-white transition-colors">Blog</Link>
               <a href="#" className="text-[#A9A9A9] hover:text-white transition-colors">Portfolio</a>
               <a href="#" className="text-[#A9A9A9] hover:text-white transition-colors">Free Giveaways</a>
             </div>
