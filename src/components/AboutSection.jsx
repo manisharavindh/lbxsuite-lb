@@ -1,0 +1,19 @@
+import React from 'react';
+
+const AboutSection = () => {
+  return (
+    <section className="w-full bg-[#141414] py-8 relative z-10 flex flex-col justify-center">
+      <div className="max-w-[1300px] w-full mx-auto px-6 lg:px-12 relative flex">
+
+        {/* Main Heading Block */}
+        <div className="relative w-full">
+          <h2 className="text-[1.5rem] sm:text-[2rem] md:text-[2.5rem] lg:text-[3rem] font-sans font-normal leading-[1.2] tracking-tight text-[#d1d1d1]">
+            <span className="text-white">We</span> are a full-stack Web3 creative agency integrating advanced AI technology to craft distinctive digital experiences that elevate your brand above the noise of today's market.
+          </h2>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default AboutSection;

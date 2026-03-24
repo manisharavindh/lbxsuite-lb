@@ -32,7 +32,7 @@ const Hero = () => {
               </div>
 
               <div className="w-full flex justify-center ml-[5%] lg:ml-[15%] xl:ml-[18%] mt-[-1%]">
-                <span className="font-sans font-medium uppercase text-[8vw] lg:text-[9vw] xl:text-[9.5rem] tracking-[-0.02em] leading-[0.95] whitespace-nowrap text-[#FFFFFF]">Full&ndash;Service</span>
+                <span className="font-sans font-medium uppercase text-[8vw] lg:text-[9vw] xl:text-[9.5rem] tracking-[-0.02em] leading-[0.95] whitespace-nowrap text-[#FFFFFF]">The&ndash;Service</span>
               </div>
 
               <div className="w-full flex items-center justify-end mr-[-20%] lg:mr-[-40%] mt-[-1%] relative">

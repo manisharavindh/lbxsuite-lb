@@ -28,10 +28,11 @@ const ServicesGrid = () => {
   ];
 
   return (
-    <section id="services" className="relative z-10 py-16 max-w-[1400px] mx-auto px-6 md:px-12">
-      <h2 className="text-lg font-bold uppercase mb-12 text-[#A9A9A9] font-sans tracking-widest">Our Expertise</h2>
+    <section id="services" className="relative z-10 w-full bg-[#141414] py-16 shadow-[-10px_-10px_30px_#141414]">
+      <div className="max-w-[1400px] mx-auto px-6 md:px-12 relative z-10">
+        <h2 className="text-lg font-bold uppercase mb-12 text-[#A9A9A9] font-sans tracking-widest">Our Expertise</h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {services.map((service, index) => (
           <BorderGlow
             key={index}
@@ -70,6 +71,7 @@ const ServicesGrid = () => {
             </div>
           </BorderGlow>
         ))}
+      </div>
       </div>
     </section>
   );

@@ -3,10 +3,10 @@ import InteractiveGrid from '../InteractiveGrid';
 import Navbar from '../components/Navbar';
 import Hero from '../components/Hero';
 import WebworksSection from '../components/WebworksSection';
-import FeaturesSection from '../components/FeaturesSection';
 import ServicesGrid from '../components/ServicesGrid';
 import ContactSection from '../components/ContactSection';
 import Footer from '../components/Footer';
+import AboutSection from '../components/AboutSection';
 
 function HomePage() {
   return (
@@ -16,7 +16,7 @@ function HomePage() {
       <main className="relative z-10 w-full flex flex-col items-center">
         <Hero />
         <div className="w-full flex-grow relative bg-[#141414]">
-          <FeaturesSection />
+          <AboutSection />
           <WebworksSection />
           {/* <DomeGallery /> */}
           <ServicesGrid />
