@@ -7,6 +7,7 @@ import ServicesGrid from '../components/ServicesGrid';
 import ContactSection from '../components/ContactSection';
 import Footer from '../components/Footer';
 import AboutSection from '../components/AboutSection';
+import FAQSection from '../components/FAQSection';
 
 function HomePage() {
   return (
@@ -20,6 +21,7 @@ function HomePage() {
           <WebworksSection />
           {/* <DomeGallery /> */}
           <ServicesGrid />
+          <FAQSection />
           <ContactSection />
         </div>
       </main>

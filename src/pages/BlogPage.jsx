@@ -1,11 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+// eslint-disable-next-line no-unused-vars
 import { motion, useInView, AnimatePresence } from 'framer-motion';
 import { ArrowUpRight, Search, Clock, ArrowRight, X } from 'lucide-react';
 import blogPosts, { categories } from '../data/blogPosts';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import InteractiveGrid from '../InteractiveGrid';
+import BorderGlow from '../components/BorderGlow';
 import AnimatedButton from '../components/AnimatedButton';
 
 const BlogPage = () => {
@@ -18,14 +19,14 @@ const BlogPage = () => {
   const isGridInView = useInView(gridRef, { once: true, margin: "-80px" });
 
   const featuredPost = blogPosts.find(p => p.featured);
-  
+
   const filteredPosts = blogPosts.filter(post => {
     const matchesCategory = activeCategory === 'All' || post.category === activeCategory;
-    const matchesSearch = searchQuery === '' || 
+    const matchesSearch = searchQuery === '' ||
       post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       post.excerpt.toLowerCase().includes(searchQuery.toLowerCase()) ||
       post.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
-    return matchesCategory && matchesSearch && !post.featured;
+    return matchesCategory && matchesSearch;
   });
 
   // Scroll to top on mount
@@ -35,97 +36,86 @@ const BlogPage = () => {
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-[#141414] text-white font-sans selection:bg-[#FF5555] selection:text-[#FFFFFF]">
-      <InteractiveGrid />
       <Navbar />
-      
+
       <main className="relative z-10 w-full flex flex-col items-center">
         {/* ============ HERO — Featured Post ============ */}
         <section ref={heroRef} className="relative w-full pt-32 md:pt-40 pb-16 md:pb-24 px-6 md:px-12">
-          <div className="max-w-[1400px] mx-auto">
+          <div className="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-[1fr_0.8fr] gap-12 lg:gap-24 items-center">
             {/* Page Title */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={isHeroInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-              className="mb-16 md:mb-20"
+              className="mb-8 md:mb-0"
             >
               <span className="text-[10px] md:text-xs font-sans font-bold tracking-[0.25em] uppercase text-[#FF5555] mb-4 block">
                 Insights & Ideas
               </span>
               <h1 className="text-5xl md:text-7xl lg:text-[6rem] font-serif text-[#FFFFFF] tracking-[-0.02em] leading-[1.05]">
-                The LbxSuite <br className="hidden md:block" />
+                LbxSuite <br className="hidden md:block" />
                 <span className="italic font-light text-[#A9A9A9]">Blog</span>
               </h1>
             </motion.div>
 
-            {/* Featured Post Card */}
+            {/* Featured Post Card - Right Side */}
             {featuredPost && (
               <motion.div
                 initial={{ opacity: 0, y: 40 }}
                 animate={isHeroInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.7, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+                className="w-full lg:max-w-[500px] ml-auto"
               >
-                <Link 
-                  to={`/blog/${featuredPost.id}`}
-                  className="group block relative overflow-hidden rounded-2xl bg-[#1a1a1a] border border-white/5 hover:border-[#FF5555]/30 transition-all duration-500"
+                <BorderGlow
+                  className="h-full transition-colors w-full"
+                  backgroundColor="#141414"
+                  glowColor="358 100 67"
+                  colors={['#FF5555', '#FF8888', '#FF2222']}
+                  borderRadius={12}
                 >
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
-                    {/* Image Side */}
-                    <div className="relative h-[280px] sm:h-[340px] lg:h-[460px] overflow-hidden">
-                      <img 
-                        src={featuredPost.coverImage} 
-                        alt={featuredPost.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a1a]/60 via-transparent to-transparent lg:bg-gradient-to-r lg:from-transparent lg:via-transparent lg:to-[#1a1a1a]/80" />
-                      
-                      {/* Featured Badge */}
-                      <div className="absolute top-6 left-6">
-                        <span className="bg-[#FF5555] text-white text-[10px] font-sans font-bold tracking-[0.15em] uppercase px-4 py-2 rounded-full">
+                  <Link
+                    to={`/blog/${featuredPost.id}`}
+                    className="group block h-full flex flex-col p-8 bg-[#141414] rounded-xl overflow-hidden relative"
+                  >
+                    <div className="relative z-10 flex flex-col h-full bg-transparent">
+                      <div className="flex items-center justify-between gap-4 mb-6">
+                        <span className="bg-[#141414] text-[#FFFFFF] text-[9px] font-sans font-bold tracking-[0.15em] uppercase px-3 py-1.5 rounded-full border border-white/10 group-hover:border-[#FF5555]/50 group-hover:text-[#FF5555] transition-colors">
                           Featured
                         </span>
-                      </div>
-                    </div>
 
-                    {/* Content Side */}
-                    <div className="p-8 md:p-10 lg:p-14 flex flex-col justify-center">
-                      <div className="flex items-center gap-4 mb-6">
-                        <span className="text-[10px] font-sans font-bold tracking-[0.2em] uppercase text-[#FF5555]">
-                          {featuredPost.category}
-                        </span>
-                        <span className="w-1 h-1 rounded-full bg-[#A9A9A9]" />
-                        <span className="text-[11px] font-sans text-[#A9A9A9] flex items-center gap-1.5">
-                          <Clock size={12} />
-                          {featuredPost.readTime}
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] font-sans text-[#A9A9A9]">{featuredPost.date}</span>
+                          <span className="w-1 h-1 rounded-full bg-[#A9A9A9]/50" />
+                          <span className="text-[10px] font-sans text-[#A9A9A9] flex items-center gap-1.5">
+                            <Clock size={10} />
+                            {featuredPost.readTime}
+                          </span>
+                        </div>
                       </div>
-                      
-                      <h2 className="text-2xl md:text-3xl lg:text-[2.25rem] font-serif text-[#FFFFFF] leading-[1.2] mb-5 group-hover:text-[#FF5555] transition-colors duration-300">
+
+                      <h3 className="text-xl md:text-2xl font-serif text-[#FFFFFF] leading-[1.3] mb-4 group-hover:text-white transition-colors duration-300 line-clamp-2">
                         {featuredPost.title}
-                      </h2>
-                      
-                      <p className="text-sm md:text-base font-sans text-[#A9A9A9] leading-relaxed mb-8 line-clamp-3">
+                      </h3>
+
+                      <p className="text-[13px] md:text-sm font-sans text-[#8a8a8a] leading-relaxed mb-8 line-clamp-3 flex-grow">
                         {featuredPost.excerpt}
                       </p>
 
-                      <div className="flex items-center justify-between mt-auto">
-                        <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 rounded-full bg-[#FF5555]/20 flex items-center justify-center text-[#FF5555] text-xs font-bold font-sans">
+                      <div className="flex items-center justify-between pt-5 border-t border-white/5 mt-auto">
+                        <div className="flex items-center gap-2.5">
+                          <div className="w-8 h-8 rounded-full bg-[#FF5555]/15 flex items-center justify-center text-[#FF5555] text-[9px] font-bold font-sans">
                             {featuredPost.author.split(' ').map(n => n[0]).join('')}
                           </div>
-                          <div>
-                            <p className="text-xs font-sans font-medium text-[#FFFFFF]">{featuredPost.author}</p>
-                            <p className="text-[10px] font-sans text-[#A9A9A9]">{featuredPost.date}</p>
-                          </div>
+                          <span className="text-[11px] font-sans font-medium text-[#FFFFFF]">{featuredPost.author}</span>
                         </div>
-                        
-                        <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center group-hover:bg-[#FF5555] group-hover:border-[#FF5555] transition-all duration-300">
-                          <ArrowUpRight size={18} className="text-[#A9A9A9] group-hover:text-white transition-colors" />
+
+                        <div className="w-9 h-9 rounded-full border border-white/5 flex items-center justify-center group-hover:bg-[#FF5555] group-hover:border-[#FF5555] transition-all duration-300">
+                          <ArrowUpRight size={16} className="text-[#A9A9A9] group-hover:text-white transition-colors" />
                         </div>
                       </div>
                     </div>
-                  </div>
-                </Link>
+                  </Link>
+                </BorderGlow>
               </motion.div>
             )}
           </div>
@@ -135,16 +125,15 @@ const BlogPage = () => {
         <section className="w-full bg-[#141414] border-y border-white/5 sticky top-[72px] z-30 backdrop-blur-xl bg-[#141414]/90">
           <div className="max-w-[1400px] mx-auto px-6 md:px-12 py-4 flex items-center justify-between gap-4">
             {/* Category Tabs */}
-            <div className="flex items-center gap-1 overflow-x-auto no-scrollbar">
+            <div className="flex items-center gap-4 md:gap-8 overflow-x-auto no-scrollbar py-2">
               {categories.map(cat => (
                 <button
                   key={cat}
                   onClick={() => setActiveCategory(cat)}
-                  className={`whitespace-nowrap px-4 py-2 rounded-full text-xs font-sans font-bold tracking-wide uppercase transition-all duration-300 cursor-pointer ${
-                    activeCategory === cat
-                      ? 'bg-[#FF5555] text-white'
-                      : 'text-[#A9A9A9] hover:text-white hover:bg-white/5'
-                  }`}
+                  className={`whitespace-nowrap px-4 py-2 rounded-full text-xs font-sans font-bold tracking-wide uppercase transition-all duration-300 cursor-pointer ${activeCategory === cat
+                    ? 'bg-[#FF5555] text-white'
+                    : 'text-[#A9A9A9] hover:text-white hover:bg-white/5'
+                    }`}
                 >
                   {cat}
                 </button>
@@ -173,7 +162,7 @@ const BlogPage = () => {
                   </motion.div>
                 )}
               </AnimatePresence>
-              <button 
+              <button
                 onClick={() => {
                   setSearchOpen(!searchOpen);
                   if (searchOpen) setSearchQuery('');
@@ -197,61 +186,47 @@ const BlogPage = () => {
                     initial={{ opacity: 0, y: 30 }}
                     animate={isGridInView ? { opacity: 1, y: 0 } : {}}
                     transition={{ duration: 0.5, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
+                    className="h-full"
                   >
-                    <Link 
+                    <Link
                       to={`/blog/${post.id}`}
-                      className="group block h-full bg-[#1a1a1a] rounded-xl overflow-hidden border border-white/5 hover:border-[#FF5555]/20 transition-all duration-500 hover:shadow-lg hover:shadow-[#FF5555]/5"
+                      className="group block h-full flex flex-col p-8 bg-[#141414] rounded-xl overflow-hidden border border-white/5 hover:border-[#FF5555]/30 hover:shadow-[0_0_30px_rgba(255,85,85,0.05)] transition-all duration-500 relative"
                     >
-                      {/* Card Image */}
-                      <div className="relative h-[200px] sm:h-[220px] overflow-hidden">
-                        <img 
-                          src={post.coverImage} 
-                          alt={post.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a1a] via-[#1a1a1a]/20 to-transparent" />
-                        
-                        {/* Category Badge */}
-                        <div className="absolute top-4 left-4">
-                          <span className="bg-[#141414]/70 backdrop-blur-md text-[#FFFFFF] text-[9px] font-sans font-bold tracking-[0.15em] uppercase px-3 py-1.5 rounded-full border border-white/10">
+                      <div className="relative z-10 flex flex-col h-full bg-transparent">
+                        <div className="flex items-center justify-between gap-4 mb-6">
+                          <span className="bg-[#141414] text-[#FFFFFF] text-[9px] font-sans font-bold tracking-[0.15em] uppercase px-3 py-1.5 rounded-full border border-white/10 group-hover:border-[#FF5555]/50 group-hover:text-[#FF5555] transition-colors">
                             {post.category}
                           </span>
-                        </div>
-                      </div>
 
-                      {/* Card Content */}
-                      <div className="p-6 md:p-7 flex flex-col">
-                        {/* Meta */}
-                        <div className="flex items-center gap-3 mb-4">
-                          <span className="text-[10px] font-sans text-[#A9A9A9]">{post.date}</span>
-                          <span className="w-1 h-1 rounded-full bg-[#A9A9A9]/50" />
-                          <span className="text-[10px] font-sans text-[#A9A9A9] flex items-center gap-1">
-                            <Clock size={10} />
-                            {post.readTime}
-                          </span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-[10px] font-sans text-[#A9A9A9]">{post.date}</span>
+                            <span className="w-1 h-1 rounded-full bg-[#A9A9A9]/50" />
+                            <span className="text-[10px] font-sans text-[#A9A9A9] flex items-center gap-1.5">
+                              <Clock size={10} />
+                              {post.readTime}
+                            </span>
+                          </div>
                         </div>
-                        
-                        <h3 className="text-lg md:text-xl font-serif text-[#FFFFFF] leading-[1.3] mb-3 group-hover:text-[#FF5555] transition-colors duration-300 line-clamp-2">
+
+                        <h3 className="text-xl md:text-2xl font-serif text-[#FFFFFF] leading-[1.3] mb-4 group-hover:text-white transition-colors duration-300 line-clamp-2">
                           {post.title}
                         </h3>
-                        
-                        <p className="text-[13px] font-sans text-[#A9A9A9] leading-relaxed mb-6 line-clamp-2 flex-grow">
+
+                        <p className="text-[13px] md:text-sm font-sans text-[#8a8a8a] leading-relaxed mb-8 line-clamp-3 flex-grow">
                           {post.excerpt}
                         </p>
 
-                        {/* Footer */}
-                        <div className="flex items-center justify-between pt-5 border-t border-white/5">
+                        <div className="flex items-center justify-between pt-5 border-t border-white/5 mt-auto">
                           <div className="flex items-center gap-2.5">
-                            <div className="w-7 h-7 rounded-full bg-[#FF5555]/15 flex items-center justify-center text-[#FF5555] text-[9px] font-bold font-sans">
+                            <div className="w-8 h-8 rounded-full bg-[#FF5555]/15 flex items-center justify-center text-[#FF5555] text-[9px] font-bold font-sans">
                               {post.author.split(' ').map(n => n[0]).join('')}
                             </div>
                             <span className="text-[11px] font-sans font-medium text-[#FFFFFF]">{post.author}</span>
                           </div>
-                          
-                          <span className="text-[11px] font-sans font-bold text-[#FF5555] flex items-center gap-1 group-hover:gap-2 transition-all duration-300 uppercase tracking-wider">
-                            Read
-                            <ArrowRight size={12} />
-                          </span>
+
+                          <div className="w-9 h-9 rounded-full border border-white/5 flex items-center justify-center group-hover:bg-[#FF5555] group-hover:border-[#FF5555] transition-all duration-300">
+                            <ArrowUpRight size={16} className="text-[#A9A9A9] group-hover:text-white transition-colors" />
+                          </div>
                         </div>
                       </div>
                     </Link>
@@ -259,7 +234,7 @@ const BlogPage = () => {
                 ))}
               </div>
             ) : (
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 className="text-center py-20"
@@ -268,7 +243,7 @@ const BlogPage = () => {
                 <p className="text-sm font-sans text-[#A9A9A9]">
                   Try adjusting your search or filter to find what you're looking for.
                 </p>
-                <button 
+                <button
                   onClick={() => { setActiveCategory('All'); setSearchQuery(''); }}
                   className="mt-6 text-[#FF5555] text-sm font-sans font-bold underline underline-offset-4 hover:text-white transition-colors cursor-pointer"
                 >
@@ -285,7 +260,7 @@ const BlogPage = () => {
             <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1e1e1e] to-[#1a1a1a] border border-white/5 p-10 md:p-16 text-center">
               {/* Decorative glow */}
               <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[400px] h-[200px] bg-[#FF5555]/10 rounded-full blur-[100px] pointer-events-none" />
-              
+
               <div className="relative z-10">
                 <span className="text-[10px] font-sans font-bold tracking-[0.25em] uppercase text-[#FF5555] mb-4 block">
                   Stay Updated
@@ -297,8 +272,8 @@ const BlogPage = () => {
                 <p className="text-sm md:text-base font-sans text-[#A9A9A9] mb-8 max-w-md mx-auto leading-relaxed">
                   No spam, no fluff. Just our best thinking on AI, engineering, and digital product strategy — delivered biweekly.
                 </p>
-                
-                <form 
+
+                <form
                   onSubmit={(e) => e.preventDefault()}
                   className="flex flex-col sm:flex-row items-center gap-3 max-w-md mx-auto"
                 >

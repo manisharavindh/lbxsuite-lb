@@ -19,7 +19,7 @@ const ContactSection = () => {
   }, []);
 
   return (
-    <section id="contact" className="relative z-10 py-24 md:py-32 w-full mx-auto px-6 md:px-12 mt-12 bg-[#141414] border-t border-white/5">
+    <section id="contact" className="relative z-10 py-24 md:py-32 w-full mx-auto px-6 md:px-12 bg-[#141414]">
       <div className="flex flex-col items-center max-w-[900px] w-full mx-auto">
 
         {/* Header Section */}

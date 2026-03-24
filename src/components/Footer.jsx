@@ -57,7 +57,7 @@ const Footer = () => {
       </div>
 
       {/* Main Element: Scrolling "SAY HI" Marquee */}
-      <div className="relative z-20 w-full max-w-[1600px] mx-auto flex flex-col items-center border-y border-[#272727] pt-6 pb-4">
+      {/* <div className="relative z-20 w-full max-w-[1600px] mx-auto flex flex-col items-center border-y border-[#272727] pt-6 pb-4">
         <style>{`
           @keyframes marquee {
             0% { transform: translateX(0); }
@@ -89,10 +89,10 @@ const Footer = () => {
             ))}
           </div>
         </a>
-      </div>
+      </div> */}
 
       {/* Bottom bar */}
-      <div className="relative z-20 flex flex-col md:flex-row justify-between items-center md:items-end pt-12 md:pt-12 pb-12 font-sans text-xs text-[#A9A9A9] space-y-6 md:space-y-0 w-full max-w-[1600px] mx-auto">
+      <div className="relative z-20 flex flex-col md:flex-row justify-between items-center md:items-end pt-12 md:pt-12 pb-12 font-sans text-xs text-[#A9A9A9] space-y-6 md:space-y-0 w-full max-w-[1600px] mx-auto border-t border-[#272727]">
         <div className="flex items-center space-x-6">
           <span>© 2026 LbxSuite. All rights reserved.</span>
         </div>

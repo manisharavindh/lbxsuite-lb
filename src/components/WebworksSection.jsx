@@ -1,53 +1,56 @@
 import React from 'react';
 import ScrollGridWorks from './ScrollGridWorks';
 
-const WebworksSection = () => {
-  const items = [
-    "wws/006.webp",
-    "wws/002.webp",
-    "wws/009.webp",
-    "wws/004.webp",
-    "wws/001.webp",
-    "wws/008.webp",
-    "wws/005.webp",
-    "wws/003.webp",
-    "wws/007.webp",
-    "wws/010.webp",
-    "wws/002.webp",
-    "wws/006.webp",
-    "wws/004.webp",
-    "wws/001.webp",
-    "wws/009.webp",
-    "wws/007.webp",
-    "wws/003.webp",
-    "wws/008.webp",
-    "wws/005.webp",
-  ];
+const items = [
+  "wws/006.webp",
+  "wws/002.webp",
+  "wws/009.webp",
+  "wws/004.webp",
+  "wws/001.webp",
+  "wws/008.webp",
+  "wws/005.webp",
+  "wws/003.webp",
+  "wws/007.webp",
+  "wws/010.webp",
+  "wws/002.webp",
+  "wws/006.webp",
+  "wws/004.webp",
+  "wws/001.webp",
+  "wws/009.webp",
+  "wws/007.webp",
+  "wws/003.webp",
+  "wws/008.webp",
+  "wws/005.webp",
+];
 
-  function shuffleNoAdjacent(arr) {
-    let shuffled = [...arr];
+function shuffleNoAdjacent(arr) {
+  let shuffled = [...arr];
 
-    // Fisher-Yates shuffle
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
+  // Fisher-Yates shuffle
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
 
-    // Fix adjacent duplicates
-    for (let i = 1; i < shuffled.length; i++) {
-      if (shuffled[i] === shuffled[i - 1]) {
-        // find a different item ahead to swap
-        for (let j = i + 1; j < shuffled.length; j++) {
-          if (shuffled[j] !== shuffled[i]) {
-            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-            break;
-          }
+  // Fix adjacent duplicates
+  for (let i = 1; i < shuffled.length; i++) {
+    if (shuffled[i] === shuffled[i - 1]) {
+      // find a different item ahead to swap
+      for (let j = i + 1; j < shuffled.length; j++) {
+        if (shuffled[j] !== shuffled[i]) {
+          [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+          break;
         }
       }
     }
-
-    return shuffled;
   }
+
+  return shuffled;
+}
+
+const WebworksSection = () => {
+  // Prevent excessive component continuous rendering calculations by computing once
+  const shuffledItems = React.useMemo(() => shuffleNoAdjacent(items), []);
 
   return (
     <section id="webworks" className="relative w-full bg-transparent pt-4 mb-6">
@@ -60,7 +63,7 @@ const WebworksSection = () => {
         </p>
       </div> */}
 
-      <ScrollGridWorks items={shuffleNoAdjacent(items)} />
+      <ScrollGridWorks items={shuffledItems} />
     </section>
   );
 };

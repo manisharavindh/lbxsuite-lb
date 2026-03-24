@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
 import { ArrowRight, CheckCircle2 } from 'lucide-react';
+// eslint-disable-next-line no-unused-vars
 import { motion, useInView } from 'framer-motion';
 
 const ProcessSection = () => {

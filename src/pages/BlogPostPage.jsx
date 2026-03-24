@@ -1,16 +1,15 @@
 import React, { useEffect, useRef } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
+// eslint-disable-next-line no-unused-vars
 import { motion, useInView } from 'framer-motion';
 import { ArrowLeft, Clock, ArrowUpRight, Share2, Twitter, Linkedin, Copy, Check } from 'lucide-react';
 import blogPosts from '../data/blogPosts';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import InteractiveGrid from '../InteractiveGrid';
 import AnimatedButton from '../components/AnimatedButton';
 
 const BlogPostPage = () => {
   const { slug } = useParams();
-  const navigate = useNavigate();
   const post = blogPosts.find(p => p.id === slug);
   const contentRef = useRef(null);
   const relatedRef = useRef(null);
@@ -124,7 +123,6 @@ const BlogPostPage = () => {
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-[#141414] text-white font-sans selection:bg-[#FF5555] selection:text-[#FFFFFF]">
-      <InteractiveGrid />
       <Navbar />
 
       <main className="relative z-10 w-full flex flex-col items-center">
@@ -324,26 +322,28 @@ const BlogPostPage = () => {
                   >
                     <Link
                       to={`/blog/${relPost.id}`}
-                      className="group flex flex-col sm:flex-row bg-[#1a1a1a] rounded-xl overflow-hidden border border-white/5 hover:border-[#FF5555]/20 transition-all duration-500 h-full"
+                      className="group flex flex-col p-8 bg-[#1a1a1a] rounded-xl overflow-hidden border border-white/5 hover:border-[#FF5555]/30 hover:shadow-[0_0_30px_rgba(255,85,85,0.05)] transition-all duration-500 h-full relative"
                     >
-                      <div className="relative w-full sm:w-[220px] h-[180px] sm:h-auto overflow-hidden shrink-0">
-                        <img 
-                          src={relPost.coverImage} 
-                          alt={relPost.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent to-[#1a1a1a]/50 hidden sm:block" />
-                      </div>
-                      <div className="p-6 flex flex-col justify-center">
-                        <span className="text-[9px] font-sans font-bold tracking-[0.2em] uppercase text-[#FF5555] mb-3">
-                          {relPost.category}
-                        </span>
-                        <h3 className="text-lg font-serif text-[#FFFFFF] leading-[1.3] mb-2 group-hover:text-[#FF5555] transition-colors duration-300 line-clamp-2">
+                      <div className="relative z-10 flex flex-col h-full bg-transparent w-full">
+                        <div className="flex items-center justify-between gap-4 mb-6">
+                          <span className="bg-[#141414] text-[#FFFFFF] text-[9px] font-sans font-bold tracking-[0.15em] uppercase px-3 py-1.5 rounded-full border border-white/10 group-hover:border-[#FF5555]/50 group-hover:text-[#FF5555] transition-colors">
+                            {relPost.category}
+                          </span>
+                        </div>
+                        
+                        <h3 className="text-xl font-serif text-[#FFFFFF] leading-[1.3] mb-4 group-hover:text-white transition-colors duration-300 line-clamp-2">
                           {relPost.title}
                         </h3>
-                        <p className="text-[12px] font-sans text-[#A9A9A9] leading-relaxed line-clamp-2">
+                        
+                        <p className="text-sm font-sans text-[#8a8a8a] leading-relaxed mb-6 line-clamp-3">
                           {relPost.excerpt}
                         </p>
+
+                        <div className="flex items-center justify-between mt-auto pt-5 border-t border-white/5">
+                          <span className="text-[11px] font-sans font-medium text-[#A9A9A9] flex items-center gap-1.5">
+                            Read article <ArrowUpRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                          </span>
+                        </div>
                       </div>
                     </Link>
                   </motion.div>

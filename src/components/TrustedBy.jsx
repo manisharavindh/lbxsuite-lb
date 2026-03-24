@@ -1,4 +1,5 @@
 import React, { useRef } from 'react';
+// eslint-disable-next-line no-unused-vars
 import { motion, useInView } from 'framer-motion';
 
 const TrustedBy = () => {
