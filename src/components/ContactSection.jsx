@@ -37,7 +37,7 @@ const ContactSection = () => {
           <Cal
             namespace="ps"
             calLink="lbxsuite/ps"
-            style={{ width: "100%", height: "auto", border: "none", overflow: "hidden" }}
+            style={{ width: "100%", height: "100%", border: "none", overflow: "scroll" }}
             config={{ "layout": "month_view", "useSlotsViewOnSmallScreen": "true", "theme": "dark" }}
           />
         </div>

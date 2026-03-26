@@ -1,21 +1,44 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-// eslint-disable-next-line no-unused-vars
-import { motion, useInView } from 'framer-motion';
-import { ArrowLeft, Clock, ArrowUpRight, Share2, Twitter, Linkedin, Copy, Check } from 'lucide-react';
+import { ArrowLeft, ArrowUpRight, Clock, Twitter, Linkedin, Copy, Check } from 'lucide-react';
 import blogPosts from '../data/blogPosts';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import AnimatedButton from '../components/AnimatedButton';
 
+const toId = (text) =>
+  text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+
 const BlogPostPage = () => {
   const { slug } = useParams();
-  const post = blogPosts.find(p => p.id === slug);
-  const contentRef = useRef(null);
-  const relatedRef = useRef(null);
-  const isContentInView = useInView(contentRef, { once: true, margin: "-50px" });
-  const isRelatedInView = useInView(relatedRef, { once: true, margin: "-80px" });
+  const post = blogPosts.find((p) => p.id === slug);
   const [copied, setCopied] = React.useState(false);
+  const [activeId, setActiveId] = React.useState('');
+
+  const headings = React.useMemo(() => {
+    if (!post) return [];
+    return post.content
+      .filter((b) => b.type === 'heading')
+      .map((b) => ({ text: b.text, id: toId(b.text) }));
+  }, [post]);
+
+  // Scroll-spy
+  useEffect(() => {
+    if (!headings.length) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) setActiveId(e.target.id);
+        });
+      },
+      { rootMargin: '-15% 0px -70% 0px' }
+    );
+    headings.forEach(({ id }) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+    return () => observer.disconnect();
+  }, [headings, slug]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -36,17 +59,15 @@ const BlogPostPage = () => {
     );
   }
 
-  // Get related posts (same category, excluding current)
+  // Related posts
   const relatedPosts = blogPosts
-    .filter(p => p.id !== post.id && p.category === post.category)
+    .filter((p) => p.id !== post.id && p.category === post.category)
     .slice(0, 2);
-  
-  // If not enough from same category, add from other categories
   if (relatedPosts.length < 2) {
-    const otherPosts = blogPosts
-      .filter(p => p.id !== post.id && !relatedPosts.includes(p))
+    const others = blogPosts
+      .filter((p) => p.id !== post.id && !relatedPosts.includes(p))
       .slice(0, 2 - relatedPosts.length);
-    relatedPosts.push(...otherPosts);
+    relatedPosts.push(...others);
   }
 
   const handleCopyLink = () => {
@@ -55,303 +76,342 @@ const BlogPostPage = () => {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const renderContent = (block, index) => {
+  const renderBlock = (block, index) => {
     switch (block.type) {
       case 'paragraph':
         return (
-          <motion.p
-            key={index}
-            initial={{ opacity: 0, y: 15 }}
-            animate={isContentInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.5, delay: 0.05 * Math.min(index, 10), ease: [0.22, 1, 0.36, 1] }}
-            className="text-base md:text-lg font-sans text-[#c0c0c0] leading-[1.85] mb-6"
+          <p key={index}
+            className="text-[1.0625rem] md:text-[1.125rem] font-sans text-[#C8C8C8] leading-[1.85] mb-7 tracking-[0.005em]"
           >
             {block.text}
-          </motion.p>
+          </p>
         );
-      
-      case 'heading':
+
+      case 'heading': {
+        const id = toId(block.text);
         return (
-          <motion.h2
-            key={index}
-            initial={{ opacity: 0, y: 15 }}
-            animate={isContentInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.5, delay: 0.05 * Math.min(index, 10), ease: [0.22, 1, 0.36, 1] }}
-            className="text-2xl md:text-3xl font-serif text-[#FFFFFF] leading-[1.2] mt-12 mb-5"
+          <h2 key={index} id={id}
+            className="text-[1.5rem] md:text-[1.75rem] font-serif text-white leading-[1.3] mt-12 mb-5 tracking-[-0.01em] scroll-mt-28"
           >
             {block.text}
-          </motion.h2>
+          </h2>
         );
-      
+      }
+
       case 'quote':
         return (
-          <motion.blockquote
-            key={index}
-            initial={{ opacity: 0, x: -20 }}
-            animate={isContentInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.05 * Math.min(index, 10), ease: [0.22, 1, 0.36, 1] }}
-            className="relative my-10 pl-6 md:pl-8 py-2 border-l-2 border-[#FF5555]"
-          >
-            <p className="text-lg md:text-xl font-serif italic text-[#FFFFFF]/90 leading-[1.6]">
+          <blockquote key={index} className="my-10 pl-6 border-l-[3px] border-[#FF5555]">
+            <p className="text-[1.125rem] md:text-[1.25rem] font-serif italic text-white/85 leading-[1.65]">
               "{block.text}"
             </p>
-          </motion.blockquote>
+          </blockquote>
         );
-      
+
       case 'list':
         return (
-          <motion.ul
-            key={index}
-            initial={{ opacity: 0, y: 15 }}
-            animate={isContentInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.5, delay: 0.05 * Math.min(index, 10), ease: [0.22, 1, 0.36, 1] }}
-            className="space-y-4 mb-8 ml-0"
-          >
+          <ul key={index} className="space-y-4 my-8">
             {block.items.map((item, i) => (
-              <li key={i} className="flex items-start gap-3 text-base md:text-lg font-sans text-[#c0c0c0] leading-[1.75]">
-                <span className="mt-2.5 w-1.5 h-1.5 rounded-full bg-[#FF5555] shrink-0" />
-                {item}
+              <li key={i} className="flex items-start gap-4 text-[1.0625rem] md:text-[1.125rem] font-sans text-[#C8C8C8] leading-[1.85]">
+                <span className="mt-[0.68rem] w-[5px] h-[5px] rounded-full bg-[#FF5555] shrink-0 ring-[3px] ring-[#FF5555]/15" />
+                <span>{item}</span>
               </li>
             ))}
-          </motion.ul>
+          </ul>
         );
-      
+
+      case 'image':
+        return (
+          <figure key={index} className="my-12 w-full">
+            <div className="relative w-full rounded-lg overflow-hidden bg-[#1A1A1A] border border-white/[0.05]">
+              <img src={block.url} alt={block.caption || 'Blog image'} className="w-full h-auto block" />
+            </div>
+            {block.caption && (
+              <figcaption className="text-center text-[12px] font-sans text-[#777] mt-3 tracking-wide">
+                {block.caption}
+              </figcaption>
+            )}
+          </figure>
+        );
+
       default:
         return null;
     }
   };
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-[#141414] text-white font-sans selection:bg-[#FF5555] selection:text-[#FFFFFF]">
+    // NOTE: no overflow-x-hidden here — it would break position:sticky on the sidebar.
+    // Horizontal overflow is prevented by max-w constraints on inner containers instead.
+    <div className="min-h-screen bg-[#141414] text-white font-sans selection:bg-[#FF5555] selection:text-white">
       <Navbar />
 
-      <main className="relative z-10 w-full flex flex-col items-center">
-        {/* ============ HERO ============ */}
-        <section className="relative w-full pt-28 md:pt-36 pb-0 px-6 md:px-12">
-          <div className="max-w-[900px] mx-auto">
-            {/* Back Button */}
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <Link 
+      <main className="relative z-10 w-full">
+
+        {/* ──────────────────────────────────────────────────────────────
+            SINGLE two-column layout wrapping EVERYTHING.
+            Left col (article): max-w-[660px], grows with flex-1
+            Right col (sidebar): w-[220px], sticky
+            Outer container: max-w-[1100px] — comfortably fits both cols
+            + gap-16 on large screens.
+        ─────────────────────────────────────────────────────────────── */}
+        <div className="max-w-[1100px] mx-auto px-6 md:px-12 pt-28 md:pt-36 pb-0 flex flex-col lg:flex-row items-start gap-0 lg:gap-16">
+
+          {/* ═══ LEFT: full article column ═══ */}
+          <div className="w-full min-w-0 lg:max-w-[660px]">
+
+            {/* Back */}
+            <div>
+              <Link
                 to="/blog"
-                className="inline-flex items-center gap-2 text-xs font-sans font-bold tracking-[0.15em] uppercase text-[#A9A9A9] hover:text-[#FF5555] transition-colors mb-10 group"
+                className="inline-flex items-center gap-2 text-[11px] font-sans font-semibold tracking-[0.14em] uppercase text-[#888] hover:text-[#FF5555] transition-colors mb-9 group"
               >
-                <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
+                <ArrowLeft size={13} className="group-hover:-translate-x-0.5 transition-transform" />
                 Back to Blog
               </Link>
-            </motion.div>
+            </div>
 
-            {/* Post Meta */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="flex items-center gap-4 mb-6 flex-wrap"
-            >
-              <span className="text-[10px] font-sans font-bold tracking-[0.2em] uppercase text-[#FF5555] bg-[#FF5555]/10 px-3 py-1.5 rounded-full">
+            {/* Category / date / read-time */}
+            <div className="flex items-center gap-3 mb-6 flex-wrap">
+              <span className="text-[10px] font-sans font-bold tracking-[0.18em] uppercase text-[#FF5555] bg-[#FF5555]/8 px-3 py-1.5 rounded-sm border border-[#FF5555]/15">
                 {post.category}
               </span>
-              <span className="text-[11px] font-sans text-[#A9A9A9]">{post.date}</span>
-              <span className="w-1 h-1 rounded-full bg-[#A9A9A9]/50" />
-              <span className="text-[11px] font-sans text-[#A9A9A9] flex items-center gap-1.5">
-                <Clock size={12} />
+              <span className="text-[11px] font-sans text-[#A9A9A9] bg-white/[0.03] border border-white/[0.06] px-3 py-1.5 rounded-sm">
+                {post.date}
+              </span>
+              <span className="text-[11px] font-sans text-[#A9A9A9] flex items-center gap-1.5 bg-white/[0.03] border border-white/[0.06] px-3 py-1.5 rounded-sm">
+                <Clock size={10} strokeWidth={2} />
                 {post.readTime}
               </span>
-            </motion.div>
+            </div>
 
             {/* Title */}
-            <motion.h1
-              initial={{ opacity: 0, y: 25 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-              className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-serif text-[#FFFFFF] leading-[1.15] tracking-[-0.01em] mb-8"
-            >
+            <h1 className="text-[1.9rem] sm:text-[2.4rem] md:text-[2.9rem] font-serif text-white leading-[1.14] tracking-[-0.018em] mb-8">
               {post.title}
-            </motion.h1>
+            </h1>
 
-            {/* Author + Share */}
-            <motion.div
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.25 }}
-              className="flex items-center justify-between pb-10 border-b border-white/5"
-            >
+            {/* Author + share bar */}
+            <div className="flex items-center justify-between pb-8 border-b border-white/[0.07] mb-8">
               <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-full bg-[#FF5555]/20 flex items-center justify-center text-[#FF5555] text-sm font-bold font-sans">
-                  {post.author.split(' ').map(n => n[0]).join('')}
+                <div className="w-9 h-9 rounded-full bg-[#FF5555]/15 flex items-center justify-center text-[#FF5555] text-[10px] font-bold font-sans shrink-0">
+                  {post.author.split(' ').map((n) => n[0]).join('')}
                 </div>
                 <div>
-                  <p className="text-sm font-sans font-medium text-[#FFFFFF]">{post.author}</p>
-                  <p className="text-[11px] font-sans text-[#A9A9A9]">{post.authorRole}</p>
+                  <p className="text-[13px] font-sans font-semibold text-white leading-tight">{post.author}</p>
+                  <p className="text-[11px] font-sans text-[#888] mt-0.5">{post.authorRole}</p>
                 </div>
               </div>
 
-              {/* Share Buttons */}
               <div className="flex items-center gap-2">
-                <button 
+                <button
                   onClick={handleCopyLink}
-                  className="w-9 h-9 rounded-full border border-white/10 flex items-center justify-center text-[#A9A9A9] hover:text-white hover:border-white/20 transition-all cursor-pointer"
                   title="Copy link"
+                  className="w-8 h-8 rounded-full border border-white/[0.08] flex items-center justify-center text-[#888] hover:text-white hover:border-white/20 hover:bg-white/[0.04] transition-all duration-200 cursor-pointer"
                 >
-                  {copied ? <Check size={14} className="text-green-400" /> : <Copy size={14} />}
+                  {copied ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} />}
                 </button>
-                <a 
+                <a
                   href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(window.location.href)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-9 h-9 rounded-full border border-white/10 flex items-center justify-center text-[#A9A9A9] hover:text-white hover:border-white/20 transition-all"
+                  target="_blank" rel="noopener noreferrer"
+                  className="w-8 h-8 rounded-full border border-white/[0.08] flex items-center justify-center text-[#888] hover:text-white hover:border-white/20 hover:bg-white/[0.04] transition-all duration-200"
                 >
-                  <Twitter size={14} />
+                  <Twitter size={12} />
                 </a>
-                <a 
+                <a
                   href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-9 h-9 rounded-full border border-white/10 flex items-center justify-center text-[#A9A9A9] hover:text-white hover:border-white/20 transition-all"
+                  target="_blank" rel="noopener noreferrer"
+                  className="w-8 h-8 rounded-full border border-white/[0.08] flex items-center justify-center text-[#888] hover:text-white hover:border-white/20 hover:bg-white/[0.04] transition-all duration-200"
                 >
-                  <Linkedin size={14} />
+                  <Linkedin size={12} />
                 </a>
               </div>
-            </motion.div>
-          </div>
-        </section>
-
-        {/* ============ COVER IMAGE ============ */}
-        <motion.section
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-          className="w-full px-6 md:px-12 py-10"
-        >
-          <div className="max-w-[1100px] mx-auto">
-            <div className="relative h-[280px] sm:h-[380px] md:h-[480px] rounded-2xl overflow-hidden">
-              <img 
-                src={post.coverImage} 
-                alt={post.title}
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#141414]/40 via-transparent to-transparent" />
             </div>
-          </div>
-        </motion.section>
 
-        {/* ============ ARTICLE CONTENT ============ */}
-        <section ref={contentRef} className="w-full px-6 md:px-12 pb-16 md:pb-24">
-          <div className="max-w-[720px] mx-auto">
-            {/* Lead paragraph styled differently */}
-            {post.content[0] && post.content[0].type === 'paragraph' && (
-              <motion.p
-                initial={{ opacity: 0, y: 15 }}
-                animate={isContentInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                className="text-lg md:text-xl font-sans text-[#e0e0e0] leading-[1.85] mb-8 first-letter:text-5xl first-letter:font-serif first-letter:text-[#FF5555] first-letter:float-left first-letter:mr-3 first-letter:mt-1"
-              >
+            {/* Cover image — same width as the article column */}
+            <div className="mb-12">
+              <div className="w-full aspect-[16/9] rounded-xl overflow-hidden border border-white/[0.06]">
+                <img
+                  src={post.coverImage}
+                  alt={post.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+
+            {/* ── Article body ── */}
+
+            {/* Lead paragraph */}
+            {post.content[0]?.type === 'paragraph' && (
+              <p className="text-[1.125rem] md:text-[1.25rem] font-sans text-[#E0E0E0] leading-[1.8] mb-10 tracking-[0.003em]">
                 {post.content[0].text}
-              </motion.p>
+              </p>
             )}
-            
-            {/* Remaining content */}
-            {post.content.slice(1).map((block, index) => renderContent(block, index + 1))}
 
-            {/* Tags */}
-            <div className="mt-16 pt-8 border-t border-white/5">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-[10px] font-sans font-bold tracking-[0.2em] uppercase text-[#A9A9A9] mr-2">Tags:</span>
-                {post.tags.map(tag => (
-                  <Link 
+            {/* Rest of content blocks */}
+            {post.content.slice(1).map((block, i) => renderBlock(block, i + 1))}
+
+            {/* Divider + Tags */}
+            <div className="mt-16 pt-8 border-t border-white/[0.06]">
+              <div className="flex items-center gap-2.5 flex-wrap">
+                <span className="text-[10px] font-sans font-bold tracking-[0.2em] uppercase text-[#555] mr-1">Tags</span>
+                {post.tags.map((tag) => (
+                  <Link
                     key={tag}
                     to={`/blog?tag=${encodeURIComponent(tag)}`}
-                    className="text-[11px] font-sans font-medium text-[#A9A9A9] bg-white/5 px-3 py-1.5 rounded-full hover:bg-[#FF5555]/10 hover:text-[#FF5555] transition-all"
+                    className="text-[11px] font-sans font-medium text-[#999] bg-white/[0.03] border border-white/[0.06] px-3 py-1.5 rounded-sm hover:bg-[#FF5555]/8 hover:border-[#FF5555]/20 hover:text-[#FF5555] transition-all duration-300"
                   >
                     {tag}
                   </Link>
                 ))}
               </div>
             </div>
-          </div>
-        </section>
 
-        {/* ============ AUTHOR BIO ============ */}
-        <section className="w-full px-6 md:px-12 pb-16 md:pb-24">
-          <div className="max-w-[720px] mx-auto">
-            <div className="bg-[#1a1a1a] rounded-2xl border border-white/5 p-8 md:p-10 flex flex-col sm:flex-row items-center sm:items-start gap-6">
-              <div className="w-16 h-16 rounded-full bg-[#FF5555]/20 flex items-center justify-center text-[#FF5555] text-xl font-bold font-sans shrink-0">
-                {post.author.split(' ').map(n => n[0]).join('')}
+            {/* Author Bio */}
+            <div className="mt-12 mb-20 md:mb-28 bg-[#1a1a1a] rounded-xl border border-white/[0.06] p-7 md:p-9 flex items-start gap-5">
+              <div className="w-12 h-12 rounded-full bg-[#FF5555]/12 flex items-center justify-center text-[#FF5555] text-[13px] font-bold font-sans shrink-0">
+                {post.author.split(' ').map((n) => n[0]).join('')}
               </div>
-              <div className="text-center sm:text-left">
-                <p className="text-lg font-serif text-[#FFFFFF] mb-1">{post.author}</p>
-                <p className="text-xs font-sans text-[#FF5555] font-bold uppercase tracking-wider mb-3">{post.authorRole}</p>
-                <p className="text-sm font-sans text-[#A9A9A9] leading-relaxed">
+              <div>
+                <p className="text-[14px] font-serif text-white mb-0.5 tracking-[-0.01em]">{post.author}</p>
+                <p className="text-[10px] font-sans text-[#FF5555] font-bold uppercase tracking-[0.15em] mb-3">{post.authorRole}</p>
+                <p className="text-[13px] font-sans text-[#999] leading-[1.7]">
                   Building the future of digital experiences at LbxSuite. Passionate about autonomous AI systems, high-performance web engineering, and thoughtful design.
                 </p>
               </div>
             </div>
-          </div>
-        </section>
+          </div>{/* end left column */}
 
-        {/* ============ RELATED POSTS ============ */}
+          {/* ═══ RIGHT: sticky sidebar ═══
+              `self-start` + `sticky top-28` is the canonical pattern.
+              Works because the parent has NO overflow set —
+              overflow-x-hidden is NOT on any ancestor of this element.
+          ═══════════════════════════════ */}
+          {headings.length > 0 && (
+            <aside className="hidden lg:block w-[220px] shrink-0 sticky top-28 self-start mt-[calc(2.25rem+2px)] mb-12">
+              {/* mt offset aligns the "On this page" label roughly with the
+                  first line of body text after the cover image */}
+              <p className="text-[10px] font-sans font-bold tracking-[0.22em] uppercase text-[#555] mb-5">
+                On this page
+              </p>
+              <nav className="relative flex flex-col">
+                {/* Static track */}
+                <div className="absolute left-0 top-0 bottom-0 w-[1px] bg-white/[0.07]" />
+
+                {headings.map(({ id, text }) => (
+                  <a
+                    key={id}
+                    href={`#${id}`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                    className={`
+                      py-2 pl-4 text-[12.5px] font-sans font-medium leading-snug border-l transition-colors duration-300
+                      ${activeId === id
+                        ? 'border-[#FF5555] text-white'
+                        : 'border-transparent text-[#666] hover:text-[#BFBFBF] hover:border-white/20'
+                      }
+                    `}
+                  >
+                    {text}
+                  </a>
+                ))}
+              </nav>
+            </aside>
+          )}
+
+        </div>{/* end two-column wrapper */}
+
+        {/* ══════════════ RELATED ARTICLES ═════════════════════════════ */}
         {relatedPosts.length > 0 && (
-          <section ref={relatedRef} className="w-full bg-[#141414] py-16 md:py-24 px-6 md:px-12 border-t border-white/5">
-            <div className="max-w-[1400px] mx-auto">
-              <div className="flex items-center justify-between mb-12">
+          <section className="w-full bg-[#141414] py-16 md:py-16 border-b border-white/[0.06]">
+            <div className="max-w-[1100px] mx-auto px-6 md:px-12">
+
+              <div className="flex items-end justify-between mb-12">
                 <div>
-                  <span className="text-[10px] font-sans font-bold tracking-[0.25em] uppercase text-[#FF5555] mb-3 block">
+                  <span className="text-[10px] font-sans font-bold tracking-[0.25em] uppercase text-[#FF5555] mb-2 block">
                     Continue Reading
                   </span>
-                  <h2 className="text-3xl md:text-4xl font-serif text-[#FFFFFF]">Related Articles</h2>
+                  <h2 className="text-[1.75rem] md:text-[2rem] font-serif text-white tracking-[-0.01em]">
+                    Related Articles
+                  </h2>
                 </div>
-                <Link 
+                <Link
                   to="/blog"
-                  className="hidden md:flex items-center gap-2 text-sm font-sans font-bold text-[#A9A9A9] hover:text-[#FF5555] transition-colors"
+                  className="hidden md:flex items-center gap-2 text-[11px] font-sans font-bold tracking-[0.1em] uppercase text-[#888] hover:text-[#FF5555] transition-colors duration-300"
                 >
                   View All
-                  <ArrowUpRight size={16} />
+                  <ArrowUpRight size={14} />
                 </Link>
               </div>
 
+              {/* Cards — pixel-identical to BlogPage */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-                {relatedPosts.map((relPost, index) => (
-                  <motion.div
-                    key={relPost.id}
-                    initial={{ opacity: 0, y: 25 }}
-                    animate={isRelatedInView ? { opacity: 1, y: 0 } : {}}
-                    transition={{ duration: 0.5, delay: index * 0.1, ease: [0.22, 1, 0.36, 1] }}
-                  >
+                {relatedPosts.map((rp) => (
+                  <div key={rp.id} className="h-full">
                     <Link
-                      to={`/blog/${relPost.id}`}
-                      className="group flex flex-col p-8 bg-[#1a1a1a] rounded-xl overflow-hidden border border-white/5 hover:border-[#FF5555]/30 hover:shadow-[0_0_30px_rgba(255,85,85,0.05)] transition-all duration-500 h-full relative"
+                      to={`/blog/${rp.id}`}
+                      className="group block h-full rounded-[4px] border border-white/[0.15] bg-[#141414] hover:border-[#FF5555]/40 transition-all duration-500"
                     >
-                      <div className="relative z-10 flex flex-col h-full bg-transparent w-full">
-                        <div className="flex items-center justify-between gap-4 mb-6">
-                          <span className="bg-[#141414] text-[#FFFFFF] text-[9px] font-sans font-bold tracking-[0.15em] uppercase px-3 py-1.5 rounded-full border border-white/10 group-hover:border-[#FF5555]/50 group-hover:text-[#FF5555] transition-colors">
-                            {relPost.category}
-                          </span>
-                        </div>
-                        
-                        <h3 className="text-xl font-serif text-[#FFFFFF] leading-[1.3] mb-4 group-hover:text-white transition-colors duration-300 line-clamp-2">
-                          {relPost.title}
+                      <div className="p-8 md:p-10 flex flex-col h-full">
+                        <h3 className="text-[1.375rem] md:text-[1.625rem] font-serif text-white leading-tight mb-4 line-clamp-2">
+                          {rp.title}
                         </h3>
-                        
-                        <p className="text-sm font-sans text-[#8a8a8a] leading-relaxed mb-6 line-clamp-3">
-                          {relPost.excerpt}
+
+                        <p className="text-sm font-sans leading-relaxed text-[#A9A9A9] mb-16 flex-grow line-clamp-3">
+                          {rp.excerpt}
                         </p>
 
-                        <div className="flex items-center justify-between mt-auto pt-5 border-t border-white/5">
-                          <span className="text-[11px] font-sans font-medium text-[#A9A9A9] flex items-center gap-1.5">
-                            Read article <ArrowUpRight size={14} className="group-hover:translate-x-1 transition-transform" />
-                          </span>
+                        <div className="mt-auto">
+                          <div className="h-[1px] w-full bg-white/10 mb-4" />
+
+                          <div className="flex justify-between text-xs font-sans text-[#A9A9A9] mb-5 uppercase tracking-wider">
+                            <div className="flex flex-col space-y-1.5">
+                              <span className="font-semibold text-[10px] text-white">Date</span>
+                              <span>{rp.date}</span>
+                            </div>
+                            <div className="flex flex-col space-y-1.5 text-right">
+                              <span className="font-semibold text-[10px] text-white">Category</span>
+                              <span>{rp.category}</span>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2.5">
+                              <div className="w-8 h-8 rounded-full bg-[#FF5555]/15 flex items-center justify-center text-[#FF5555] text-[9px] font-bold font-sans">
+                                {rp.author.split(' ').map((n) => n[0]).join('')}
+                              </div>
+                              <div className="flex flex-col">
+                                <span className="text-[11px] font-sans font-medium text-white">{rp.author}</span>
+                                <span className="text-[10px] font-sans text-[#A9A9A9] flex items-center gap-1">
+                                  <Clock size={9} />
+                                  {rp.readTime}
+                                </span>
+                              </div>
+                            </div>
+                            <div className="w-9 h-9 rounded-full border border-white/10 flex items-center justify-center group-hover:bg-[#FF5555] group-hover:border-[#FF5555] transition-all duration-300">
+                              <ArrowUpRight size={16} className="text-[#A9A9A9] group-hover:text-white transition-colors" />
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </Link>
-                  </motion.div>
+                  </div>
                 ))}
               </div>
+
+              <div className="md:hidden mt-10 text-center">
+                <Link
+                  to="/blog"
+                  className="inline-flex items-center gap-2 text-[11px] font-sans font-bold tracking-[0.1em] uppercase text-[#888] hover:text-[#FF5555] transition-colors duration-300"
+                >
+                  View All Articles
+                  <ArrowUpRight size={13} />
+                </Link>
+              </div>
+
             </div>
           </section>
         )}
+
       </main>
 
       <Footer />

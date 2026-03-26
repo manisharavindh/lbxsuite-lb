@@ -48,7 +48,7 @@ const QAItem = ({ question, answer }) => {
     <div className="border-b border-[#272727]">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex justify-between items-center py-6 md:py-8 text-left focus:outline-none group"
+        className="w-full flex justify-between items-center py-6 md:py-8 text-left focus:outline-none group cursor-pointer"
       >
         <span className={`text-sm md:text-[1.125rem] font-sans transition-colors duration-300 pr-8 font-semibold opacity-90 group-hover:opacity-100 ${isOpen ? 'text-[#FFFFFF]' : 'text-[#FFFFFF]'}`}>
           {question}
