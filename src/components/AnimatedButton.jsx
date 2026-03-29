@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 /**
  * AnimatedButton — Perfect vertical ticker hover.
@@ -7,14 +8,15 @@ import React from 'react';
  * equals exactly one row. A wrapper translates both rows upward on hover.
  */
 const AnimatedButton = ({
-  href = '#',
+  href,
+  to,
   children,
   className = '',
   variant = 'primary',
   onClick,
   size = 'md',
 }) => {
-  const Tag = href ? 'a' : 'button';
+  const Tag = to ? Link : (href ? 'a' : 'button');
 
   const sizeMap = {
     sm: { padding: 'px-5 py-2.5', text: 'text-sm', gap: 'gap-2' },
@@ -45,7 +47,8 @@ const AnimatedButton = ({
 
   return (
     <Tag
-      href={href || undefined}
+      to={to}
+      href={!to && href ? href : undefined}
       onClick={onClick}
       className={`anim-btn relative rounded font-sans font-bold cursor-pointer ${s.text} ${styles.base} ${className}`}
       style={{ display: 'inline-block', overflow: 'hidden' }}

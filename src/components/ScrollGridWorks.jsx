@@ -58,7 +58,7 @@ const ScrollGridWorks = ({ items }) => {
   return (
     <div
       ref={containerRef}
-      className="relative w-full flex flex-col items-center justify-center py-6 md:py-10 z-100"
+      className="relative w-full flex flex-col items-center justify-center py-16 md:py-16 z-100"
     >
       <div
         className="flex flex-col gap-4 md:gap-5 w-[105vw]"
