@@ -27,15 +27,15 @@ const servicesData = {
     info: "Every project goes through rigorous planning, elegant design, agile execution, and strict quality assurance phases."
   },
   "branding": {
-    title: "Video Editing & Branding",
+    title: "Branding",
     subtitle: "Crafting memorable identities & visual stories.",
-    description: "A brand is more than a logo—it's how you communicate. We create comprehensive visual identities, cinematic video edits, and compelling narratives that resonate with your audience and make your brand unforgettable.",
+    description: "A brand is more than a logo—it's how you communicate. We create comprehensive visual identities and compelling narratives that resonate with your audience and make your brand unforgettable.",
     featuresTitle: "Core Capabilities",
     features: [
-      { name: "Custom Video Editing", desc: "Cinematic cuts, motion graphics, and color grading for high-retention content." },
+      { name: "Visual Identity", desc: "Complete visual rulebooks ensuring consistency across all touchpoints." },
       { name: "Logo Design", desc: "Memorable, scalable marks that instantly communicate your core values." },
       { name: "Copywriting", desc: "Persuasive brand messaging, taglines, and tone-of-voice development." },
-      { name: "Brand Guidelines", desc: "Complete visual rulebooks ensuring consistency across all touchpoints." }
+      { name: "Brand Strategy", desc: "Positioning your brand effectively within your competitive landscape." }
     ],
     microServices: [
       { name: "Social Media Kits", desc: "High-quality templates and assets tailored for all digital platforms." },
@@ -43,6 +43,24 @@ const servicesData = {
       { name: "Messaging Guide", desc: "A definitive guide establishing and standardizing your exact brand voice." }
     ],
     info: "Through a collaborative process, we explore your brand's core values, target audience, and market positioning."
+  },
+  "video": {
+    title: "Video Editing",
+    subtitle: "Cinematic narratives that captivate and convert.",
+    description: "We transform raw footage into compelling, high-retention video content. Whether it's for YouTube, social media ads, or corporate presentations, our cinematic edits bring your digital stories to life.",
+    featuresTitle: "Core Capabilities",
+    features: [
+      { name: "Cinematic Edits", desc: "High-retention cuts with perfect pacing to keep your audience engaged." },
+      { name: "Motion Graphics", desc: "Custom animations, lower thirds, and dynamic visual effects." },
+      { name: "Color Grading", desc: "Professional color correction establishing a premium look and feel." },
+      { name: "Sound Design", desc: "Immersive audio mixing, sound effects, and licensed music scoring." }
+    ],
+    microServices: [
+      { name: "Short Form Content", desc: "Optimizing longs into viral clips for TikTok, Shorts, and Reels." },
+      { name: "Thumbnail Design", desc: "High-CTR, custom thumbnail artwork that drives clicks and views." },
+      { name: "Subtitle Generation", desc: "Accurate, dynamic captions designed to retain silent scrollers." }
+    ],
+    info: "We work directly with your raw files to systematically build a narrative that converts."
   },
   "ai": {
     title: "Agentic AI Solutions",
@@ -153,8 +171,8 @@ const ServiceDetailsPage = () => {
             <div className="flex flex-col space-y-8 md:space-y-10">
               {service.features.map((feature, idx) => (
                 <div key={idx} className="flex items-start text-left group">
-                  <div className="w-10 h-10 md:w-12 md:h-12 shrink-0 rounded-full bg-[#FF5555]/10 flex items-center justify-center mr-5 md:mr-6 mt-1 group-hover:bg-[#FF5555] transition-colors duration-300">
-                    <span className="text-[#FF5555] group-hover:text-white text-lg md:text-xl transition-colors duration-300">✦</span>
+                  <div className="w-10 h-10 md:w-12 md:h-12 shrink-0 rounded-full bg-[#FF5555]/10 flex items-center justify-center mr-5 md:mr-6 mt-1">
+                    <span className="text-[#FF5555] text-lg md:text-xl">✦</span>
                   </div>
                   <div className="flex-1">
                     <h4 className="text-lg md:text-xl font-serif text-[#FFFFFF] mb-2">{feature.name}</h4>
@@ -179,10 +197,10 @@ const ServiceDetailsPage = () => {
             {service.microServices.map((addon, idx) => (
               <div
                 key={idx}
-                className="p-6 md:p-8 flex flex-col h-full border border-[#FFFFFF]/5 rounded-xl text-left md:text-center items-start md:items-center justify-center"
+                className="p-6 md:p-8 flex flex-col h-full bg-[#1A1A1A] border border-[#FFFFFF]/5 rounded-xl text-left md:text-center items-start md:items-center justify-center hover:border-[#FF5555]/20 transition-all duration-300 group"
               >
                 <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#FF5555]/10 flex items-center justify-center mb-5 md:mb-6">
-                  <span className="text-[#FF5555] text-2xl md:text-3xl transition-colors duration-300 leading-none pb-1">+</span>
+                  <span className="text-[#FF5555] text-2xl md:text-3xl leading-none pb-1">+</span>
                 </div>
                 <h4 className="text-base md:text-lg font-bold text-[#FFFFFF] uppercase tracking-wide mb-2 md:mb-3">{addon.name}</h4>
                 <p className="text-[#888888] text-sm md:text-base leading-relaxed">{addon.desc}</p>
