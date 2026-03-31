@@ -24,9 +24,9 @@ const Navbar = () => {
 
   const navLinks = [
     { label: 'Services', href: isHome ? '#services' : '/#services', isAnchor: isHome },
-    { label: 'Work', href: isHome ? '#features' : '/#features', isAnchor: isHome },
+    // { label: 'Works', href: isHome ? '#features' : '/#features', isAnchor: isHome },
     { label: 'Blog', href: '/blog', isAnchor: false },
-    { label: 'Company', href: isHome ? '#contact' : '/#contact', isAnchor: isHome },
+    { label: 'FAQs', href: isHome ? '#faq' : '/#faq', isAnchor: isHome },
   ];
 
   return (

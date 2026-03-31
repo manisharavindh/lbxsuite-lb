@@ -37,19 +37,19 @@ const Footer = () => {
             <div className="flex flex-col space-y-4">
               <h4 className="text-white font-bold mb-2 uppercase tracking-widest text-[10px]">Explore</h4>
               <Link to="/blog" className="text-[#A9A9A9] hover:text-white transition-colors">Blog</Link>
-              <a href="#" className="text-[#A9A9A9] hover:text-white transition-colors">Portfolio</a>
-              <a href="#" className="text-[#A9A9A9] hover:text-white transition-colors">Free Giveaways</a>
+              {/* <a href="#" className="text-[#A9A9A9] hover:text-white transition-colors">Portfolio</a> */}
+              <a href="/blog" className="text-[#A9A9A9] hover:text-white transition-colors">Free Giveaways</a>
             </div>
             <div className="flex flex-col space-y-4">
-              <h4 className="text-white font-bold mb-2 uppercase tracking-widest text-[10px]">Services</h4>
-              <a href="#" className="text-[#A9A9A9] hover:text-white transition-colors">Enterprise</a>
-              <a href="#" className="text-[#A9A9A9] hover:text-white transition-colors">Startups</a>
-              <a href="#" className="text-[#A9A9A9] hover:text-white transition-colors">E-commerce</a>
+              <h4 className="text-white font-bold mb-2 uppercase tracking-widest text-[10px]">Specials</h4>
+              <a href="#contact" className="text-[#A9A9A9] hover:text-white transition-colors">Enterprise</a>
+              <a href="#contact" className="text-[#A9A9A9] hover:text-white transition-colors">Startups</a>
+              <a href="#contact" className="text-[#A9A9A9] hover:text-white transition-colors">E-commerce</a>
             </div>
             <div className="flex flex-col space-y-4">
               <h4 className="text-white font-bold mb-2 uppercase tracking-widest text-[10px]">Social</h4>
-              <a href="#" className="text-[#A9A9A9] hover:text-white transition-colors">Linkedin</a>
-              <a href="#" className="text-[#A9A9A9] hover:text-white transition-colors">Instagram</a>
+              <a href="https://www.linkedin.com/company/lbxsuite" className="text-[#A9A9A9] hover:text-white transition-colors">Linkedin</a>
+              <a href="https://www.instagram.com/lbxsuite/" className="text-[#A9A9A9] hover:text-white transition-colors">Instagram</a>
               <a href="#contact" className="text-[#A9A9A9] hover:text-white transition-colors font-bold">Google Meet</a>
             </div>
           </div>

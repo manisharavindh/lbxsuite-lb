@@ -22,7 +22,7 @@ const Row = ({ items, direction, scrollYProgress }) => {
       {repeatedItems.map((src, idx) => (
         <div
           key={idx}
-          className="relative w-[260px] h-[160px] sm:w-[340px] sm:h-[200px] md:w-[420px] md:h-[240px] rounded-xl md:rounded-2xl overflow-hidden flex-shrink-0 ring-1 ring-white/10 shadow-md bg-[#0a0a0a] transform-gpu"
+          className="relative w-[260px] h-[160px] sm:w-[340px] sm:h-[200px] md:w-[420px] md:h-[240px] rounded overflow-hidden flex-shrink-0 ring-1 ring-white/10 shadow-md bg-[#0a0a0a] transform-gpu"
           style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden', contain: 'content' }}
         >
           <img
