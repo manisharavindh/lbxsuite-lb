@@ -55,18 +55,13 @@ const AdminPostEditor = ({ user, onLogout }) => {
   const [newBlockItems, setNewBlockItems] = useState(['']);
   const fileInputRef = useRef(null);
 
-  const [socialLinks, setSocialLinks] = useState(['copy', 'twitter', 'linkedin']);
-
-  const toggleSocialLink = (link) => {
-      setSocialLinks(prev => {
-          if (prev.includes(link)) return prev.filter(l => l !== link);
-          if (prev.length >= 5) {
-              addToast('Maximum 5 links allowed', 'warning');
-              return prev;
-          }
-          return [...prev, link];
-      });
-  };
+  const [socialLinks, setSocialLinks] = useState({
+    copy: true,
+    twitter: '',
+    linkedin: '',
+    instagram: '',
+    facebook: ''
+  });
 
   useEffect(() => {
     if (!isNew) loadPost();
@@ -76,8 +71,20 @@ const AdminPostEditor = ({ user, onLogout }) => {
     try {
       const post = await postsAPI.get(id);
       
-      const loadedLinks = post.tags?.filter(t => t.startsWith('__link:')).map(t => t.replace('__link:', ''));
-      setSocialLinks(loadedLinks?.length > 0 ? loadedLinks : ['copy', 'twitter', 'linkedin']);
+      const loadedLinksTag = post.tags?.find(t => t.startsWith('__social:'));
+      let loadedLinks = { copy: true, twitter: '', linkedin: '', instagram: '', facebook: '' };
+      if (loadedLinksTag) {
+          try {
+             loadedLinks = { ...loadedLinks, ...JSON.parse(loadedLinksTag.replace('__social:', '')) };
+          } catch(e) {}
+      } else {
+          // Fallback legacy support
+          const oldLinks = post.tags?.filter(t => t.startsWith('__link:')).map(t => t.replace('__link:', ''));
+          if (oldLinks?.length > 0) {
+              oldLinks.forEach(l => { loadedLinks[l] = l === 'copy' ? true : 'true'; });
+          }
+      }
+      setSocialLinks(loadedLinks);
       
       setForm({
         title: post.title || '',
@@ -89,7 +96,7 @@ const AdminPostEditor = ({ user, onLogout }) => {
         author_role: post.author_role || '',
         read_time: post.read_time || '',
         featured: post.featured || false,
-        tags: post.tags?.filter(t => !t.startsWith('__link:')) || [],
+        tags: post.tags?.filter(t => !t.startsWith('__link:') && !t.startsWith('__social:')) || [],
         content: typeof post.content === 'string' ? JSON.parse(post.content) : (post.content || []),
         status: post.status || 'draft',
       });
@@ -141,7 +148,7 @@ const AdminPostEditor = ({ user, onLogout }) => {
     }
 
     setSavingType(newStatus || form.status);
-    const tagsToSave = [...form.tags.filter(t => !t.startsWith('__link:')), ...socialLinks.map(l => `__link:${l}`)];
+    const tagsToSave = [...form.tags.filter(t => !t.startsWith('__link:') && !t.startsWith('__social:')), `__social:${JSON.stringify(socialLinks)}`];
     const payload = { ...form, tags: tagsToSave };
     if (newStatus) payload.status = newStatus;
 
@@ -626,26 +633,36 @@ const AdminPostEditor = ({ user, onLogout }) => {
               </div>
               
               <div className="admin-field" style={{ marginBottom: 0, marginTop: '20px' }}>
-                <label className="admin-label">Visible Share Options (Max 5)</label>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '8px' }}>
-                  {[
-                    { id: 'copy', label: 'Copy Link' },
-                    { id: 'twitter', label: 'Twitter' },
-                    { id: 'linkedin', label: 'LinkedIn' },
-                    { id: 'instagram', label: 'Instagram' },
-                    { id: 'facebook', label: 'Option One (Facebook)' }
-                  ].map((opt) => (
-                    <div key={opt.id} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <label className="admin-label">Author Social Links</label>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '8px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <input
                         type="checkbox"
-                        id={`social-${opt.id}`}
-                        checked={socialLinks.includes(opt.id)}
-                        onChange={() => toggleSocialLink(opt.id)}
+                        id="social-copy"
+                        checked={socialLinks.copy}
+                        onChange={(e) => setSocialLinks(prev => ({ ...prev, copy: e.target.checked }))}
                         style={{ accentColor: 'var(--admin-accent)' }}
                       />
-                      <label htmlFor={`social-${opt.id}`} style={{ fontSize: '13px', color: 'var(--admin-text-secondary)', cursor: 'pointer' }}>
-                        {opt.label}
+                      <label htmlFor="social-copy" style={{ fontSize: '13px', color: 'var(--admin-text-secondary)', cursor: 'pointer' }}>
+                        Show Copy Link Button
                       </label>
+                  </div>
+                  {[
+                    { id: 'twitter', label: 'Twitter Profile URL' },
+                    { id: 'linkedin', label: 'LinkedIn Profile URL' },
+                    { id: 'instagram', label: 'Instagram Profile URL' },
+                    { id: 'facebook', label: 'Facebook Profile URL' }
+                  ].map((opt) => (
+                    <div key={opt.id} style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                      <label style={{ fontSize: '12px', color: 'var(--admin-text-muted)' }}>{opt.label}</label>
+                      <input
+                        type="url"
+                        className="admin-input"
+                        placeholder={`https://${opt.id}.com/...`}
+                        value={socialLinks[opt.id]}
+                        onChange={(e) => setSocialLinks(prev => ({ ...prev, [opt.id]: e.target.value }))}
+                        style={{ padding: '8px 12px', fontSize: '13px' }}
+                      />
                     </div>
                   ))}
                 </div>
