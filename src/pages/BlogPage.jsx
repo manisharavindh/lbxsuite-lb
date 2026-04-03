@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowUpRight, Search, Clock, ArrowRight, X } from 'lucide-react';
-import blogPosts, { categories } from '../data/blogPosts';
+import { categories } from '../data/blogPosts';
+import blogPostsFallback from '../data/blogPosts';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import BorderGlow from '../components/BorderGlow';
@@ -12,6 +13,39 @@ const BlogPage = () => {
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [searchOpen, setSearchOpen] = useState(false);
+  const [blogPosts, setBlogPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/admin/posts/public/list')
+      .then(res => {
+        if (!res.ok) throw new Error('Network response was not ok');
+        return res.json();
+      })
+      .then(data => {
+        // Map data to expected format if needed
+        const mappedData = data.map(post => ({
+          id: post.slug,
+          title: post.title,
+          excerpt: post.excerpt,
+          coverImage: post.image_url,
+          category: post.category || 'General',
+          author: post.author,
+          authorRole: post.author_role,
+          date: new Date(post.published_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+          readTime: post.read_time,
+          featured: post.featured,
+          tags: post.tags || [],
+        }));
+        setBlogPosts(mappedData);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error("Failed to fetch posts from DB, using fallback:", err);
+        setBlogPosts(blogPostsFallback);
+        setLoading(false);
+      });
+  }, []);
 
   const featuredPost = blogPosts.find(p => p.featured);
 
@@ -34,7 +68,13 @@ const BlogPage = () => {
       <Navbar />
 
       <main className="relative z-10 w-full flex flex-col items-center">
-        {/* ============ HERO — Featured Post ============ */}
+        {loading ? (
+          <div className="w-full h-[50vh] flex items-center justify-center">
+            <span className="text-[#A9A9A9] animate-pulse">Loading posts...</span>
+          </div>
+        ) : (
+          <>
+            {/* ============ HERO — Featured Post ============ */}
         <section className="relative w-full pt-32 md:pt-40 pb-16 md:pb-24 px-6 md:px-12">
           <div className="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-[1fr_0.8fr] gap-12 lg:gap-24 items-center">
             {/* Page Title */}
@@ -267,6 +307,8 @@ const BlogPage = () => {
             </div>
           </div>
         </section>
+        </>
+        )}
       </main>
 
       <Footer />

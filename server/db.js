@@ -77,4 +77,48 @@ export async function dbCheck() {
   }
 }
 
+export async function seedBlogsIfEmpty() {
+  try {
+    const { count, error } = await supabase
+      .from('posts')
+      .select('*', { count: 'exact', head: true });
+
+    if (error) {
+      console.error('[DB] Failed to count posts for seeding:', error.message);
+      return;
+    }
+
+    if (count === 0) {
+      console.log('[DB] Posts table is empty. Seeding initial data...');
+      
+      // Dynamic import to avoid issues if file path changes
+      const { default: blogPosts } = await import('../src/data/blogPosts.js');
+      
+      for (const post of blogPosts) {
+        const payload = {
+            title: post.title,
+            slug: post.id,
+            excerpt: post.excerpt,
+            image_url: post.coverImage,
+            category: post.category,
+            author: post.author,
+            author_role: post.authorRole,
+            read_time: post.readTime,
+            featured: post.featured,
+            tags: post.tags || [],
+            content: JSON.stringify(post.content || []),
+            status: 'published',
+            // Try to parse the date string or fallback
+            published_at: new Date(post.date).toISOString()
+        };
+        
+        await supabase.from('posts').upsert(payload, { onConflict: 'slug' });
+      }
+      console.log('[DB] Successfully seeded initial blog posts.');
+    }
+  } catch (err) {
+    console.error('[DB] Error during blog seeding:', err.message);
+  }
+}
+
 export default supabase;

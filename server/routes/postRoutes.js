@@ -159,6 +159,10 @@ router.post('/', authMiddleware, async (req, res) => {
         throw error;
     }
 
+    if (data.featured) {
+        await supabase.from('posts').update({ featured: false }).neq('id', data.id).eq('featured', true);
+    }
+
     return res.status(201).json(data);
   } catch (err) {
     console.error('[Posts] Create error:', err.message);
@@ -193,6 +197,10 @@ router.put('/:id', authMiddleware, async (req, res) => {
 
     const { data, error } = await supabase.from('posts').update(payload).eq('id', req.params.id).select().single();
     if (error || !data) return res.status(404).json({ error: 'Post not found or update error' });
+
+    if (data.featured) {
+        await supabase.from('posts').update({ featured: false }).neq('id', data.id).eq('featured', true);
+    }
 
     return res.json(data);
   } catch (err) {

@@ -3,7 +3,7 @@ import express from 'express';
 import path from 'path';
 import cookieParser from 'cookie-parser';
 import { fileURLToPath } from 'url';
-import { dbCheck } from './server/db.js';
+import { dbCheck, seedBlogsIfEmpty } from './server/db.js';
 import authRoutes from './server/routes/authRoutes.js';
 import postRoutes from './server/routes/postRoutes.js';
 import analyticsRoutes from './server/routes/analyticsRoutes.js';
@@ -42,6 +42,7 @@ async function start() {
   try {
     if (process.env.SUPABASE_URL) {
       await dbCheck();
+      await seedBlogsIfEmpty();
     } else {
       console.log('[Server] No SUPABASE_URL found — running without database.');
     }

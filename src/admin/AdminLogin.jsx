@@ -35,6 +35,13 @@ const AdminLogin = ({ onLogin }) => {
           LBXSUITE <span>Admin</span>
         </div>
 
+        {error && (
+          <div className="admin-login-error">
+            <AlertCircle size={14} />
+            {error}
+          </div>
+        )}
+
         <form onSubmit={handleSubmit}>
           <div className="admin-field">
             <label className="admin-label">Username</label>
@@ -98,13 +105,6 @@ const AdminLogin = ({ onLogin }) => {
             )}
           </button>
         </form>
-
-        {error && (
-          <div className="admin-login-error">
-            <AlertCircle size={14} />
-            {error}
-          </div>
-        )}
       </div>
     </div>
   );

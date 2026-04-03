@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, ArrowUpRight, Clock, Twitter, Linkedin, Copy, Check } from 'lucide-react';
-import blogPosts from '../data/blogPosts';
 import Navbar from '../components/Navbar';
+import blogPostsFallback from '../data/blogPosts';
 import Footer from '../components/Footer';
 import AnimatedButton from '../components/AnimatedButton';
 
@@ -11,9 +11,75 @@ const toId = (text) =>
 
 const BlogPostPage = () => {
   const { slug } = useParams();
-  const post = blogPosts.find((p) => p.id === slug);
+  const [blogPosts, setBlogPosts] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
   const [copied, setCopied] = React.useState(false);
   const [activeId, setActiveId] = React.useState('');
+
+  useEffect(() => {
+    fetch('/api/admin/posts/public/list')
+      .then(res => {
+        if (!res.ok) throw new Error('Network response was not ok');
+        return res.json();
+      })
+      .then(data => {
+        const mappedData = data.map(post => ({
+          id: post.slug,
+          title: post.title,
+          excerpt: post.excerpt,
+          coverImage: post.image_url,
+          category: post.category || 'General',
+          author: post.author,
+          authorRole: post.author_role,
+          date: new Date(post.published_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+          readTime: post.read_time,
+          featured: post.featured,
+          tags: post.tags || [],
+          // To get content we might need to fetch the individual post or it might be in the list?
+          // The /api/admin/posts/public/list doesn't return content to save bandwidth!
+        }));
+        setBlogPosts(mappedData);
+      })
+      .catch(err => {
+        console.error("Failed to fetch post list from DB, using fallback:", err);
+        setBlogPosts(blogPostsFallback);
+      });
+  }, []);
+
+  const [post, setPost] = React.useState(null);
+
+  useEffect(() => {
+    setLoading(true);
+    fetch(`/api/admin/posts/public/${slug}`)
+      .then(res => {
+        if (!res.ok) throw new Error('Not found');
+        return res.json();
+      })
+      .then(data => {
+        const mappedPost = {
+          id: data.slug,
+          title: data.title,
+          excerpt: data.excerpt,
+          coverImage: data.image_url,
+          category: data.category || 'General',
+          author: data.author,
+          authorRole: data.author_role,
+          date: new Date(data.published_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+          readTime: data.read_time,
+          featured: data.featured,
+          tags: data.tags || [],
+          content: data.content || []
+        };
+        setPost(mappedPost);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error("Failed to fetch post from DB, using fallback:", err);
+        const fallbackPost = blogPostsFallback.find(p => p.id === slug) || null;
+        setPost(fallbackPost);
+        setLoading(false);
+      });
+  }, [slug]);
 
   const headings = React.useMemo(() => {
     if (!post) return [];
@@ -43,6 +109,14 @@ const BlogPostPage = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [slug]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#141414] flex items-center justify-center">
+        <span className="text-[#A9A9A9] animate-pulse">Loading post...</span>
+      </div>
+    );
+  }
 
   if (!post) {
     return (
