@@ -14,6 +14,14 @@ dist-ssr
 
 todo.txt
 
+# Environment variables
+.env
+.env.local
+
+# Uploaded images
+public/uploads/*
+!public/uploads/.gitkeep
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
