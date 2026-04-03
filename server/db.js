@@ -10,8 +10,8 @@ export function getSupabase() {
       console.warn('[DB] Warning: SUPABASE_URL or SUPABASE_KEY environment variable is missing.');
     }
     supabaseInstance = createClient(
-      process.env.SUPABASE_URL || 'https://placeholder.supabase.co',
-      process.env.SUPABASE_KEY || 'placeholder_key'
+      process.env.SUPABASE_URL,
+      process.env.SUPABASE_KEY
     );
   }
   return supabaseInstance;
@@ -21,18 +21,12 @@ const supabase = getSupabase();
 
 export async function dbCheck() {
   try {
-    // Verify connection and table reachability
-    const { error } = await supabase.from('posts').select('id').limit(1);
-    
-    if (error) {
-      console.error('[DB] Verification error - Check if tables exist:', error.message);
-      return false;
-    }
-    
+    // Moved posts table verification below to prevent it from aborting the admin loop
+
     // Always sync the admin credentials with the current Environment Variables
     const adminUsername = process.env.ADMIN_USERNAME;
     const adminPassword = process.env.ADMIN_PASSWORD;
-    
+
     // Only attempt admin user modifications if credentials explicitly exist via ENV
     if (adminUsername && adminPassword) {
       const hash = await bcryptjs.hash(adminPassword, 12);
@@ -47,7 +41,7 @@ export async function dbCheck() {
         const { error: insertError } = await supabase
           .from('admin_users')
           .insert([{ username: adminUsername, password_hash: hash }]);
-          
+
         if (insertError) {
           console.error('[DB] Failed to prepare default admin user:', insertError.message);
         } else {
@@ -59,13 +53,20 @@ export async function dbCheck() {
           .from('admin_users')
           .update({ password_hash: hash })
           .eq('id', existingUser.id);
-          
+
         if (updateError) {
           console.error('[DB] Failed to sync admin password change:', updateError.message);
         }
       }
     } else {
       console.warn('[DB] Warning: ADMIN_USERNAME or ADMIN_PASSWORD missing from ENV. Skipping admin sync.');
+    }
+
+    // Verify connection and posts table reachability explicitly at the end
+    const { error: postsError } = await supabase.from('posts').select('id').limit(1);
+    if (postsError) {
+      console.error('[DB] Posts Verification error - Check if tables exist:', postsError.message);
+      return false;
     }
 
     console.log('[DB] Supabase connection and tables verified active.');
