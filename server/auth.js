@@ -6,17 +6,30 @@ const JWT_SECRET = process.env.JWT_SECRET || 'lbxsuite-admin-secret-change-me';
 const TOKEN_EXPIRY = '24h';
 
 export async function login(username, password) {
+  console.log(`[Auth] Attempting login for user: ${username}`);
   const { data: user, error } = await supabase
     .from('admin_users')
     .select('*')
     .eq('username', username)
     .maybeSingle();
 
-  if (error || !user) return null;
+  if (error) {
+    console.error(`[Auth] Supabase query error:`, error.message, error.details || '');
+    return null;
+  }
+  
+  if (!user) {
+    console.error(`[Auth] User not found in 'admin_users' table inside Supabase`);
+    return null;
+  }
 
   const valid = await bcryptjs.compare(password, user.password_hash);
-  if (!valid) return null;
+  if (!valid) {
+    console.error(`[Auth] User found, but bcrypt password hash validation failed.`);
+    return null;
+  }
 
+  console.log(`[Auth] Login successful for user: ${username}`);
   const token = jwt.sign(
     { id: user.id, username: user.username },
     JWT_SECRET,
