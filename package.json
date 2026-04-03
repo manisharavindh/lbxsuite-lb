@@ -7,11 +7,13 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "node server.js"
   },
   "dependencies": {
     "@calcom/embed-react": "^1.5.3",
     "@use-gesture/react": "^10.3.1",
+    "express": "^5.2.1",
     "framer-motion": "^12.37.0",
     "gsap": "^3.14.2",
     "lucide-react": "^0.577.0",

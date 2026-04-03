@@ -38,7 +38,7 @@ const Footer = () => {
               <h4 className="text-white font-bold mb-2 uppercase tracking-widest text-[10px]">Explore</h4>
               <Link to="/blog" className="text-[#A9A9A9] hover:text-white transition-colors">Blog</Link>
               {/* <a href="#" className="text-[#A9A9A9] hover:text-white transition-colors">Portfolio</a> */}
-              <a href="/blog" className="text-[#A9A9A9] hover:text-white transition-colors">Free Giveaways</a>
+              <Link to="/giveaways" className="text-[#A9A9A9] hover:text-white transition-colors">Free Giveaways</Link>
             </div>
             <div className="flex flex-col space-y-4">
               <h4 className="text-white font-bold mb-2 uppercase tracking-widest text-[10px]">Specials</h4>
@@ -92,15 +92,15 @@ const Footer = () => {
       </div> */}
 
       {/* Bottom bar */}
-      <div className="relative z-20 flex flex-col md:flex-row justify-between items-center md:items-end pt-12 md:pt-12 pb-12 font-sans text-xs text-[#A9A9A9] space-y-6 md:space-y-0 w-full max-w-[1600px] mx-auto border-t border-[#272727]">
+      <div className="relative z-20 flex flex-col md:flex-row justify-between items-center md:items-end pt-12 md:pt-12 pb-12 font-sans text-xs text-[#A9A9A9] space-y-6 md:space-y-0 w-full max-w-[1600px] mx-auto border-t-2 border-[#272727]">
         <div className="flex items-center space-x-6">
           <span>© 2026 LbxSuite. All rights reserved.</span>
         </div>
 
         <div className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-8">
           <div className="flex space-x-6">
-            <a href="#" className="hover:text-[#FFFFFF] transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-[#FFFFFF] transition-colors">Terms of Service</a>
+            <Link to="/privacy" className="hover:text-[#FFFFFF] transition-colors">Privacy Policy</Link>
+            <Link to="/terms" className="hover:text-[#FFFFFF] transition-colors">Terms of Service</Link>
           </div>
         </div>
       </div>

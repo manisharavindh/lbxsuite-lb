@@ -9,9 +9,9 @@ const InteractiveGrid = () => {
 
     const ctx = canvas.getContext('2d', { alpha: true });
 
-    const gridSize = 30; // Increased box size
-    const gap = 2; // Increased gap from 1 to 2
-    const opacity = 0.015; // Made the grid a little darker by reducing opacity from 0.03
+    const gridSize = 30; // Updated from 36px to 30px
+    const gap = 0; // Removed gap to allow perfect cell-filling
+    const opacity = 0.04; // Increased opacity to make the grid lines properly visible
     const parallaxFactor = 0.4;
 
     let width, height, columns, rows;
@@ -92,21 +92,29 @@ const InteractiveGrid = () => {
 
       const pixelOffset = (scrollY * parallaxFactor) % gridSize;
 
-      // Draw base grids
-      ctx.fillStyle = '#FFFFFF';
+      // Draw base grids (as crisp lines matching NotFoundPage style) FIRST
+      ctx.strokeStyle = '#FFFFFF';
       ctx.globalAlpha = opacity;
+      ctx.lineWidth = 1;
       ctx.beginPath();
-      for (let r = -1; r < rows; r++) {
-        for (let c = -1; c < columns; c++) {
-          const cellX = c * gridSize;
-          const cellY = r * gridSize - pixelOffset;
-          const boxSize = gridSize - gap * 2;
-          ctx.rect(cellX + gap, cellY + gap, Math.max(0, boxSize), Math.max(0, boxSize));
-        }
+      
+      // Vertical lines
+      for (let c = -1; c <= columns; c++) {
+        const x = c * gridSize;
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, height);
       }
-      ctx.fill();
+      
+      // Horizontal lines
+      for (let r = -1; r <= rows; r++) {
+        const y = r * gridSize - pixelOffset;
+        ctx.moveTo(0, y);
+        ctx.lineTo(width, y);
+      }
+      
+      ctx.stroke();
 
-      // Draw active grids with #FF5655 and fade out effect
+      // Draw active grids with #FF5655 and fade out effect AFTER (so they overlap as before)
       for (const [key, timestamp] of activeCells.entries()) {
         const age = time - timestamp;
 
@@ -122,17 +130,17 @@ const InteractiveGrid = () => {
 
         const cellX = c * gridSize;
         const cellY = r * gridSize - pixelOffset;
-        const baseBoxSize = gridSize - gap * 2;
+        const baseBoxSize = gridSize; // no structural gap needed for overlap effect
 
         const intensity = Math.max(0, 1 - (age / 800));
 
-        // Scale from 1.0 to 1.2 based on intensity
-        const scale = 1.0 + (intensity * 0.2);
+        // Scale from 1.0 to 1.08 based on intensity to keep the overlap constrained and subtle
+        const scale = 1.0 + (intensity * 0.08);
         const currentBoxSize = baseBoxSize * scale;
 
         // Calculate center of original box to scale from center
-        const centerX = cellX + gap + baseBoxSize / 2;
-        const centerY = cellY + gap + baseBoxSize / 2;
+        const centerX = cellX + baseBoxSize / 2;
+        const centerY = cellY + baseBoxSize / 2;
 
         // 3D depth pop out amount
         const depth = intensity * 6; // Max 6px pop out depth
