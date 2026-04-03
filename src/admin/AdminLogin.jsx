@@ -34,16 +34,6 @@ const AdminLogin = ({ onLogin }) => {
         <div className="admin-login-logo">
           LBXSUITE <span>Admin</span>
         </div>
-        <p className="admin-login-subtitle">
-          Sign in to manage your content and analytics.
-        </p>
-
-        {error && (
-          <div className="admin-login-error">
-            <AlertCircle size={14} />
-            {error}
-          </div>
-        )}
 
         <form onSubmit={handleSubmit}>
           <div className="admin-field">
@@ -109,14 +99,12 @@ const AdminLogin = ({ onLogin }) => {
           </button>
         </form>
 
-        <p style={{
-          textAlign: 'center',
-          fontSize: '11px',
-          color: 'var(--admin-text-muted)',
-          marginTop: '24px',
-        }}>
-          Credentials are managed via environment variables.
-        </p>
+        {error && (
+          <div className="admin-login-error">
+            <AlertCircle size={14} />
+            {error}
+          </div>
+        )}
       </div>
     </div>
   );

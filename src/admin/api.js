@@ -19,15 +19,16 @@ async function request(url, options = {}) {
 
   const res = await fetch(`${API_BASE}${url}`, config);
 
+  const data = await res.json().catch(() => ({}));
+
   if (res.status === 401) {
-    // Redirect to login if unauthorized
+    // Redirect to login if unauthorized, but keep the detailed error
     if (!window.location.pathname.includes('/admin/login')) {
       window.location.href = '/admin/login';
     }
-    throw new Error('Unauthorized');
+    throw new Error(data.error || 'Unauthorized');
   }
 
-  const data = await res.json();
   if (!res.ok) throw new Error(data.error || 'Request failed');
   return data;
 }
