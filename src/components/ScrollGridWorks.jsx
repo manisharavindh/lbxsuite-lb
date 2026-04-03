@@ -58,13 +58,13 @@ const ScrollGridWorks = ({ items }) => {
   return (
     <div
       ref={containerRef}
-      className="relative w-full flex flex-col items-center justify-center py-16 md:py-16 z-100"
+      className="relative w-full flex flex-col items-center justify-center z-100 pt-8"
     >
       <div
         className="flex flex-col gap-4 md:gap-5 w-[105vw]"
-        style={{
-          transform: 'rotate(-3deg) scale(1.05)',
-        }}
+      // style={{
+      //   transform: 'rotate(-3deg) scale(1.05)',
+      // }}
       >
         {rows.map((rowItems, idx) => {
           const safeItems = rowItems.length > 0 ? rowItems : items;

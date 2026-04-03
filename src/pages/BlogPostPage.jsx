@@ -67,8 +67,21 @@ const BlogPostPage = () => {
           date: new Date(data.published_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
           readTime: data.read_time,
           featured: data.featured,
-          tags: data.tags?.filter(t => !t.startsWith('__link:')) || [],
-          shareLinks: data.tags?.filter(t => t.startsWith('__link:')).map(t => t.replace('__link:', '')) || ['copy', 'twitter', 'linkedin'],
+          tags: data.tags?.filter(t => !t.startsWith('__link:') && !t.startsWith('__social:')) || [],
+          social: (() => {
+              let res = { copy: true, twitter_enabled: false, linkedin_enabled: false, instagram_enabled: false, facebook_enabled: false };
+              const socialTag = data.tags?.find(t => t.startsWith('__social:'));
+              if (socialTag) {
+                  try { res = { ...res, ...JSON.parse(socialTag.replace('__social:', '')) }; } catch(e) {}
+              } else {
+                  const oldLinks = data.tags?.filter(t => t.startsWith('__link:')).map(t => t.replace('__link:', '')) || ['copy', 'twitter', 'linkedin'];
+                  oldLinks.forEach(l => {
+                      if (l === 'copy') res.copy = true;
+                      else res[`${l}_enabled`] = true;
+                  });
+              }
+              return res;
+          })(),
           content: data.content || []
         };
         setPost(mappedPost);
@@ -276,7 +289,7 @@ const BlogPostPage = () => {
               </div>
 
               <div className="flex items-center gap-2">
-                {post.shareLinks?.includes('copy') && (
+                {post.social?.copy !== false && (
                   <button
                     onClick={handleCopyLink}
                     title="Copy link"
@@ -285,37 +298,41 @@ const BlogPostPage = () => {
                     {copied ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} />}
                   </button>
                 )}
-                {post.shareLinks?.includes('twitter') && (
+                {post.social?.twitter_enabled && (
                   <a
-                    href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(window.location.href)}`}
+                    href={post.social.twitter && post.social.twitter.trim() !== '' ? post.social.twitter : `https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(window.location.href)}`}
                     target="_blank" rel="noopener noreferrer"
+                    title={post.social.twitter && post.social.twitter.trim() !== '' ? "Author's Twitter" : "Share on Twitter"}
                     className="w-8 h-8 rounded-full border border-white/[0.08] flex items-center justify-center text-[#888] hover:text-white hover:border-white/20 hover:bg-white/[0.04] transition-all duration-200"
                   >
                     <Twitter size={12} />
                   </a>
                 )}
-                {post.shareLinks?.includes('linkedin') && (
+                {post.social?.linkedin_enabled && (
                   <a
-                    href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`}
+                    href={post.social.linkedin && post.social.linkedin.trim() !== '' ? post.social.linkedin : `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`}
                     target="_blank" rel="noopener noreferrer"
+                    title={post.social.linkedin && post.social.linkedin.trim() !== '' ? "Author's LinkedIn" : "Share on LinkedIn"}
                     className="w-8 h-8 rounded-full border border-white/[0.08] flex items-center justify-center text-[#888] hover:text-white hover:border-white/20 hover:bg-white/[0.04] transition-all duration-200"
                   >
                     <Linkedin size={12} />
                   </a>
                 )}
-                {post.shareLinks?.includes('instagram') && (
+                {post.social?.instagram_enabled && (
                   <a
-                    href={`https://instagram.com`}
+                    href={post.social.instagram && post.social.instagram.trim() !== '' ? post.social.instagram : `https://instagram.com`}
                     target="_blank" rel="noopener noreferrer"
+                    title={post.social.instagram && post.social.instagram.trim() !== '' ? "Author's Instagram" : "Visit Instagram"}
                     className="w-8 h-8 rounded-full border border-white/[0.08] flex items-center justify-center text-[#888] hover:text-white hover:border-white/20 hover:bg-white/[0.04] transition-all duration-200"
                   >
                     <Instagram size={12} />
                   </a>
                 )}
-                {post.shareLinks?.includes('facebook') && (
+                {post.social?.facebook_enabled && (
                   <a
-                    href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`}
+                    href={post.social.facebook && post.social.facebook.trim() !== '' ? post.social.facebook : `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`}
                     target="_blank" rel="noopener noreferrer"
+                    title={post.social.facebook && post.social.facebook.trim() !== '' ? "Author's Facebook" : "Share on Facebook"}
                     className="w-8 h-8 rounded-full border border-white/[0.08] flex items-center justify-center text-[#888] hover:text-white hover:border-white/20 hover:bg-white/[0.04] transition-all duration-200"
                   >
                     <Facebook size={12} />

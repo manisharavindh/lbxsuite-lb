@@ -19,15 +19,15 @@ const ContactSection = () => {
   }, []);
 
   return (
-    <section id="contact" className="relative z-10 py-24 md:py-32 w-full mx-auto px-6 md:px-12 bg-[#141414]">
+    <section id="contact" className="relative z-10 py-20 md:py-28 w-full mx-auto px-6 md:px-12 bg-[#141414]">
       <div className="flex flex-col items-center max-w-[900px] w-full mx-auto">
 
         {/* Header Section */}
         <div className="text-center mb-6 flex flex-col items-center">
-          <h2 className="text-3xl md:text-[2.5rem] lg:text-[2.75rem] leading-[1.15] font-serif text-[#FFFFFF] mb-4">
+          <h2 className="text-3xl md:text-[2.5rem] lg:text-[2.75rem] leading-[1.15] font-serif text-[#FFFFFF] mb-4 text-left md:text-center">
             Let's connect and discuss your vision.
           </h2>
-          <p className="text-[#A9A9A9] font-sans md:text-lg max-w-2xl text-center">
+          <p className="text-[#A9A9A9] font-sans md:text-lg max-w-2xl text-left md:text-center">
             We funnel ambitious ideas into high-performance software. Book a time that works for you or reach out through our other channels.
           </p>
         </div>

@@ -55,7 +55,7 @@ const WebworksSection = () => {
   return (
     <section id="webworks" className="relative w-full bg-transparent pt-4 mb-6">
       {/* <div className="text-center mb-0 relative z-20 w-full max-w-7xl mx-auto px-4">
-        <h2 className="text-4xl md:text-6xl font-extrabold mb-4 text-white tracking-tight">
+        <h2 className="text-4xl md:text-6xl font-extrabold mb-4 text-white tracking-tight text-center md:text-left">
           Featured <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF5655] to-[#FF8888]">Webworks</span>
         </h2>
         <p className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto font-light">

@@ -36,11 +36,10 @@ const ServicesGrid = () => {
   ];
 
   return (
-    <section id="services" className="relative z-10 w-full bg-[#141414] py-16 pt-24 shadow-[-10px_-10px_30px_#141414]">
+    <section id="services" className="relative z-10 w-full bg-[#141414] shadow-[-10px_-10px_30px_#141414] pt-20 md:pt-28">
       <div className="max-w-[1400px] mx-auto px-6 md:px-12 relative z-10">
-        <h2 className="text-lg font-bold uppercase mb-12 text-[#A9A9A9] font-sans tracking-widest">Our Expertise</h2>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif text-[#FFFFFF] leading-tight font-medium mb-6 md:mb-8">Our Expertise</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 ">
           {services.map((service, index) => (
             <Link
               key={index}

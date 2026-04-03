@@ -60,7 +60,11 @@ const AdminPostEditor = ({ user, onLogout }) => {
     twitter: '',
     linkedin: '',
     instagram: '',
-    facebook: ''
+    facebook: '',
+    twitter_enabled: false,
+    linkedin_enabled: false,
+    instagram_enabled: false,
+    facebook_enabled: false
   });
 
   useEffect(() => {
@@ -72,18 +76,42 @@ const AdminPostEditor = ({ user, onLogout }) => {
       const post = await postsAPI.get(id);
       
       const loadedLinksTag = post.tags?.find(t => t.startsWith('__social:'));
-      let loadedLinks = { copy: true, twitter: '', linkedin: '', instagram: '', facebook: '' };
+      let loadedLinks = { 
+        copy: true, twitter: '', linkedin: '', instagram: '', facebook: '',
+        twitter_enabled: false, linkedin_enabled: false, instagram_enabled: false, facebook_enabled: false 
+      };
+      
       if (loadedLinksTag) {
           try {
-             loadedLinks = { ...loadedLinks, ...JSON.parse(loadedLinksTag.replace('__social:', '')) };
+             const parsed = JSON.parse(loadedLinksTag.replace('__social:', ''));
+             loadedLinks = { ...loadedLinks, ...parsed };
+             
+             ['twitter', 'linkedin', 'instagram', 'facebook'].forEach(key => {
+                 if (parsed[`${key}_enabled`] !== undefined) {
+                     loadedLinks[`${key}_enabled`] = parsed[`${key}_enabled`];
+                 } else if (parsed[key] && typeof parsed[key] === 'string' && parsed[key].trim() !== '') {
+                     loadedLinks[`${key}_enabled`] = true;
+                     if (parsed[key] === 'true') {
+                         loadedLinks[key] = ''; // clear legacy 'true' value
+                     }
+                 }
+             });
           } catch(e) {}
       } else {
           // Fallback legacy support
           const oldLinks = post.tags?.filter(t => t.startsWith('__link:')).map(t => t.replace('__link:', ''));
           if (oldLinks?.length > 0) {
-              oldLinks.forEach(l => { loadedLinks[l] = l === 'copy' ? true : 'true'; });
+              oldLinks.forEach(l => { 
+                  if (l === 'copy') {
+                      loadedLinks.copy = true;
+                  } else {
+                      loadedLinks[l] = ''; 
+                      loadedLinks[`${l}_enabled`] = true;
+                  }
+              });
           }
       }
+      loadedLinks.copy = true; // always ensure copy is true
       setSocialLinks(loadedLinks);
       
       setForm({
@@ -633,36 +661,64 @@ const AdminPostEditor = ({ user, onLogout }) => {
               </div>
               
               <div className="admin-field" style={{ marginBottom: 0, marginTop: '20px' }}>
-                <label className="admin-label">Author Social Links</label>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '8px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <label className="admin-label">Social & Sharing Links</label>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '12px' }}>
+                  
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', opacity: 0.7 }}>
                       <input
                         type="checkbox"
                         id="social-copy"
-                        checked={socialLinks.copy}
-                        onChange={(e) => setSocialLinks(prev => ({ ...prev, copy: e.target.checked }))}
-                        style={{ accentColor: 'var(--admin-accent)' }}
+                        checked={true}
+                        disabled={true}
+                        style={{ accentColor: 'var(--admin-accent)', cursor: 'not-allowed' }}
                       />
-                      <label htmlFor="social-copy" style={{ fontSize: '13px', color: 'var(--admin-text-secondary)', cursor: 'pointer' }}>
-                        Show Copy Link Button
+                      <label htmlFor="social-copy" style={{ fontSize: '13px', color: 'var(--admin-text-secondary)', cursor: 'not-allowed' }}>
+                        Copy Link (Default & Uneditable)
                       </label>
                   </div>
+
+                  <div style={{ height: '1px', background: 'var(--admin-border)' }}></div>
+                  <label className="admin-label" style={{ marginBottom: '-8px' }}>Author Links</label>
+
                   {[
                     { id: 'twitter', label: 'Twitter Profile URL' },
                     { id: 'linkedin', label: 'LinkedIn Profile URL' },
                     { id: 'instagram', label: 'Instagram Profile URL' },
                     { id: 'facebook', label: 'Facebook Profile URL' }
                   ].map((opt) => (
-                    <div key={opt.id} style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                      <label style={{ fontSize: '12px', color: 'var(--admin-text-muted)' }}>{opt.label}</label>
-                      <input
-                        type="url"
-                        className="admin-input"
-                        placeholder={`https://${opt.id}.com/...`}
-                        value={socialLinks[opt.id]}
-                        onChange={(e) => setSocialLinks(prev => ({ ...prev, [opt.id]: e.target.value }))}
-                        style={{ padding: '8px 12px', fontSize: '13px' }}
-                      />
+                    <div key={opt.id} style={{ display: 'flex', flexDirection: 'column', gap: '10px', padding: '12px', background: 'var(--admin-surface-2)', borderRadius: 'var(--admin-radius)', border: '1px solid var(--admin-border)' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <input
+                          type="checkbox"
+                          id={`social-${opt.id}-enable`}
+                          checked={socialLinks[`${opt.id}_enabled`]}
+                          onChange={(e) => {
+                            const isChecked = e.target.checked;
+                            setSocialLinks(prev => ({ 
+                              ...prev, 
+                              [`${opt.id}_enabled`]: isChecked,
+                              ...( !isChecked ? { [opt.id]: '' } : {} )
+                            }))
+                          }}
+                          style={{ accentColor: 'var(--admin-accent)', cursor: 'pointer' }}
+                        />
+                        <label htmlFor={`social-${opt.id}-enable`} style={{ fontSize: '13px', fontWeight: 500, color: 'var(--admin-text)', cursor: 'pointer' }}>
+                          Enable {opt.label.replace(' Profile URL', '')} Profile
+                        </label>
+                      </div>
+                      
+                      {socialLinks[`${opt.id}_enabled`] && (
+                        <div style={{ marginLeft: '22px' }}>
+                          <input
+                            type="url"
+                            className="admin-input"
+                            placeholder={`https://${opt.id}.com/...`}
+                            value={socialLinks[opt.id] || ''}
+                            onChange={(e) => setSocialLinks(prev => ({ ...prev, [opt.id]: e.target.value }))}
+                            style={{ padding: '8px 12px', fontSize: '13px', width: '100%', boxSizing: 'border-box' }}
+                          />
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>

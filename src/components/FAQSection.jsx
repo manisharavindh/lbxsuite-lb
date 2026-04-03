@@ -82,9 +82,9 @@ const QAItem = ({ question, answer }) => {
 
 const FAQSection = () => {
   return (
-    <section id="faq" className="relative z-10 w-full bg-[#141414] pt-20 md:pt-32">
+    <section id="faq" className="relative z-10 w-full bg-[#141414] pt-28 md:pt-32">
       <div className="max-w-[1400px] mx-auto px-6 md:px-12 relative z-10">
-        <h2 className="text-4xl md:text-5xl lg:text-[4rem] font-serif text-[#FFFFFF] leading-tight mb-2">
+        <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif text-[#FFFFFF] leading-tight font-medium mb-2">
           Questions? We got answers.
         </h2>
 

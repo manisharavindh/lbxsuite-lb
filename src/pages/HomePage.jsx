@@ -3,11 +3,13 @@ import InteractiveGrid from '../InteractiveGrid';
 import Navbar from '../components/Navbar';
 import Hero from '../components/Hero';
 import WebworksSection from '../components/WebworksSection';
+import TestimonialSection from '../components/TestimonialSection';
 import ServicesGrid from '../components/ServicesGrid';
 import ContactSection from '../components/ContactSection';
 import Footer from '../components/Footer';
 import AboutSection from '../components/AboutSection';
 import FAQSection from '../components/FAQSection';
+// import CTASection from '../components/CTASection'
 
 function HomePage() {
   return (
@@ -21,8 +23,10 @@ function HomePage() {
           <WebworksSection />
           {/* <DomeGallery /> */}
           <ServicesGrid />
+          <TestimonialSection />
           <FAQSection />
           <ContactSection />
+          {/* <CTASection /> */}
         </div>
       </main>
       <Footer />

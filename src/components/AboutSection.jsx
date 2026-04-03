@@ -2,7 +2,7 @@ import React from 'react';
 
 const AboutSection = () => {
   return (
-    <section className="w-full bg-[#141414] py-8 relative z-10 flex flex-col justify-center">
+    <section className="w-full bg-[#141414] relative z-10 flex flex-col justify-center pt-8">
       <div className="max-w-[1300px] w-full mx-auto px-6 lg:px-12 relative flex">
 
         {/* Main Heading Block */}
