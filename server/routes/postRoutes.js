@@ -113,6 +113,37 @@ router.get('/', authMiddleware, async (req, res) => {
   }
 });
 
+// GET /api/admin/posts/action/export — Export all data
+router.get('/action/export', authMiddleware, async (req, res) => {
+  try {
+    const { data, error } = await supabase.from('posts').select('*');
+    if (error) throw error;
+    return res.json(data);
+  } catch (err) {
+    console.error('[Posts] Export error:', err.message);
+    return res.status(500).json({ error: 'Failed to export posts' });
+  }
+});
+
+// POST /api/admin/posts/action/import — Import data
+router.post('/action/import', authMiddleware, async (req, res) => {
+  try {
+    const posts = req.body;
+    if (!Array.isArray(posts)) {
+        return res.status(400).json({ error: 'Invalid data format. Expected an array of posts.' });
+    }
+    
+    // UPSERT all posts, overriding existing ones by id or slug
+    const { error } = await supabase.from('posts').upsert(posts, { onConflict: 'slug' });
+    if (error) throw error;
+    
+    return res.json({ success: true, count: posts.length });
+  } catch (err) {
+    console.error('[Posts] Import error:', err.message);
+    return res.status(500).json({ error: 'Failed to import posts' });
+  }
+});
+
 // GET /api/admin/posts/:id — Get single
 router.get('/:id', authMiddleware, async (req, res) => {
   try {

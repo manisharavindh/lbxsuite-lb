@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   Search, Plus, Trash2, Edit3, Eye, MoreHorizontal,
-  FileText, Filter, ChevronLeft, ChevronRight
+  FileText, Filter, ChevronLeft, ChevronRight, Download, Upload
 } from 'lucide-react';
 import AdminLayout from './AdminLayout';
 import { postsAPI } from './api';
@@ -17,6 +17,9 @@ const AdminPosts = ({ user, onLogout }) => {
   const [deleteId, setDeleteId] = useState(null);
   const [toasts, setToasts] = useState([]);
   const navigate = useNavigate();
+  const fileInputRef = useRef(null);
+  const [importing, setImporting] = useState(false);
+  const [exporting, setExporting] = useState(false);
 
   const limit = 10;
 
@@ -52,6 +55,47 @@ const AdminPosts = ({ user, onLogout }) => {
     setDeleteId(null);
   };
 
+  const handleExport = async () => {
+    setExporting(true);
+    try {
+      const data = await postsAPI.exportData();
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `lbxsuite_blog_export_${new Date().toISOString().split('T')[0]}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      addToast('Data exported successfully', 'success');
+    } catch (err) {
+      addToast('Failed to export data', 'error');
+    } finally {
+      setExporting(false);
+    }
+  };
+
+  const handleImport = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setImporting(true);
+    try {
+      const text = await file.text();
+      const data = JSON.parse(text);
+      if (!Array.isArray(data)) throw new Error('Invalid format: expected array');
+      
+      const result = await postsAPI.importData(data);
+      addToast(`Successfully imported ${result.count} posts`, 'success');
+      loadPosts(); // Refresh the list
+    } catch (err) {
+      console.error(err);
+      addToast('Failed to import data: ' + err.message, 'error');
+    } finally {
+      setImporting(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
   const addToast = (message, type = 'success') => {
     const id = Date.now();
     setToasts(prev => [...prev, { id, message, type }]);
@@ -69,9 +113,26 @@ const AdminPosts = ({ user, onLogout }) => {
       title="Blog Posts"
       subtitle={`${total} post${total !== 1 ? 's' : ''} total`}
       actions={
-        <Link to="/admin/posts/new" className="admin-btn admin-btn-primary admin-btn-sm">
-          <Plus size={14} /> New Post
-        </Link>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <button onClick={handleExport} disabled={exporting} className="admin-btn admin-btn-secondary admin-btn-sm" title="Download all posts as JSON">
+            {exporting ? <div className="admin-spinner" style={{ width: 14, height: 14, borderWidth: '2px' }} /> : <Download size={14} />} {exporting ? 'Exporting...' : 'Export'}
+          </button>
+          
+          <input 
+            type="file" 
+            ref={fileInputRef} 
+            onChange={handleImport} 
+            accept=".json" 
+            style={{ display: 'none' }} 
+          />
+          <button onClick={() => fileInputRef.current?.click()} disabled={importing} className="admin-btn admin-btn-secondary admin-btn-sm" title="Upload posts from JSON">
+            {importing ? <div className="admin-spinner" style={{ width: 14, height: 14, borderWidth: '2px' }} /> : <Upload size={14} />} {importing ? 'Importing...' : 'Import'}
+          </button>
+
+          <Link to="/admin/posts/new" className="admin-btn admin-btn-primary admin-btn-sm">
+            <Plus size={14} /> New Post
+          </Link>
+        </div>
       }
     >
       {/* Filters */}

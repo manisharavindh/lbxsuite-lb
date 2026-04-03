@@ -71,6 +71,12 @@ export const postsAPI = {
       body: formData,
     });
   },
+  exportData: () => request('/admin/posts/action/export'),
+  importData: (data) =>
+    request('/admin/posts/action/import', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
 };
 
 // Analytics

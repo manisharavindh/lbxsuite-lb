@@ -45,7 +45,7 @@ const AdminPostEditor = ({ user, onLogout }) => {
   });
 
   const [loading, setLoading] = useState(!isNew);
-  const [saving, setSaving] = useState(false);
+  const [savingType, setSavingType] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [tagInput, setTagInput] = useState('');
   const [toasts, setToasts] = useState([]);
@@ -55,6 +55,19 @@ const AdminPostEditor = ({ user, onLogout }) => {
   const [newBlockItems, setNewBlockItems] = useState(['']);
   const fileInputRef = useRef(null);
 
+  const [socialLinks, setSocialLinks] = useState(['copy', 'twitter', 'linkedin']);
+
+  const toggleSocialLink = (link) => {
+      setSocialLinks(prev => {
+          if (prev.includes(link)) return prev.filter(l => l !== link);
+          if (prev.length >= 5) {
+              addToast('Maximum 5 links allowed', 'warning');
+              return prev;
+          }
+          return [...prev, link];
+      });
+  };
+
   useEffect(() => {
     if (!isNew) loadPost();
   }, [id]);
@@ -62,6 +75,10 @@ const AdminPostEditor = ({ user, onLogout }) => {
   const loadPost = async () => {
     try {
       const post = await postsAPI.get(id);
+      
+      const loadedLinks = post.tags?.filter(t => t.startsWith('__link:')).map(t => t.replace('__link:', ''));
+      setSocialLinks(loadedLinks?.length > 0 ? loadedLinks : ['copy', 'twitter', 'linkedin']);
+      
       setForm({
         title: post.title || '',
         slug: post.slug || '',
@@ -72,7 +89,7 @@ const AdminPostEditor = ({ user, onLogout }) => {
         author_role: post.author_role || '',
         read_time: post.read_time || '',
         featured: post.featured || false,
-        tags: post.tags || [],
+        tags: post.tags?.filter(t => !t.startsWith('__link:')) || [],
         content: typeof post.content === 'string' ? JSON.parse(post.content) : (post.content || []),
         status: post.status || 'draft',
       });
@@ -123,8 +140,9 @@ const AdminPostEditor = ({ user, onLogout }) => {
       return;
     }
 
-    setSaving(true);
-    const payload = { ...form };
+    setSavingType(newStatus || form.status);
+    const tagsToSave = [...form.tags.filter(t => !t.startsWith('__link:')), ...socialLinks.map(l => `__link:${l}`)];
+    const payload = { ...form, tags: tagsToSave };
     if (newStatus) payload.status = newStatus;
 
     try {
@@ -140,7 +158,7 @@ const AdminPostEditor = ({ user, onLogout }) => {
     } catch (err) {
       addToast(err.message || 'Failed to save post', 'error');
     } finally {
-      setSaving(false);
+      setSavingType(null);
     }
   };
 
@@ -222,16 +240,17 @@ const AdminPostEditor = ({ user, onLogout }) => {
           <button
             onClick={() => handleSave('draft')}
             className="admin-btn admin-btn-secondary admin-btn-sm"
-            disabled={saving}
+            disabled={savingType !== null}
           >
+            {savingType === 'draft' ? <div className="admin-spinner" style={{ width: 14, height: 14, borderWidth: '2px' }} /> : <Save size={14} />}
             Save Draft
           </button>
           <button
             onClick={() => handleSave('published')}
             className="admin-btn admin-btn-primary admin-btn-sm"
-            disabled={saving}
+            disabled={savingType !== null}
           >
-            {saving ? <div className="admin-spinner" style={{ width: 14, height: 14, borderWidth: '2px' }} /> : <Save size={14} />}
+            {savingType === 'published' ? <div className="admin-spinner" style={{ width: 14, height: 14, borderWidth: '2px' }} /> : <Save size={14} />}
             {form.status === 'published' ? 'Update' : 'Publish'}
           </button>
         </div>
@@ -605,6 +624,33 @@ const AdminPostEditor = ({ user, onLogout }) => {
                   />
                 </div>
               </div>
+              
+              <div className="admin-field" style={{ marginBottom: 0, marginTop: '20px' }}>
+                <label className="admin-label">Visible Share Options (Max 5)</label>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '8px' }}>
+                  {[
+                    { id: 'copy', label: 'Copy Link' },
+                    { id: 'twitter', label: 'Twitter' },
+                    { id: 'linkedin', label: 'LinkedIn' },
+                    { id: 'instagram', label: 'Instagram' },
+                    { id: 'facebook', label: 'Option One (Facebook)' }
+                  ].map((opt) => (
+                    <div key={opt.id} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <input
+                        type="checkbox"
+                        id={`social-${opt.id}`}
+                        checked={socialLinks.includes(opt.id)}
+                        onChange={() => toggleSocialLink(opt.id)}
+                        style={{ accentColor: 'var(--admin-accent)' }}
+                      />
+                      <label htmlFor={`social-${opt.id}`} style={{ fontSize: '13px', color: 'var(--admin-text-secondary)', cursor: 'pointer' }}>
+                        {opt.label}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
             </div>
           </div>
         </div>

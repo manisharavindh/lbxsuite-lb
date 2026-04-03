@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, ArrowUpRight, Clock, Twitter, Linkedin, Copy, Check } from 'lucide-react';
+import { ArrowLeft, ArrowUpRight, Clock, Twitter, Linkedin, Copy, Check, Instagram, Facebook } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import blogPostsFallback from '../data/blogPosts';
 import Footer from '../components/Footer';
@@ -67,7 +67,8 @@ const BlogPostPage = () => {
           date: new Date(data.published_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
           readTime: data.read_time,
           featured: data.featured,
-          tags: data.tags || [],
+          tags: data.tags?.filter(t => !t.startsWith('__link:')) || [],
+          shareLinks: data.tags?.filter(t => t.startsWith('__link:')).map(t => t.replace('__link:', '')) || ['copy', 'twitter', 'linkedin'],
           content: data.content || []
         };
         setPost(mappedPost);
@@ -275,27 +276,51 @@ const BlogPostPage = () => {
               </div>
 
               <div className="flex items-center gap-2">
-                <button
-                  onClick={handleCopyLink}
-                  title="Copy link"
-                  className="w-8 h-8 rounded-full border border-white/[0.08] flex items-center justify-center text-[#888] hover:text-white hover:border-white/20 hover:bg-white/[0.04] transition-all duration-200 cursor-pointer"
-                >
-                  {copied ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} />}
-                </button>
-                <a
-                  href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(window.location.href)}`}
-                  target="_blank" rel="noopener noreferrer"
-                  className="w-8 h-8 rounded-full border border-white/[0.08] flex items-center justify-center text-[#888] hover:text-white hover:border-white/20 hover:bg-white/[0.04] transition-all duration-200"
-                >
-                  <Twitter size={12} />
-                </a>
-                <a
-                  href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`}
-                  target="_blank" rel="noopener noreferrer"
-                  className="w-8 h-8 rounded-full border border-white/[0.08] flex items-center justify-center text-[#888] hover:text-white hover:border-white/20 hover:bg-white/[0.04] transition-all duration-200"
-                >
-                  <Linkedin size={12} />
-                </a>
+                {post.shareLinks?.includes('copy') && (
+                  <button
+                    onClick={handleCopyLink}
+                    title="Copy link"
+                    className="w-8 h-8 rounded-full border border-white/[0.08] flex items-center justify-center text-[#888] hover:text-white hover:border-white/20 hover:bg-white/[0.04] transition-all duration-200 cursor-pointer"
+                  >
+                    {copied ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} />}
+                  </button>
+                )}
+                {post.shareLinks?.includes('twitter') && (
+                  <a
+                    href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(window.location.href)}`}
+                    target="_blank" rel="noopener noreferrer"
+                    className="w-8 h-8 rounded-full border border-white/[0.08] flex items-center justify-center text-[#888] hover:text-white hover:border-white/20 hover:bg-white/[0.04] transition-all duration-200"
+                  >
+                    <Twitter size={12} />
+                  </a>
+                )}
+                {post.shareLinks?.includes('linkedin') && (
+                  <a
+                    href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`}
+                    target="_blank" rel="noopener noreferrer"
+                    className="w-8 h-8 rounded-full border border-white/[0.08] flex items-center justify-center text-[#888] hover:text-white hover:border-white/20 hover:bg-white/[0.04] transition-all duration-200"
+                  >
+                    <Linkedin size={12} />
+                  </a>
+                )}
+                {post.shareLinks?.includes('instagram') && (
+                  <a
+                    href={`https://instagram.com`}
+                    target="_blank" rel="noopener noreferrer"
+                    className="w-8 h-8 rounded-full border border-white/[0.08] flex items-center justify-center text-[#888] hover:text-white hover:border-white/20 hover:bg-white/[0.04] transition-all duration-200"
+                  >
+                    <Instagram size={12} />
+                  </a>
+                )}
+                {post.shareLinks?.includes('facebook') && (
+                  <a
+                    href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`}
+                    target="_blank" rel="noopener noreferrer"
+                    className="w-8 h-8 rounded-full border border-white/[0.08] flex items-center justify-center text-[#888] hover:text-white hover:border-white/20 hover:bg-white/[0.04] transition-all duration-200"
+                  >
+                    <Facebook size={12} />
+                  </a>
+                )}
               </div>
             </div>
 
