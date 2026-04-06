@@ -36,21 +36,21 @@ const Footer = () => {
           <div className="grid grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-12 text-xs md:text-sm font-sans">
             <div className="flex flex-col space-y-4">
               <h4 className="text-white font-bold mb-2 uppercase tracking-widest text-[10px]">Explore</h4>
-              <Link to="/blog" className="text-[#A9A9A9] hover:text-white transition-colors">Blog</Link>
+              <Link to="/blog" className="text-[#A9A9A9] hover:text-white transition-colors" data-track="Footer — Blog Link">Blog</Link>
               {/* <a href="#" className="text-[#A9A9A9] hover:text-white transition-colors">Portfolio</a> */}
-              <Link to="/giveaways" className="text-[#A9A9A9] hover:text-white transition-colors">Free Giveaways</Link>
+              <Link to="/giveaways" className="text-[#A9A9A9] hover:text-white transition-colors" data-track="Footer — Free Giveaways Link">Free Giveaways</Link>
             </div>
             <div className="flex flex-col space-y-4">
               <h4 className="text-white font-bold mb-2 uppercase tracking-widest text-[10px]">Specials</h4>
-              <a href="#contact" className="text-[#A9A9A9] hover:text-white transition-colors">Enterprise</a>
-              <a href="#contact" className="text-[#A9A9A9] hover:text-white transition-colors">Startups</a>
-              <a href="#contact" className="text-[#A9A9A9] hover:text-white transition-colors">E-commerce</a>
+              <a href="#contact" className="text-[#A9A9A9] hover:text-white transition-colors" data-track="Footer — Enterprise Link">Enterprise</a>
+              <a href="#contact" className="text-[#A9A9A9] hover:text-white transition-colors" data-track="Footer — Startups Link">Startups</a>
+              <a href="#contact" className="text-[#A9A9A9] hover:text-white transition-colors" data-track="Footer — E-commerce Link">E-commerce</a>
             </div>
             <div className="flex flex-col space-y-4">
               <h4 className="text-white font-bold mb-2 uppercase tracking-widest text-[10px]">Social</h4>
-              <a href="https://www.linkedin.com/company/lbxsuite" className="text-[#A9A9A9] hover:text-white transition-colors">Linkedin</a>
-              <a href="https://www.instagram.com/lbxsuite/" className="text-[#A9A9A9] hover:text-white transition-colors">Instagram</a>
-              <a href="#contact" className="text-[#A9A9A9] hover:text-white transition-colors font-bold">Google Meet</a>
+              <a href="https://www.linkedin.com/company/lbxsuite" className="text-[#A9A9A9] hover:text-white transition-colors" data-track="Footer — LinkedIn Social">Linkedin</a>
+              <a href="https://www.instagram.com/lbxsuite/" className="text-[#A9A9A9] hover:text-white transition-colors" data-track="Footer — Instagram Social">Instagram</a>
+              <a href="#contact" className="text-[#A9A9A9] hover:text-white transition-colors font-bold" data-track="Footer — Google Meet Social">Google Meet</a>
             </div>
           </div>
         </div>
@@ -99,8 +99,8 @@ const Footer = () => {
 
         <div className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-8">
           <div className="flex space-x-6">
-            <Link to="/privacy" className="hover:text-[#FFFFFF] transition-colors">Privacy Policy</Link>
-            <Link to="/terms" className="hover:text-[#FFFFFF] transition-colors">Terms of Service</Link>
+            <Link to="/privacy" className="hover:text-[#FFFFFF] transition-colors" data-track="Footer — Privacy Policy Link">Privacy Policy</Link>
+            <Link to="/terms" className="hover:text-[#FFFFFF] transition-colors" data-track="Footer — Terms of Service Link">Terms of Service</Link>
           </div>
         </div>
       </div>

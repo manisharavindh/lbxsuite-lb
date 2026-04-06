@@ -91,4 +91,5 @@ export const analyticsAPI = {
     const qs = new URLSearchParams(params).toString();
     return request(`/admin/analytics/heatmap${qs ? '?' + qs : ''}`);
   },
+  sessions: (days = 7) => request(`/admin/analytics/sessions?days=${days}`),
 };

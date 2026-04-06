@@ -101,6 +101,7 @@ const BlogPage = () => {
                   <Link
                     to={`/blog/${featuredPost.id}`}
                     className="group block h-full"
+                    data-track="Blog — Featured Post Card"
                   >
                     <div className="p-8 md:p-10 flex flex-col h-full w-full">
                       <div className="flex items-center gap-3 mb-6">
@@ -165,6 +166,7 @@ const BlogPage = () => {
                     ? 'bg-[#FF5555] text-white'
                     : 'text-[#A9A9A9] hover:text-white hover:bg-white/5'
                     }`}
+                  data-track={`Blog — Filter: ${cat}`}
                 >
                   {cat}
                 </button>
@@ -189,6 +191,7 @@ const BlogPage = () => {
                       onChange={(e) => setSearchQuery(e.target.value)}
                       autoFocus
                       className="w-full bg-white/5 border border-white/10 rounded-full px-4 py-2 text-xs font-sans text-white placeholder-[#A9A9A9] outline-none focus:border-[#FF5555]/50 transition-colors"
+                      data-track="Blog — Search Input"
                     />
                   </motion.div>
                 )}
@@ -199,6 +202,7 @@ const BlogPage = () => {
                   if (searchOpen) setSearchQuery('');
                 }}
                 className="w-9 h-9 rounded-full border border-white/10 flex items-center justify-center text-[#A9A9A9] hover:text-white hover:border-white/20 transition-all cursor-pointer"
+                data-track="Blog — Search Toggle"
               >
                 {searchOpen ? <X size={14} /> : <Search size={14} />}
               </button>
@@ -216,6 +220,7 @@ const BlogPage = () => {
                     <Link
                       to={`/blog/${post.id}`}
                       className="group block h-full rounded-[4px] border border-white/[0.15] bg-[#141414] hover:border-[#FF5555]/40 transition-all duration-500"
+                      data-track={`Blog — Post: ${post.title.substring(0, 50)}`}
                     >
                       <div className="p-8 md:p-10 flex flex-col h-full w-full">
                         <h3 className="text-2xl md:text-[1.75rem] font-serif text-[#FFFFFF] leading-tight mb-4 group-hover:text-white transition-colors duration-300 line-clamp-2">
@@ -273,6 +278,7 @@ const BlogPage = () => {
                 <button
                   onClick={() => { setActiveCategory('All'); setSearchQuery(''); }}
                   className="mt-6 text-[#FF5555] text-sm font-sans font-bold underline underline-offset-4 hover:text-white transition-colors cursor-pointer"
+                  data-track="Blog — Clear All Filters"
                 >
                   Clear all filters
                 </button>
@@ -299,8 +305,9 @@ const BlogPage = () => {
                   type="email"
                   placeholder="your@email.com"
                   className="w-full sm:w-80 bg-white/5 border border-white/10 rounded px-5 py-3 text-sm font-sans text-white placeholder-[#A9A9A9] outline-none focus:border-[#FF5555]/50 transition-colors"
+                  data-track="Blog — Newsletter Email Input"
                 />
-                <AnimatedButton href={null} size="md" className="w-full sm:w-auto whitespace-nowrap">
+                <AnimatedButton href={null} size="md" className="w-full sm:w-auto whitespace-nowrap" data-track="Blog — Newsletter Subscribe CTA">
                   Subscribe
                 </AnimatedButton>
               </form>

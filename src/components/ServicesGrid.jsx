@@ -46,6 +46,7 @@ const ServicesGrid = () => {
               to={`/services/${service.id}`}
               className="block h-full no-underline"
               style={{ textDecoration: 'none' }}
+              data-track={`Services — ${service.title} Card`}
             >
               <BorderGlow
                 className="h-full transition-colors"

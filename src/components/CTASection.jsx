@@ -18,7 +18,7 @@ const CTASection = () => {
           <p className="text-[#A9A9A9] font-sans md:text-lg mb-12 max-w-md">
             We funnel ambitious ideas into high-performance software. Book an introductory call with our technical leads today.
           </p>
-          <AnimatedButton href="mailto:hello@lbxsuite.com" size="lg" className="shadow-lg shadow-[#FF5555]/20 w-fit">
+          <AnimatedButton href="mailto:hello@lbxsuite.com" size="lg" className="shadow-lg shadow-[#FF5555]/20 w-fit" data-track="CTA — Book an Intro Call">
             Book an Intro Call
           </AnimatedButton>
         </div>
@@ -30,6 +30,7 @@ const CTASection = () => {
               key={index}
               href="#"
               className={`py-6 lg:py-8 flex justify-between items-center group ${index === 0 ? 'border-y' : 'border-b'} border-white/10 hover:border-[#FF5555]/50 transition-colors duration-300`}
+              data-track={`CTA — Learn More: ${link}`}
             >
               <span className="text-base lg:text-lg font-sans font-medium text-[#A9A9A9] group-hover:text-[#FFFFFF] transition-colors duration-300">
                 {link}

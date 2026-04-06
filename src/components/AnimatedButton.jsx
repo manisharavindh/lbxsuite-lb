@@ -15,6 +15,8 @@ const AnimatedButton = ({
   variant = 'primary',
   onClick,
   size = 'md',
+  'data-track': dataTrack,
+  ...rest
 }) => {
   const Tag = to ? Link : (href ? 'a' : 'button');
 
@@ -52,6 +54,8 @@ const AnimatedButton = ({
       onClick={onClick}
       className={`anim-btn relative rounded font-sans font-bold cursor-pointer ${s.text} ${styles.base} ${className}`}
       style={{ display: 'inline-block', overflow: 'hidden' }}
+      data-track={dataTrack}
+      {...rest}
     >
       {/* 
         Sizing ghost — invisible, in flow, determines button height.

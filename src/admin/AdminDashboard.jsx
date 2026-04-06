@@ -42,33 +42,31 @@ const AdminDashboard = ({ user, onLogout }) => {
   const statCards = stats ? [
     {
       label: 'Total Clicks',
-      value: stats.totalClicks.toLocaleString(),
+      value: (stats.totalClicks || 0).toLocaleString(),
       icon: MousePointerClick,
       color: 'accent',
       description: 'Last 30 days',
     },
     {
-      label: 'Unique Visitors',
-      value: stats.uniqueVisitors.toLocaleString(),
-      icon: Users,
+      label: 'Page Views',
+      value: (stats.totalPageviews || 0).toLocaleString(),
+      icon: Eye,
       color: 'info',
+      description: 'Unique page loads',
+    },
+    {
+      label: 'Unique Visitors',
+      value: (stats.uniqueVisitors || 0).toLocaleString(),
+      icon: Users,
+      color: 'success',
       description: 'By session ID',
     },
     {
       label: 'Blog Posts',
       value: totalPosts.toString(),
       icon: FileText,
-      color: 'success',
-      description: `${recentPosts.filter(p => p.status === 'published').length} published`,
-    },
-    {
-      label: 'Avg. Daily Clicks',
-      value: stats.clicksByDay.length > 0
-        ? Math.round(stats.totalClicks / Math.max(stats.clicksByDay.length, 1)).toLocaleString()
-        : '0',
-      icon: TrendingUp,
       color: 'warning',
-      description: stats.clicksByDay.length > 0 ? `Over ${stats.clicksByDay.length} days` : 'No data yet',
+      description: `${recentPosts.filter(p => p.status === 'published').length} published`,
     },
   ] : [];
 

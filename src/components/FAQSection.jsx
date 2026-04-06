@@ -49,6 +49,7 @@ const QAItem = ({ question, answer }) => {
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="w-full flex justify-between items-center py-6 md:py-8 text-left focus:outline-none group cursor-pointer"
+        data-track={`FAQ — ${question.substring(0, 60)}`}
       >
         <span className={`text-sm md:text-[1.125rem] font-sans transition-colors duration-300 pr-8 font-semibold opacity-90 group-hover:opacity-100 ${isOpen ? 'text-[#FFFFFF]' : 'text-[#FFFFFF]'}`}>
           {question}

@@ -33,8 +33,9 @@ const GiveawaysPage = () => {
                 type="email" 
                 placeholder="Enter your email to get early access..." 
                 className="w-full bg-[#0a0a0a] border border-[#272727] rounded-full px-6 py-4 text-sm text-white focus:outline-none focus:border-[#FF5555] transition-colors"
+                data-track="Giveaways — Email Notify Input"
               />
-              <AnimatedButton text="Notify Me" as="button" className="w-full sm:w-auto flex-shrink-0" />
+              <AnimatedButton text="Notify Me" as="button" className="w-full sm:w-auto flex-shrink-0" data-track="Giveaways — Notify Me CTA" />
             </form>
           </div>
         </div>
@@ -48,7 +49,7 @@ const GiveawaysPage = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full">
             {/* The Last Giveaway Card */}
-            <div className="group relative border border-[#272727] bg-[#0a0a0a] rounded-2xl overflow-hidden transition-all duration-300 hover:border-[#555555] cursor-pointer">
+            <div className="group relative border border-[#272727] bg-[#0a0a0a] rounded-2xl overflow-hidden transition-all duration-300 hover:border-[#555555] cursor-pointer" data-track="Giveaways — Past Drop: Ultimate Setup #1">
               <div className="aspect-video bg-[#141414] relative overflow-hidden flex flex-col items-center justify-center border-b border-[#272727]">
                  <Award className="w-16 h-16 text-[#A9A9A9] mb-4 group-hover:scale-110 transition-transform duration-500" />
                  <span className="px-4 py-1.5 rounded-full bg-[#0a0a0a] border border-[#272727] text-xs font-bold text-[#A9A9A9] uppercase tracking-widest absolute top-4 left-4">

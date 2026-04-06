@@ -39,6 +39,7 @@ CREATE TABLE IF NOT EXISTS user_analytics (
     element_text TEXT,
     element_class TEXT,
     element_clicked TEXT,
+    element_name TEXT,
     page_path TEXT,
     page_url TEXT,
     referrer TEXT,
@@ -76,6 +77,9 @@ BEGIN
     IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='user_analytics' AND column_name='referrer') THEN
         ALTER TABLE user_analytics ADD COLUMN referrer TEXT;
     END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='user_analytics' AND column_name='element_name') THEN
+        ALTER TABLE user_analytics ADD COLUMN element_name TEXT;
+    END IF;
 END $$;
 
 -- Indexes for performance
@@ -84,5 +88,6 @@ CREATE INDEX IF NOT EXISTS idx_analytics_page_path ON user_analytics(page_path);
 CREATE INDEX IF NOT EXISTS idx_analytics_session_id ON user_analytics(session_id);
 CREATE INDEX IF NOT EXISTS idx_analytics_event_type ON user_analytics(event_type);
 CREATE INDEX IF NOT EXISTS idx_analytics_element_tag ON user_analytics(element_tag);
+CREATE INDEX IF NOT EXISTS idx_analytics_element_name ON user_analytics(element_name);
 CREATE INDEX IF NOT EXISTS idx_posts_slug ON posts(slug);
 CREATE INDEX IF NOT EXISTS idx_posts_status ON posts(status);

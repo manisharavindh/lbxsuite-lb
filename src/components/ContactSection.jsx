@@ -33,7 +33,7 @@ const ContactSection = () => {
         </div>
 
         {/* Cal Embed - Given rigid height to completely block dropdown glitch */}
-        <div className="w-full">
+        <div className="w-full" data-track="Contact — Cal.com Booking Widget">
           <Cal
             namespace="ps"
             calLink="lbxsuite/ps"

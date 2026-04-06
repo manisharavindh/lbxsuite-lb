@@ -35,7 +35,7 @@ const Navbar = () => {
         <div className="max-w-[1600px] mx-auto px-6 md:px-12 flex justify-between items-center text-sm font-sans font-medium relative">
 
           {/* Left: Logo */}
-          <Link to="/" className="font-sans tracking-tight uppercase text-xl md:text-2xl font-black text-[#FFFFFF] hover:opacity-80 transition-opacity">
+          <Link to="/" className="font-sans tracking-tight uppercase text-xl md:text-2xl font-black text-[#FFFFFF] hover:opacity-80 transition-opacity" data-track="Nav — Logo">
             LBXSUITE
           </Link>
 
@@ -43,7 +43,7 @@ const Navbar = () => {
           <div className="hidden md:flex items-center space-x-6 lg:space-x-8 font-bold text-[#FFFFFF]">
             {navLinks.map(link => (
               link.isAnchor ? (
-                <a key={link.label} href={link.href} className="hover:text-[#A9A9A9] transition-colors">
+                <a key={link.label} href={link.href} className="hover:text-[#A9A9A9] transition-colors" data-track={`Nav — ${link.label}`}>
                   {link.label}
                 </a>
               ) : (
@@ -52,19 +52,20 @@ const Navbar = () => {
                   to={link.href}
                   className={`hover:text-[#A9A9A9] transition-colors ${location.pathname.startsWith(link.href) && link.href !== '/' ? 'text-[#FF5555]' : ''
                     }`}
+                  data-track={`Nav — ${link.label}`}
                 >
                   {link.label}
                 </Link>
               )
             ))}
-            <AnimatedButton href={isHome ? '#contact' : '/#contact'} size="sm" variant="nav" className="ml-2">
+            <AnimatedButton href={isHome ? '#contact' : '/#contact'} size="sm" variant="nav" className="ml-2" data-track="Nav — Start a Project CTA">
               Start a Project
             </AnimatedButton>
           </div>
 
           {/* Mobile Menu Toggle */}
           <div className="md:hidden flex items-center z-[60]">
-            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="text-[#FFFFFF]">
+            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="text-[#FFFFFF]" data-track="Nav — Mobile Menu Toggle">
               {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
           </div>
@@ -82,6 +83,7 @@ const Navbar = () => {
                   href={link.href}
                   className="hover:text-[#A9A9A9] transition-colors flex items-center group w-max"
                   onClick={() => setMobileMenuOpen(false)}
+                  data-track={`Nav Mobile — ${link.label}`}
                 >
                   <span>{link.label}</span>
                 </a>
@@ -92,13 +94,14 @@ const Navbar = () => {
                   className={`hover:text-[#A9A9A9] transition-colors flex items-center group w-max ${location.pathname.startsWith(link.href) && link.href !== '/' ? 'text-[#FF5555]' : ''
                     }`}
                   onClick={() => setMobileMenuOpen(false)}
+                  data-track={`Nav Mobile — ${link.label}`}
                 >
                   <span>{link.label}</span>
                 </Link>
               )
             ))}
             <div className="pt-8">
-              <AnimatedButton href={isHome ? '#contact' : '/#contact'} size="lg" onClick={() => setMobileMenuOpen(false)} className="w-max">
+              <AnimatedButton href={isHome ? '#contact' : '/#contact'} size="lg" onClick={() => setMobileMenuOpen(false)} className="w-max" data-track="Nav Mobile — Start a Project CTA">
                 Start a Project
               </AnimatedButton>
             </div>

@@ -251,6 +251,7 @@ const BlogPostPage = () => {
               <Link
                 to="/blog"
                 className="inline-flex items-center gap-2 text-[11px] font-sans font-semibold tracking-[0.14em] uppercase text-[#888] hover:text-[#FF5555] transition-colors mb-9 group"
+                data-track="Blog Post — Back to Blog"
               >
                 <ArrowLeft size={13} className="group-hover:-translate-x-0.5 transition-transform" />
                 Back to Blog
@@ -294,6 +295,7 @@ const BlogPostPage = () => {
                     onClick={handleCopyLink}
                     title="Copy link"
                     className="w-8 h-8 rounded-full border border-white/[0.08] flex items-center justify-center text-[#888] hover:text-white hover:border-white/20 hover:bg-white/[0.04] transition-all duration-200 cursor-pointer"
+                    data-track="Blog Post — Copy Link"
                   >
                     {copied ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} />}
                   </button>
@@ -373,6 +375,7 @@ const BlogPostPage = () => {
                     key={tag}
                     to={`/blog?tag=${encodeURIComponent(tag)}`}
                     className="text-[11px] font-sans font-medium text-[#999] bg-white/[0.03] border border-white/[0.06] px-3 py-1.5 rounded-sm hover:bg-[#FF5555]/8 hover:border-[#FF5555]/20 hover:text-[#FF5555] transition-all duration-300"
+                    data-track={`Blog Post — Tag: ${tag}`}
                   >
                     {tag}
                   </Link>
@@ -466,6 +469,7 @@ const BlogPostPage = () => {
                     <Link
                       to={`/blog/${rp.id}`}
                       className="group block h-full rounded-[4px] border border-white/[0.15] bg-[#141414] hover:border-[#FF5555]/40 transition-all duration-500"
+                      data-track={`Blog Post — Related: ${rp.title.substring(0, 40)}`}
                     >
                       <div className="p-8 md:p-10 flex flex-col h-full">
                         <h3 className="text-[1.375rem] md:text-[1.625rem] font-serif text-white leading-tight mb-4 line-clamp-2">
@@ -518,6 +522,7 @@ const BlogPostPage = () => {
                 <Link
                   to="/blog"
                   className="inline-flex items-center gap-2 text-[11px] font-sans font-bold tracking-[0.1em] uppercase text-[#888] hover:text-[#FF5555] transition-colors duration-300"
+                  data-track="Blog Post — View All Articles"
                 >
                   View All Articles
                   <ArrowUpRight size={13} />

@@ -44,7 +44,7 @@ const NotFoundPage = () => {
             Page not found.
           </p>
 
-          <AnimatedButton href="/" size="md" className="shadow-2xl">
+          <AnimatedButton href="/" size="md" className="shadow-2xl" data-track="404 — Return Home CTA">
             Return Home
           </AnimatedButton>
         </div>

@@ -18,7 +18,7 @@ const Hero = () => {
 
           {/* Right Top Arrow */}
           <div className="absolute right-0 top-[18%] lg:top-[20%] z-20">
-            <div className="w-16 h-16 flex justify-center items-center group cursor-pointer hover:scale-110 transition-transform">
+            <div className="w-16 h-16 flex justify-center items-center group cursor-pointer hover:scale-110 transition-transform" data-track="Hero — Arrow Icon">
               <ArrowUpRight size={56} className="text-[#fff] group-hover:text-[#fff] transition-colors lg:w-[64px] lg:h-[64px]" strokeWidth={2.5} />
             </div>
           </div>
@@ -43,7 +43,7 @@ const Hero = () => {
                   </p>
 
                   {/* Funnel Element */}
-                  <AnimatedButton href="#contact" size="sm" className="shadow-lg">
+                  <AnimatedButton href="#contact" size="sm" className="shadow-lg" data-track="Hero — Book an Intro Call CTA">
                     Book an Intro Call
                   </AnimatedButton>
                 </div>
@@ -65,7 +65,7 @@ const Hero = () => {
             <p className="text-[13px] sm:text-[14px] font-sans text-[#A9A9A9] leading-[1.6] font-medium mb-6">
               The first full-stack Web3 creative agency integrating AI technology to deliver best-in-class client experience.
             </p>
-            <AnimatedButton href="#contact" size="md">
+            <AnimatedButton href="#contact" size="md" data-track="Hero Mobile — Book an Intro Call CTA">
               Book an Intro Call
             </AnimatedButton>
           </div>
@@ -73,7 +73,7 @@ const Hero = () => {
       </div>
 
       {/* Simple Scroll Down Text */}
-      <div className="absolute bottom-10 md:bottom-12 left-1/2 -translate-x-1/2 z-20 cursor-pointer opacity-80 hover:opacity-100 transition-opacity duration-300">
+      <div className="absolute bottom-10 md:bottom-12 left-1/2 -translate-x-1/2 z-20 cursor-pointer opacity-80 hover:opacity-100 transition-opacity duration-300" data-track="Hero — Scroll to Explore">
         <span className="font-sans text-[8px] md:text-[10px] tracking-[0.25em] md:tracking-[0.3em] text-[#A9A9A9] uppercase font-medium whitespace-nowrap">
           Scroll TO EXPLORE
         </span>

@@ -114,6 +114,7 @@ const ServiceDetailsPage = () => {
             <button
               onClick={() => navigate(-1)}
               className="inline-flex items-center gap-2 text-[11px] font-sans font-semibold tracking-[0.14em] uppercase text-[#888] hover:text-[#FF5555] transition-colors mb-9 group cursor-pointer"
+              data-track="Service Detail — Back Button"
             >
               <ArrowLeft size={13} className="group-hover:-translate-x-0.5 transition-transform" />
               Back
@@ -147,6 +148,7 @@ const ServiceDetailsPage = () => {
                 href="#contact"
                 size="md"
                 className="w-full justify-center lg:w-fit"
+                data-track={`Service Detail — Book Intro Call (${service.title})`}
                 onClick={(e) => {
                   const contactSection = document.getElementById('contact');
                   if (contactSection) {
