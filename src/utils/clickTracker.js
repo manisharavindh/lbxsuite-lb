@@ -18,10 +18,30 @@ function getSessionId() {
 }
 
 function getElementText(el) {
-  const text = el.textContent?.trim();
+  // Try innerText first for better accuracy, then textContent
+  const text = (el.innerText || el.textContent || '').trim();
   if (text && text.length <= 100) return text;
   if (text) return text.substring(0, 100) + '…';
-  return el.getAttribute('aria-label') || el.getAttribute('alt') || '';
+  return el.getAttribute('aria-label') || el.getAttribute('alt') || el.getAttribute('title') || '';
+}
+
+function getElementIdentifier(el) {
+  // Build a meaningful element identifier for the admin to recognize
+  const tag = el.tagName?.toLowerCase() || 'unknown';
+  const id = el.id || null;
+  const classes = el.className?.toString() || '';
+
+  // For links, include the href
+  if (tag === 'a' && el.href) {
+    try {
+      const url = new URL(el.href);
+      return { tag, id, href: url.pathname + url.hash };
+    } catch {
+      return { tag, id, href: el.getAttribute('href') };
+    }
+  }
+
+  return { tag, id };
 }
 
 function flushQueue() {
@@ -30,23 +50,44 @@ function flushQueue() {
   const events = [...eventQueue];
   eventQueue = [];
 
-  fetch('/api/analytics/track-batch', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ events }),
-    keepalive: true,
-  }).catch(() => {
-    // Silently fail — don't disrupt user experience
-  });
+  // Use sendBeacon for reliability on page unload, fetch otherwise
+  const payload = JSON.stringify({ events });
+  
+  if (navigator.sendBeacon) {
+    const blob = new Blob([payload], { type: 'application/json' });
+    const sent = navigator.sendBeacon('/api/analytics/track-batch', blob);
+    if (!sent) {
+      // Fallback to fetch if sendBeacon fails
+      fetch('/api/analytics/track-batch', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: payload,
+        keepalive: true,
+      }).catch(() => {});
+    }
+  } else {
+    fetch('/api/analytics/track-batch', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: payload,
+      keepalive: true,
+    }).catch(() => {});
+  }
 }
 
 function trackClick(event) {
-  const el = event.target.closest('a, button, [role="button"], input[type="submit"], [data-track]') || event.target;
+  // Don't track clicks on admin pages
+  if (window.location.pathname.startsWith('/admin')) return;
+
+  // Find the nearest interactive element
+  const el = event.target.closest('a, button, [role="button"], input[type="submit"], [data-track], nav, .nav-link') || event.target;
+
+  const { tag, id, href } = getElementIdentifier(el);
 
   const data = {
     event_type: 'click',
-    element_tag: el.tagName?.toLowerCase(),
-    element_id: el.id || null,
+    element_tag: tag,
+    element_id: id,
     element_text: getElementText(el),
     element_class: el.className?.toString()?.substring(0, 200) || null,
     page_url: window.location.href,
@@ -67,9 +108,12 @@ function trackClick(event) {
 }
 
 function trackPageView() {
+  // Don't track admin pages
+  if (window.location.pathname.startsWith('/admin')) return;
+
   const data = {
     event_type: 'pageview',
-    element_tag: null,
+    element_tag: 'page',
     element_id: null,
     element_text: document.title,
     element_class: null,
@@ -88,12 +132,14 @@ function trackPageView() {
 }
 
 export function initClickTracking() {
-  // Don't track on admin pages
-  if (window.location.pathname.startsWith('/admin')) return;
+  // Don't track on admin pages — but always return a valid cleanup function
+  if (window.location.pathname.startsWith('/admin')) {
+    return () => {}; // no-op cleanup
+  }
 
   document.addEventListener('click', trackClick, { passive: true });
 
-  // Track page views
+  // Track initial page view
   trackPageView();
 
   // Set up periodic flush

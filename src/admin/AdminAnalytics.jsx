@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   MousePointerClick, Eye, TrendingUp, Clock,
-  BarChart3, Activity, Layers, Filter
+  BarChart3, Activity, Layers, Users, Zap, RefreshCw
 } from 'lucide-react';
 import AdminLayout from './AdminLayout';
 import { analyticsAPI } from './api';
@@ -13,6 +13,7 @@ const AdminAnalytics = ({ user, onLogout }) => {
   const [loading, setLoading] = useState(true);
   const [days, setDays] = useState(30);
   const [activeTab, setActiveTab] = useState('overview');
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -30,7 +31,7 @@ const AdminAnalytics = ({ user, onLogout }) => {
           clicksByHour: [],
         })),
         analyticsAPI.topElements(days).catch(() => ({ elements: [] })),
-        analyticsAPI.clicks({ days, limit: 30 }).catch(() => ({ clicks: [] })),
+        analyticsAPI.clicks({ days, limit: 50 }).catch(() => ({ clicks: [] })),
       ]);
       setOverview(overviewData);
       setTopElements(elementsData.elements || []);
@@ -39,7 +40,13 @@ const AdminAnalytics = ({ user, onLogout }) => {
       console.error('Analytics load error:', err);
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
+  };
+
+  const handleRefresh = () => {
+    setRefreshing(true);
+    loadData();
   };
 
   const maxDayClicks = overview?.clicksByDay?.length > 0
@@ -50,6 +57,9 @@ const AdminAnalytics = ({ user, onLogout }) => {
     ? Math.max(...topElements.map(e => parseInt(e.clicks)))
     : 1;
 
+  // Compute engagement rate (clicks / pageviews) if we have data
+  const pageviews = overview?.topPages?.reduce((sum, p) => sum + parseInt(p.clicks), 0) || 0;
+
   return (
     <AdminLayout
       user={user}
@@ -57,16 +67,26 @@ const AdminAnalytics = ({ user, onLogout }) => {
       title="Analytics"
       subtitle="Track user engagement and optimize your site."
       actions={
-        <div style={{ display: 'flex', gap: '4px' }}>
-          {[7, 14, 30, 90].map((d) => (
-            <button
-              key={d}
-              onClick={() => setDays(d)}
-              className={`admin-btn admin-btn-sm ${days === d ? 'admin-btn-primary' : 'admin-btn-secondary'}`}
-            >
-              {d}d
-            </button>
-          ))}
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+          <button
+            onClick={handleRefresh}
+            className="admin-btn admin-btn-ghost admin-btn-sm"
+            disabled={refreshing}
+            title="Refresh data"
+          >
+            <RefreshCw size={14} className={refreshing ? 'admin-spin' : ''} />
+          </button>
+          <div style={{ display: 'flex', gap: '4px' }}>
+            {[7, 14, 30, 90].map((d) => (
+              <button
+                key={d}
+                onClick={() => setDays(d)}
+                className={`admin-btn admin-btn-sm ${days === d ? 'admin-btn-primary' : 'admin-btn-secondary'}`}
+              >
+                {d}d
+              </button>
+            ))}
+          </div>
         </div>
       }
     >
@@ -74,7 +94,7 @@ const AdminAnalytics = ({ user, onLogout }) => {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <div className="admin-stats-grid">
             {[1, 2, 3, 4].map(i => (
-              <div key={i} className="admin-skeleton" style={{ height: '120px' }} />
+              <div key={i} className="admin-skeleton" style={{ height: '140px' }} />
             ))}
           </div>
           <div className="admin-skeleton" style={{ height: '400px' }} />
@@ -87,11 +107,13 @@ const AdminAnalytics = ({ user, onLogout }) => {
               <div className="admin-stat-icon accent"><MousePointerClick size={20} /></div>
               <div className="admin-stat-value">{(overview?.totalClicks || 0).toLocaleString()}</div>
               <div className="admin-stat-label">Total Clicks</div>
+              <div className="admin-stat-description">Last {days} days</div>
             </div>
             <div className="admin-stat-card">
-              <div className="admin-stat-icon info"><Eye size={20} /></div>
+              <div className="admin-stat-icon info"><Users size={20} /></div>
               <div className="admin-stat-value">{(overview?.uniqueVisitors || 0).toLocaleString()}</div>
               <div className="admin-stat-label">Unique Visitors</div>
+              <div className="admin-stat-description">By session</div>
             </div>
             <div className="admin-stat-card">
               <div className="admin-stat-icon success"><TrendingUp size={20} /></div>
@@ -101,11 +123,15 @@ const AdminAnalytics = ({ user, onLogout }) => {
                   : '0'}
               </div>
               <div className="admin-stat-label">Avg. Daily Clicks</div>
+              <div className="admin-stat-description">
+                {overview?.clicksByDay?.length > 0 ? `Over ${overview.clicksByDay.length} days` : 'No data'}
+              </div>
             </div>
             <div className="admin-stat-card">
               <div className="admin-stat-icon warning"><Layers size={20} /></div>
               <div className="admin-stat-value">{(overview?.topPages?.length || 0).toLocaleString()}</div>
               <div className="admin-stat-label">Active Pages</div>
+              <div className="admin-stat-description">With interactions</div>
             </div>
           </div>
 
@@ -123,6 +149,12 @@ const AdminAnalytics = ({ user, onLogout }) => {
               >
                 <tab.icon size={14} style={{ display: 'inline', marginRight: '6px', verticalAlign: '-2px' }} />
                 {tab.label}
+                {tab.key === 'elements' && topElements.length > 0 && (
+                  <span className="admin-tab-count">{topElements.length}</span>
+                )}
+                {tab.key === 'clicks' && recentClicks.length > 0 && (
+                  <span className="admin-tab-count">{recentClicks.length}</span>
+                )}
               </button>
             ))}
           </div>
@@ -185,6 +217,9 @@ const AdminAnalytics = ({ user, onLogout }) => {
               <div className="admin-card">
                 <div className="admin-card-header">
                   <span className="admin-card-title">Top Pages</span>
+                  <span style={{ fontSize: '11px', color: 'var(--admin-text-muted)' }}>
+                    {overview?.topPages?.length || 0} pages
+                  </span>
                 </div>
                 <div className="admin-card-body">
                   {overview?.topPages?.length > 0 ? (
@@ -245,15 +280,12 @@ const AdminAnalytics = ({ user, onLogout }) => {
                           return (
                             <div
                               key={hour}
+                              className="admin-hourly-bar"
                               style={{
                                 height: `${Math.max((clicks / maxH) * 100, 4)}%`,
                                 background: clicks > 0
-                                  ? `linear-gradient(to top, rgba(255,85,85,0.4), rgba(255,85,85,${0.3 + (clicks/maxH) * 0.7}))`
+                                  ? `linear-gradient(to top, rgba(255,85,85,0.4), rgba(255,85,85,${0.3 + (clicks / maxH) * 0.7}))`
                                   : 'var(--admin-surface-3)',
-                                borderRadius: '3px 3px 0 0',
-                                cursor: 'pointer',
-                                transition: 'all 0.2s',
-                                position: 'relative',
                               }}
                               title={`${hour}:00 — ${clicks} clicks`}
                             />
@@ -293,7 +325,7 @@ const AdminAnalytics = ({ user, onLogout }) => {
               <div className="admin-card-header">
                 <span className="admin-card-title">Most Clicked Elements</span>
                 <span style={{ fontSize: '11px', color: 'var(--admin-text-muted)' }}>
-                  {topElements.length} elements tracked
+                  {topElements.length} element{topElements.length !== 1 ? 's' : ''} tracked
                 </span>
               </div>
               <div className="admin-card-body" style={{ padding: 0 }}>
@@ -314,7 +346,7 @@ const AdminAnalytics = ({ user, onLogout }) => {
                       <tbody>
                         {topElements.map((el, i) => (
                           <tr key={i}>
-                            <td style={{ fontWeight: 700, color: 'var(--admin-text-muted)' }}>{i + 1}</td>
+                            <td style={{ fontWeight: 700, color: 'var(--admin-text-muted)', width: '40px' }}>{i + 1}</td>
                             <td>
                               <code style={{
                                 fontSize: '11px',
@@ -322,6 +354,7 @@ const AdminAnalytics = ({ user, onLogout }) => {
                                 padding: '2px 6px',
                                 borderRadius: '3px',
                                 color: 'var(--admin-text-secondary)',
+                                wordBreak: 'break-all',
                               }}>
                                 {el.element?.substring(0, 40) || '—'}
                               </code>
@@ -331,7 +364,7 @@ const AdminAnalytics = ({ user, onLogout }) => {
                             </td>
                             <td>
                               <span className="admin-badge admin-badge-info" style={{ fontSize: '9px' }}>
-                                {el.element_tag}
+                                {el.element_tag || '?'}
                               </span>
                             </td>
                             <td style={{ fontSize: '12px' }}>{el.page_path || '/'}</td>
@@ -369,7 +402,7 @@ const AdminAnalytics = ({ user, onLogout }) => {
               <div className="admin-card-header">
                 <span className="admin-card-title">Recent Click Events</span>
                 <span style={{ fontSize: '11px', color: 'var(--admin-text-muted)' }}>
-                  Last {days} days
+                  Last {days} days · {recentClicks.length} events
                 </span>
               </div>
               <div className="admin-card-body" style={{ padding: 0 }}>

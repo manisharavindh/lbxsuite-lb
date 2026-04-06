@@ -56,12 +56,10 @@
 }
 
 @keyframes admin-glow {
-
   0%,
   100% {
     transform: translate(0, 0) rotate(0deg);
   }
-
   50% {
     transform: translate(-2%, 2%) rotate(1deg);
   }
@@ -435,6 +433,8 @@
 @media (max-width: 768px) {
   .admin-topbar {
     padding: 12px 16px;
+    flex-wrap: wrap;
+    gap: 12px;
   }
 }
 
@@ -521,11 +521,12 @@
   border: 1px solid var(--admin-border);
   border-radius: var(--admin-radius-lg);
   padding: 24px;
-  transition: border-color var(--admin-transition);
+  transition: border-color var(--admin-transition), transform var(--admin-transition);
 }
 
 .admin-stat-card:hover {
   border-color: var(--admin-border-hover);
+  transform: translateY(-1px);
 }
 
 .admin-stat-icon {
@@ -571,6 +572,13 @@
   font-size: 12px;
   color: var(--admin-text-muted);
   font-weight: 500;
+}
+
+.admin-stat-description {
+  font-size: 10px;
+  color: var(--admin-text-muted);
+  margin-top: 6px;
+  opacity: 0.7;
 }
 
 /* ========= Table ========= */
@@ -702,6 +710,20 @@
   opacity: 1;
 }
 
+/* ========= Hourly Bar ========= */
+.admin-hourly-bar {
+  border-radius: 3px 3px 0 0;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.admin-hourly-bar:hover {
+  opacity: 0.9;
+  transform: scaleY(1.05);
+  transform-origin: bottom;
+}
+
 /* ========= Empty State ========= */
 .admin-empty {
   display: flex;
@@ -791,7 +813,6 @@
   from {
     opacity: 0;
   }
-
   to {
     opacity: 1;
   }
@@ -802,7 +823,6 @@
     opacity: 0;
     transform: translateY(16px) scale(0.98);
   }
-
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -980,11 +1000,11 @@
   background: var(--admin-accent);
 }
 
-/* ========= Loading ========= */
+/* ========= Loading / Spinners ========= */
 .admin-spinner {
   width: 20px;
   height: 20px;
-  border: 2px solid #fff;
+  border: 2px solid rgba(255, 255, 255, 0.15);
   border-top-color: currentColor;
   border-radius: 50%;
   animation: admin-spin 0.6s linear infinite;
@@ -1000,6 +1020,11 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+/* Utility class for spinning icons (e.g. refresh button) */
+.admin-spin {
+  animation: admin-spin 1s linear infinite;
 }
 
 .admin-loading-page {
@@ -1173,6 +1198,7 @@
   gap: 2px;
   border-bottom: 1px solid var(--admin-border);
   margin-bottom: 24px;
+  overflow-x: auto;
 }
 
 .admin-tab {
@@ -1187,6 +1213,10 @@
   border-bottom: 2px solid transparent;
   transition: all var(--admin-transition);
   margin-bottom: -1px;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .admin-tab:hover {
@@ -1196,6 +1226,20 @@
 .admin-tab.active {
   color: var(--admin-accent);
   border-bottom-color: var(--admin-accent);
+}
+
+.admin-tab-count {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 10px;
+  background: var(--admin-surface-3);
+  color: var(--admin-text-muted);
+}
+
+.admin-tab.active .admin-tab-count {
+  background: var(--admin-accent-bg);
+  color: var(--admin-accent);
 }
 
 /* ========= Toast ========= */
@@ -1245,6 +1289,7 @@
 /* ========= Scrollbar ========= */
 .admin-layout ::-webkit-scrollbar {
   width: 6px;
+  height: 6px;
 }
 
 .admin-layout ::-webkit-scrollbar-track {
@@ -1272,7 +1317,6 @@
   0% {
     background-position: -200% 0;
   }
-
   100% {
     background-position: 200% 0;
   }

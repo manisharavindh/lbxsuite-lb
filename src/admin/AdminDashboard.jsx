@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   MousePointerClick, Eye, FileText, TrendingUp,
-  ArrowUpRight, Clock, Plus
+  ArrowUpRight, Clock, Plus, Users, Zap
 } from 'lucide-react';
 import AdminLayout from './AdminLayout';
 import { analyticsAPI, postsAPI } from './api';
@@ -10,6 +10,7 @@ import { analyticsAPI, postsAPI } from './api';
 const AdminDashboard = ({ user, onLogout }) => {
   const [stats, setStats] = useState(null);
   const [recentPosts, setRecentPosts] = useState([]);
+  const [totalPosts, setTotalPosts] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -30,6 +31,7 @@ const AdminDashboard = ({ user, onLogout }) => {
       ]);
       setStats(analyticsData);
       setRecentPosts(postsData.posts || []);
+      setTotalPosts(postsData.total || 0);
     } catch (err) {
       console.error('Dashboard load error:', err);
     } finally {
@@ -43,18 +45,21 @@ const AdminDashboard = ({ user, onLogout }) => {
       value: stats.totalClicks.toLocaleString(),
       icon: MousePointerClick,
       color: 'accent',
+      description: 'Last 30 days',
     },
     {
       label: 'Unique Visitors',
       value: stats.uniqueVisitors.toLocaleString(),
-      icon: Eye,
+      icon: Users,
       color: 'info',
+      description: 'By session ID',
     },
     {
       label: 'Blog Posts',
-      value: recentPosts.length > 0 ? recentPosts.length.toString() : '0',
+      value: totalPosts.toString(),
       icon: FileText,
       color: 'success',
+      description: `${recentPosts.filter(p => p.status === 'published').length} published`,
     },
     {
       label: 'Avg. Daily Clicks',
@@ -63,6 +68,7 @@ const AdminDashboard = ({ user, onLogout }) => {
         : '0',
       icon: TrendingUp,
       color: 'warning',
+      description: stats.clicksByDay.length > 0 ? `Over ${stats.clicksByDay.length} days` : 'No data yet',
     },
   ] : [];
 
@@ -76,7 +82,7 @@ const AdminDashboard = ({ user, onLogout }) => {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <div className="admin-stats-grid">
             {[1, 2, 3, 4].map(i => (
-              <div key={i} className="admin-skeleton" style={{ height: '120px' }} />
+              <div key={i} className="admin-skeleton" style={{ height: '140px' }} />
             ))}
           </div>
           <div className="admin-skeleton" style={{ height: '340px' }} />
@@ -92,6 +98,9 @@ const AdminDashboard = ({ user, onLogout }) => {
                 </div>
                 <div className="admin-stat-value">{card.value}</div>
                 <div className="admin-stat-label">{card.label}</div>
+                {card.description && (
+                  <div className="admin-stat-description">{card.description}</div>
+                )}
               </div>
             ))}
           </div>
@@ -102,6 +111,9 @@ const AdminDashboard = ({ user, onLogout }) => {
             <div className="admin-card">
               <div className="admin-card-header">
                 <span className="admin-card-title">Click Trend (30 days)</span>
+                <Link to="/admin/analytics" className="admin-btn admin-btn-ghost admin-btn-sm">
+                  View All <ArrowUpRight size={12} />
+                </Link>
               </div>
               <div className="admin-card-body">
                 {stats?.clicksByDay?.length > 0 ? (
@@ -245,7 +257,9 @@ const AdminDashboard = ({ user, onLogout }) => {
                   </div>
                 ) : (
                   <div className="admin-empty" style={{ padding: '40px 24px' }}>
-                    <p className="admin-empty-text">No page data available.</p>
+                    <div className="admin-empty-icon"><Zap size={20} /></div>
+                    <p className="admin-empty-title">No page data yet</p>
+                    <p className="admin-empty-text">Page stats emerge as visitors browse your site.</p>
                   </div>
                 )}
               </div>
