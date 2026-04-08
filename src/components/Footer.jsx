@@ -5,7 +5,7 @@ import { Twitter, Linkedin, Github } from 'lucide-react';
 
 const Footer = () => {
   return (
-    <footer className="relative z-40 w-full text-[#FFFFFF] px-6 md:px-12 pt-12 pb-8 font-sans overflow-hidden">
+    <footer className="relative z-20 w-full text-[#FFFFFF] px-6 md:px-12 pt-12 pb-8 font-sans overflow-hidden">
       {/* 
         Foreground shadow overlay to smoothly blend the footer top 
       */}

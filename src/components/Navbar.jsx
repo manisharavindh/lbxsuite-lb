@@ -22,6 +22,20 @@ const Navbar = () => {
     setMobileMenuOpen(false);
   }, [location]);
 
+  // Lock body scroll when mobile menu is open, but allow menu itself to scroll
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+    };
+  }, [mobileMenuOpen]);
   const navLinks = [
     { label: 'Services', href: isHome ? '#services' : '/#services', isAnchor: isHome },
     // { label: 'Works', href: isHome ? '#features' : '/#features', isAnchor: isHome },
@@ -74,7 +88,7 @@ const Navbar = () => {
 
       {/* Mobile Menu Overlay */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 bg-[#141414] z-40 px-6 pt-[120px] pb-8 md:hidden flex flex-col h-[100dvh]">
+        <div className="fixed inset-0 bg-[#141414] z-40 px-6 pt-[120px] pb-8 md:hidden flex flex-col h-[100dvh] overflow-y-auto">
           <div className="flex flex-col space-y-6 text-5xl font-serif text-[#FFFFFF] relative z-10">
             {navLinks.map((link) => (
               link.isAnchor ? (

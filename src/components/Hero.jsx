@@ -73,7 +73,7 @@ const Hero = () => {
       </div>
 
       {/* Simple Scroll Down Text */}
-      <div className="absolute bottom-10 md:bottom-12 left-1/2 -translate-x-1/2 z-20 cursor-pointer opacity-80 hover:opacity-100 transition-opacity duration-300" data-track="Hero — Scroll to Explore">
+      <div className="absolute bottom-10 md:bottom-12 left-1/2 -translate-x-1/2 z-20 cursor-pointer opacity-80 hover:opacity-100 transition-opacity duration-300" data-track="Hero — Scroll to Explore" onClick={() => window.scrollTo({ top: 500, behavior: 'smooth' })}>
         <span className="font-sans text-[8px] md:text-[10px] tracking-[0.25em] md:tracking-[0.3em] text-[#A9A9A9] uppercase font-medium whitespace-nowrap">
           Scroll TO EXPLORE
         </span>

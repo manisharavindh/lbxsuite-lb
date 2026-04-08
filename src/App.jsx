@@ -8,7 +8,7 @@ import NotFoundPage from './pages/NotFoundPage';
 import GiveawaysPage from './pages/GiveawaysPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import TermsConditionsPage from './pages/TermsConditionsPage';
-import { initClickTracking } from './utils/clickTracker';
+import { initClickTracking } from './utils/uiUtils';
 
 // Lazy-load admin to keep the main bundle lean
 const AdminApp = lazy(() => import('./admin/AdminApp'));
