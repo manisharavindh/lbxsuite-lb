@@ -24,6 +24,18 @@ const _currentDir = typeof __dirname !== 'undefined'
 const app = express();
 
 // Middleware
+app.use((req, res, next) => {
+  // on Netlify (serverless-http), req.body might be a raw Buffer instead of being parsed
+  if (req.body && Buffer.isBuffer(req.body) && req.headers['content-type']?.includes('application/json')) {
+    try {
+      req.body = JSON.parse(req.body.toString('utf8'));
+    } catch (e) {
+      console.error('Failed to parse Buffer body:', e);
+    }
+  }
+  next();
+});
+
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
