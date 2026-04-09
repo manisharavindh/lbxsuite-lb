@@ -45,7 +45,8 @@ router.get('/me', async (req, res) => {
   try {
     const jwt = await import('jsonwebtoken');
     const JWT_SECRET = process.env.JWT_SECRET || 'lbxsuite-admin-secret-change-me';
-    const decoded = jwt.default.verify(token, JWT_SECRET);
+    const jwtModule = jwt.default || jwt;
+    const decoded = jwtModule.verify(token, JWT_SECRET);
     return res.json({ user: { id: decoded.id, username: decoded.username } });
   } catch {
     res.clearCookie('admin_token');

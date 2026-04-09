@@ -1,10 +1,14 @@
 import 'dotenv/config';
-import express from 'express';
+import _express from 'express';
 import path from 'path';
-import cookieParser from 'cookie-parser';
+import _cookieParser from 'cookie-parser';
 import { fileURLToPath } from 'url';
 
-// Import routes — use .default fallback for ESM/CJS interop (Netlify bundles as CJS)
+// ESM/CJS interop — Netlify's esbuild may wrap default exports
+const express = _express.default || _express;
+const cookieParser = _cookieParser.default || _cookieParser;
+
+// Import routes
 import _authRoutes from './routes/authRoutes.js';
 import _postRoutes from './routes/postRoutes.js';
 import _analyticsRoutes from './routes/analyticsRoutes.js';
@@ -25,6 +29,15 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // API Routes
+app.post('/api/debug', (req, res) => {
+  res.json({
+    body: req.body,
+    headers: req.headers,
+    rawBody: req.rawBody, // if any
+    isBase64: req.isBase64Encoded
+  });
+});
+
 app.use('/api/admin/auth', authRoutes);
 app.use('/api/admin/posts', postRoutes);
 app.use('/api/admin/analytics', analyticsRoutes);
