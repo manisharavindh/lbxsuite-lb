@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import bcryptjs from 'bcryptjs';
-import supabase from './db.js';
+import _supabase from './db.js';
+const supabase = _supabase.default || _supabase;
 
 const JWT_SECRET = process.env.JWT_SECRET || 'lbxsuite-admin-secret-change-me';
 const TOKEN_EXPIRY = '24h';

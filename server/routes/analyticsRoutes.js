@@ -1,5 +1,6 @@
 import { Router } from 'express';
-import supabase from '../db.js';
+import _supabase from '../db.js';
+const supabase = _supabase.default || _supabase;
 import { authMiddleware } from '../auth.js';
 
 const router = Router();

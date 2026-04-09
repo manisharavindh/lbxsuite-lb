@@ -4,18 +4,25 @@ import sharp from 'sharp';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
-import supabase from '../db.js';
+import _supabase from '../db.js';
 import { authMiddleware } from '../auth.js';
+const supabase = _supabase.default || _supabase;
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// Resolve current directory — works in both ESM (local dev) and CJS (Netlify bundle)
+const _currentDir = typeof __dirname !== 'undefined'
+  ? __dirname
+  : path.dirname(fileURLToPath(import.meta.url));
 
 const router = Router();
 
-// Ensure uploads directory exists for image pipeline fallback
-const uploadsDir = path.join(__dirname, '../../public/uploads');
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
+// Ensure uploads directory exists (local dev only — Lambda filesystem is read-only)
+const uploadsDir = path.join(_currentDir, '../../public/uploads');
+try {
+  if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+  }
+} catch {
+  // Expected on serverless (read-only filesystem) — images go to Supabase Storage
 }
 
 const upload = multer({

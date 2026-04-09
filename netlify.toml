@@ -1,0 +1,20 @@
+[build]
+  command = "npm ci --include=dev && npm run build"
+  publish = "dist"
+  functions = "netlify/functions"
+  [build.environment]
+    SECRETS_SCAN_OMIT_PATHS = "netlify/functions/*,server/*,*.js,.env.example"
+    SECRETS_SCAN_OMIT_KEYS = "ADMIN_USERNAME"
+
+[functions]
+  external_node_modules = ["sharp"]
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
