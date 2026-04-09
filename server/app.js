@@ -41,15 +41,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // API Routes
-app.post('/api/debug', (req, res) => {
-  res.json({
-    body: req.body,
-    headers: req.headers,
-    rawBody: req.rawBody, // if any
-    isBase64: req.isBase64Encoded
-  });
-});
-
 app.use('/api/admin/auth', authRoutes);
 app.use('/api/admin/posts', postRoutes);
 app.use('/api/admin/analytics', analyticsRoutes);
