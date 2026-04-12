@@ -19,10 +19,10 @@ const testimonialsRow1 = [
     rating: 4.5
   },
   {
-    name: "Arun Prakash M.",
+    name: "Subhhashree",
     avatar: profileImg,
-    text: "500+ products and the site still loads fast on 4G. That matters for our tier-2 city customers. Genuinely recommend if you care about performance.",
-    role: "E-Commerce Entrepreneur, Madurai",
+    text: "We weren’t sure at first, but the final video exceeded expectations—clean, professional, and well-crafted. Despite multiple revisions, everything was delivered on time. Truly impressed and highly recommended!",
+    role: "Chairperson, RAS'26",
     rating: 5
   },
   {
@@ -52,14 +52,14 @@ const testimonialsRow2 = [
   {
     name: "Murugan Selvam",
     avatar: profileImg,
-    text: "Built our booking system from scratch. My staff learned it in one day — zero customer complaints since. That says it all.",
+    text: "Built our booking system from scratch. My staff learned it in one day zero customer complaints since. That says it all.",
     role: "Resort Owner, Kodaikanal",
     rating: 5
   },
   {
     name: "Lakshmi Narayanan",
     avatar: profileImg,
-    text: "They didn't just build and disappear. Three months later, had a small issue — fixed same day. Already referred two friends.",
+    text: "They didn't just build and disappear. Three months later, had a small issue fixed same day. Already referred two friends.",
     role: "Textile Exporter, Erode",
     rating: 4.5
   }
