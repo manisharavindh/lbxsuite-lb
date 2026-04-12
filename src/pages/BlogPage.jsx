@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowUpRight, Search, Clock, ArrowRight, X } from 'lucide-react';
+import { ArrowUpRight, Search, Clock, X } from 'lucide-react';
 import { categories } from '../data/blogPosts';
 import blogPostsFallback from '../data/blogPosts';
 import Navbar from '../components/Navbar';
@@ -9,12 +9,16 @@ import Footer from '../components/Footer';
 import BorderGlow from '../components/BorderGlow';
 import AnimatedButton from '../components/AnimatedButton';
 
+
 const BlogPage = () => {
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [searchOpen, setSearchOpen] = useState(false);
   const [blogPosts, setBlogPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [newsletterEmail, setNewsletterEmail] = useState('');
+  const [newsletterStatus, setNewsletterStatus] = useState('idle'); // idle | loading | success | error
+  const [newsletterError, setNewsletterError] = useState('');
 
   useEffect(() => {
     fetch('/api/admin/posts/public/list')
@@ -62,6 +66,34 @@ const BlogPage = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  const handleNewsletterSubscribe = async (e) => {
+    e.preventDefault();
+    if (!newsletterEmail) return;
+
+    setNewsletterStatus('loading');
+    setNewsletterError('');
+    try {
+      const response = await fetch('/api/newsletter/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: newsletterEmail }),
+      });
+
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(errData.error || 'Failed to subscribe');
+      }
+      setNewsletterStatus('success');
+      setNewsletterEmail('');
+      setTimeout(() => setNewsletterStatus('idle'), 3000);
+    } catch (err) {
+      console.error('Newsletter error:', err);
+      setNewsletterStatus('error');
+      setNewsletterError(err.message || 'Something went wrong.');
+      setTimeout(() => setNewsletterStatus('idle'), 3000);
+    }
+  };
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-[#141414] text-white font-sans selection:bg-[#FF5555] selection:text-[#FFFFFF]">
@@ -298,17 +330,33 @@ const BlogPage = () => {
                 Biweekly insights on AI, engineering, and product strategy. No spam.
               </p>
               <form
-                onSubmit={(e) => e.preventDefault()}
+                onSubmit={handleNewsletterSubscribe}
                 className="flex flex-col sm:flex-row items-center gap-3"
               >
                 <input
                   type="email"
+                  value={newsletterEmail}
+                  onChange={(e) => setNewsletterEmail(e.target.value)}
                   placeholder="your@email.com"
-                  className="w-full sm:w-80 bg-white/5 border border-white/10 rounded px-5 py-3 text-sm font-sans text-white placeholder-[#A9A9A9] outline-none focus:border-[#FF5555]/50 transition-colors"
+                  disabled={newsletterStatus === 'loading'}
+                  className="w-full sm:w-80 bg-white/5 border border-white/10 rounded px-5 py-3 text-sm font-sans text-white placeholder-[#A9A9A9] outline-none focus:border-[#FF5555]/50 transition-colors disabled:opacity-50"
                   data-track="Blog — Newsletter Email Input"
+                  required
                 />
-                <AnimatedButton href={null} size="md" className="w-full sm:w-auto whitespace-nowrap" data-track="Blog — Newsletter Subscribe CTA">
-                  Subscribe
+                <AnimatedButton
+                  type="submit"
+                  disabled={newsletterStatus === 'loading'}
+                  size="md"
+                  className="w-full sm:w-auto whitespace-nowrap"
+                  data-track="Blog — Newsletter Subscribe CTA"
+                >
+                  {newsletterStatus === 'loading'
+                    ? 'Joining...'
+                    : newsletterStatus === 'success'
+                      ? 'Subscribed!'
+                      : newsletterStatus === 'error'
+                        ? newsletterError
+                        : 'Subscribe'}
                 </AnimatedButton>
               </form>
             </div>

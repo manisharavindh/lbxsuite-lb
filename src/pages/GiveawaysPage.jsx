@@ -20,12 +20,14 @@ const GiveawaysPage = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState('idle');
+  const [subscribeError, setSubscribeError] = useState('');
 
   const handleSubscribe = async (e) => {
     e.preventDefault();
     if (!email) return;
 
     setStatus('loading');
+    setSubscribeError('');
     try {
       const response = await fetch('/api/newsletter/subscribe', {
         method: 'POST',
@@ -33,12 +35,18 @@ const GiveawaysPage = () => {
         body: JSON.stringify({ email }),
       });
 
-      if (!response.ok) throw new Error('Failed to subscribe');
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(errData.error || 'Failed to subscribe');
+      }
       setStatus('success');
       setEmail('');
+      setTimeout(() => setStatus('idle'), 3000);
     } catch (err) {
-      console.error(err);
+      console.error('Newsletter error:', err);
       setStatus('error');
+      setSubscribeError(err.message || 'Something went wrong.');
+      setTimeout(() => setStatus('idle'), 3000);
     }
   };
 
@@ -144,27 +152,27 @@ const GiveawaysPage = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="your@email.com"
-                  disabled={status === 'loading' || status === 'success'}
+                  disabled={status === 'loading'}
                   className="w-full sm:w-80 bg-white/5 border border-white/10 rounded px-5 py-3 text-sm font-sans text-white placeholder-[#A9A9A9] outline-none focus:border-[#FF5555]/50 transition-colors disabled:opacity-50"
                   data-track="Giveaways — Newsletter Email Input"
                   required
                 />
-                <button
+                <AnimatedButton
                   type="submit"
-                  disabled={status === 'loading' || status === 'success'}
-                  className={`w-full sm:w-auto whitespace-nowrap bg-[#FF5555] text-white font-sans font-medium text-sm px-6 py-3 rounded hover:bg-white hover:text-[#141414] transition-all duration-300 ${status === 'loading' ? 'opacity-70 cursor-not-allowed' : ''} ${status === 'success' ? 'bg-[#27c93f] hover:bg-[#27c93f] hover:text-white cursor-default' : ''}`}
+                  disabled={status === 'loading'}
+                  size="md"
+                  className="w-full sm:w-auto whitespace-nowrap"
                   data-track="Giveaways — Newsletter Subscribe CTA"
                 >
-                  {status === 'loading' ? 'Joining...' : status === 'success' ? 'Subscribed!' : 'Subscribe'}
-                </button>
+                  {status === 'loading'
+                    ? 'Joining...'
+                    : status === 'success'
+                      ? 'Subscribed!'
+                      : status === 'error'
+                        ? subscribeError
+                        : 'Subscribe'}
+                </AnimatedButton>
               </form>
-
-              {status === 'success' && (
-                <p className="text-[#27c93f] text-xs font-sans mt-3">You've successfully joined the list!</p>
-              )}
-              {status === 'error' && (
-                <p className="text-[#FF5555] text-xs font-sans mt-3">Failed to join. Please try again later.</p>
-              )}
             </div>
           </div>
         </section>

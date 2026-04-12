@@ -34,15 +34,17 @@ router.post('/subscribe', async (req, res) => {
     });
 
     if (!response.ok) {
-        const errorData = await response.json();
-        console.error('[Resend Error]', errorData);
-        throw new Error('Failed to push contact to Resend');
+        const errorData = await response.json().catch(() => ({}));
+        console.error('[Resend Error]', response.status, errorData);
+        return res.status(response.status).json({ 
+          error: errorData.message || 'Failed to add contact to newsletter' 
+        });
     }
 
     res.status(200).json({ success: true });
   } catch (error) {
     console.error('Newsletter subscribe error:', error);
-    res.status(500).json({ error: 'Internal server error while subscribing' });
+    res.status(500).json({ error: error.message || 'Internal server error while subscribing' });
   }
 });
 
