@@ -75,7 +75,7 @@ const AdminDashboard = ({ user, onLogout }) => {
     : 1;
 
   return (
-    <AdminLayout user={user} onLogout={onLogout} title="Dashboard" subtitle="Welcome back — here's your overview.">
+    <AdminLayout user={user} onLogout={onLogout} title="Dashboard" subtitle="Welcome back! here's your overview.">
       {loading ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <div className="admin-stats-grid">

@@ -55,17 +55,7 @@ const AdminPostEditor = ({ user, onLogout }) => {
   const [newBlockItems, setNewBlockItems] = useState(['']);
   const fileInputRef = useRef(null);
 
-  const [socialLinks, setSocialLinks] = useState({
-    copy: true,
-    twitter: '',
-    linkedin: '',
-    instagram: '',
-    facebook: '',
-    twitter_enabled: false,
-    linkedin_enabled: false,
-    instagram_enabled: false,
-    facebook_enabled: false
-  });
+  const [authorLinks, setAuthorLinks] = useState([]);
 
   useEffect(() => {
     if (!isNew) loadPost();
@@ -74,46 +64,30 @@ const AdminPostEditor = ({ user, onLogout }) => {
   const loadPost = async () => {
     try {
       const post = await postsAPI.get(id);
-      
-      const loadedLinksTag = post.tags?.find(t => t.startsWith('__social:'));
-      let loadedLinks = { 
-        copy: true, twitter: '', linkedin: '', instagram: '', facebook: '',
-        twitter_enabled: false, linkedin_enabled: false, instagram_enabled: false, facebook_enabled: false 
-      };
-      
+
+      const loadedLinksTag = post.tags?.find(t => t.startsWith('__authorlinks:'));
+      let loadedLinks = [];
+
       if (loadedLinksTag) {
-          try {
-             const parsed = JSON.parse(loadedLinksTag.replace('__social:', ''));
-             loadedLinks = { ...loadedLinks, ...parsed };
-             
-             ['twitter', 'linkedin', 'instagram', 'facebook'].forEach(key => {
-                 if (parsed[`${key}_enabled`] !== undefined) {
-                     loadedLinks[`${key}_enabled`] = parsed[`${key}_enabled`];
-                 } else if (parsed[key] && typeof parsed[key] === 'string' && parsed[key].trim() !== '') {
-                     loadedLinks[`${key}_enabled`] = true;
-                     if (parsed[key] === 'true') {
-                         loadedLinks[key] = ''; // clear legacy 'true' value
-                     }
-                 }
-             });
-          } catch(e) {}
+        try {
+          loadedLinks = JSON.parse(loadedLinksTag.replace('__authorlinks:', ''));
+        } catch (e) { }
       } else {
-          // Fallback legacy support
-          const oldLinks = post.tags?.filter(t => t.startsWith('__link:')).map(t => t.replace('__link:', ''));
-          if (oldLinks?.length > 0) {
-              oldLinks.forEach(l => { 
-                  if (l === 'copy') {
-                      loadedLinks.copy = true;
-                  } else {
-                      loadedLinks[l] = ''; 
-                      loadedLinks[`${l}_enabled`] = true;
-                  }
-              });
-          }
+        // Fallback legacy support
+        const oldSocialTag = post.tags?.find(t => t.startsWith('__social:'));
+        if (oldSocialTag) {
+          try {
+            const parsed = JSON.parse(oldSocialTag.replace('__social:', ''));
+            ['twitter', 'linkedin', 'instagram', 'facebook'].forEach(key => {
+              if (parsed[`${key}_enabled`] && parsed[key] && parsed[key] !== 'true') {
+                loadedLinks.push(parsed[key]);
+              }
+            });
+          } catch (e) { }
+        }
       }
-      loadedLinks.copy = true; // always ensure copy is true
-      setSocialLinks(loadedLinks);
-      
+      setAuthorLinks(loadedLinks.slice(0, 3));
+
       setForm({
         title: post.title || '',
         slug: post.slug || '',
@@ -124,7 +98,7 @@ const AdminPostEditor = ({ user, onLogout }) => {
         author_role: post.author_role || '',
         read_time: post.read_time || '',
         featured: post.featured || false,
-        tags: post.tags?.filter(t => !t.startsWith('__link:') && !t.startsWith('__social:')) || [],
+        tags: post.tags?.filter(t => !t.startsWith('__link:') && !t.startsWith('__social:') && !t.startsWith('__authorlinks:')) || [],
         content: typeof post.content === 'string' ? JSON.parse(post.content) : (post.content || []),
         status: post.status || 'draft',
       });
@@ -176,7 +150,7 @@ const AdminPostEditor = ({ user, onLogout }) => {
     }
 
     setSavingType(newStatus || form.status);
-    const tagsToSave = [...form.tags.filter(t => !t.startsWith('__link:') && !t.startsWith('__social:')), `__social:${JSON.stringify(socialLinks)}`];
+    const tagsToSave = [...form.tags.filter(t => !t.startsWith('__link:') && !t.startsWith('__social:') && !t.startsWith('__authorlinks:')), `__authorlinks:${JSON.stringify(authorLinks.filter(l => l.trim() !== ''))}`];
     const payload = { ...form, tags: tagsToSave };
     if (newStatus) payload.status = newStatus;
 
@@ -659,68 +633,87 @@ const AdminPostEditor = ({ user, onLogout }) => {
                   />
                 </div>
               </div>
-              
+
               <div className="admin-field" style={{ marginBottom: 0, marginTop: '20px' }}>
-                <label className="admin-label">Social & Sharing Links</label>
+                <label className="admin-label">Author Links (Max 3)</label>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '12px' }}>
-                  
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', opacity: 0.7 }}>
-                      <input
-                        type="checkbox"
-                        id="social-copy"
-                        checked={true}
-                        disabled={true}
-                        style={{ accentColor: 'var(--admin-accent)', cursor: 'not-allowed' }}
-                      />
-                      <label htmlFor="social-copy" style={{ fontSize: '13px', color: 'var(--admin-text-secondary)', cursor: 'not-allowed' }}>
-                        Copy Link (Default & Uneditable)
-                      </label>
-                  </div>
 
-                  <div style={{ height: '1px', background: 'var(--admin-border)' }}></div>
-                  <label className="admin-label" style={{ marginBottom: '-8px' }}>Author Links</label>
+                  {authorLinks.map((link, index) => {
+                    const lowerUrl = link.toLowerCase();
+                    let IconComp = LinkIcon;
+                    if (lowerUrl.includes('twitter.com') || lowerUrl.includes('x.com')) IconComp = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path></svg>;
+                    else if (lowerUrl.includes('linkedin.com')) IconComp = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>;
+                    else if (lowerUrl.includes('instagram.com')) IconComp = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>;
+                    else if (lowerUrl.includes('facebook.com')) IconComp = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>;
+                    else if (lowerUrl.includes('github.com')) IconComp = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>;
 
-                  {[
-                    { id: 'twitter', label: 'Twitter Profile URL' },
-                    { id: 'linkedin', label: 'LinkedIn Profile URL' },
-                    { id: 'instagram', label: 'Instagram Profile URL' },
-                    { id: 'facebook', label: 'Facebook Profile URL' }
-                  ].map((opt) => (
-                    <div key={opt.id} style={{ display: 'flex', flexDirection: 'column', gap: '10px', padding: '12px', background: 'var(--admin-surface-2)', borderRadius: 'var(--admin-radius)', border: '1px solid var(--admin-border)' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <input
-                          type="checkbox"
-                          id={`social-${opt.id}-enable`}
-                          checked={socialLinks[`${opt.id}_enabled`]}
-                          onChange={(e) => {
-                            const isChecked = e.target.checked;
-                            setSocialLinks(prev => ({ 
-                              ...prev, 
-                              [`${opt.id}_enabled`]: isChecked,
-                              ...( !isChecked ? { [opt.id]: '' } : {} )
-                            }))
-                          }}
-                          style={{ accentColor: 'var(--admin-accent)', cursor: 'pointer' }}
-                        />
-                        <label htmlFor={`social-${opt.id}-enable`} style={{ fontSize: '13px', fontWeight: 500, color: 'var(--admin-text)', cursor: 'pointer' }}>
-                          Enable {opt.label.replace(' Profile URL', '')} Profile
-                        </label>
-                      </div>
-                      
-                      {socialLinks[`${opt.id}_enabled`] && (
-                        <div style={{ marginLeft: '22px' }}>
-                          <input
-                            type="url"
-                            className="admin-input"
-                            placeholder={`https://${opt.id}.com/...`}
-                            value={socialLinks[opt.id] || ''}
-                            onChange={(e) => setSocialLinks(prev => ({ ...prev, [opt.id]: e.target.value }))}
-                            style={{ padding: '8px 12px', fontSize: '13px', width: '100%', boxSizing: 'border-box' }}
-                          />
+                    return (
+                      <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', alignItems: 'center' }}>
+                          <button
+                            onClick={() => {
+                              const newLinks = [...authorLinks];
+                              [newLinks[index - 1], newLinks[index]] = [newLinks[index], newLinks[index - 1]];
+                              setAuthorLinks(newLinks);
+                            }}
+                            className="admin-btn admin-btn-ghost"
+                            style={{ padding: '2px', opacity: index === 0 ? 0.3 : 1 }}
+                            disabled={index === 0}
+                          >
+                            <ChevronUp size={12} />
+                          </button>
+                          <button
+                            onClick={() => {
+                              const newLinks = [...authorLinks];
+                              [newLinks[index], newLinks[index + 1]] = [newLinks[index + 1], newLinks[index]];
+                              setAuthorLinks(newLinks);
+                            }}
+                            className="admin-btn admin-btn-ghost"
+                            style={{ padding: '2px', opacity: index === authorLinks.length - 1 ? 0.3 : 1 }}
+                            disabled={index === authorLinks.length - 1}
+                          >
+                            <ChevronDown size={12} />
+                          </button>
                         </div>
-                      )}
-                    </div>
-                  ))}
+                        <div style={{ width: '28px', height: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--admin-surface-2)', borderRadius: 'var(--admin-radius)', border: '1px solid var(--admin-border)', color: 'var(--admin-text-muted)' }}>
+                          <IconComp />
+                        </div>
+                        <input
+                          type="url"
+                          className="admin-input"
+                          placeholder="https://..."
+                          value={link}
+                          onChange={(e) => {
+                            const newLinks = [...authorLinks];
+                            newLinks[index] = e.target.value;
+                            setAuthorLinks(newLinks);
+                          }}
+                          style={{ flex: 1 }}
+                        />
+                        <button
+                          onClick={() => {
+                            const newLinks = [...authorLinks];
+                            newLinks.splice(index, 1);
+                            setAuthorLinks(newLinks);
+                          }}
+                          className="admin-btn admin-btn-ghost admin-btn-sm"
+                          style={{ color: 'var(--admin-accent)', padding: '6px' }}
+                        >
+                          <X size={14} />
+                        </button>
+                      </div>
+                    );
+                  })}
+
+                  {authorLinks.length < 3 && (
+                    <button
+                      onClick={() => setAuthorLinks([...authorLinks, ''])}
+                      className="admin-btn admin-btn-secondary admin-btn-sm"
+                      style={{ alignSelf: 'flex-start' }}
+                    >
+                      <Plus size={14} /> Add Link
+                    </button>
+                  )}
                 </div>
               </div>
 

@@ -325,25 +325,10 @@
 .admin-sidebar-brand {
   font-size: 18px;
   font-weight: 900;
-  letter-spacing: -0.02em;
-  text-transform: uppercase;
-  color: var(--admin-text);
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  gap: 8px;
 }
 
 .admin-sidebar-brand span {
   color: var(--admin-accent);
-  font-size: 11px;
-  font-weight: 600;
-  padding: 2px 8px;
-  background: var(--admin-accent-bg);
-  border: 1px solid var(--admin-accent-border);
-  border-radius: 4px;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
 }
 
 .admin-sidebar-nav {
@@ -524,11 +509,6 @@
   border-radius: var(--admin-radius-lg);
   padding: 24px;
   transition: border-color var(--admin-transition), transform var(--admin-transition);
-}
-
-.admin-stat-card:hover {
-  border-color: var(--admin-border-hover);
-  transform: translateY(-1px);
 }
 
 .admin-stat-icon {

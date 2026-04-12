@@ -12,9 +12,11 @@ const cookieParser = _cookieParser.default || _cookieParser;
 import _authRoutes from './routes/authRoutes.js';
 import _postRoutes from './routes/postRoutes.js';
 import _analyticsRoutes from './routes/analyticsRoutes.js';
+import _newsletterRoutes from './routes/newsletterRoutes.js';
 const authRoutes = _authRoutes.default || _authRoutes;
 const postRoutes = _postRoutes.default || _postRoutes;
 const analyticsRoutes = _analyticsRoutes.default || _analyticsRoutes;
+const newsletterRoutes = _newsletterRoutes.default || _newsletterRoutes;
 
 // Resolve current directory — works in both ESM (local dev) and CJS (Netlify bundle)
 const _currentDir = typeof __dirname !== 'undefined'
@@ -45,6 +47,7 @@ app.use('/api/admin/auth', authRoutes);
 app.use('/api/admin/posts', postRoutes);
 app.use('/api/admin/analytics', analyticsRoutes);
 app.use('/api/analytics', analyticsRoutes); // Public tracking endpoint
+app.use('/api/newsletter', newsletterRoutes); // Public newsletter endpoint
 
 // SPA fallback for local dev (Netlify handles this via redirects in production)
 if (process.env.NODE_ENV !== 'production') {

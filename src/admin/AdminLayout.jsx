@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, FileText, BarChart3, Settings,
-  LogOut, Menu, X, ChevronRight, Plus
+  LogOut, Menu, X, Plus, ExternalLink
 } from 'lucide-react';
 import { authAPI } from './api';
 import './admin.css';
@@ -31,6 +31,7 @@ const navItems = [
 
 const AdminLayout = ({ user, onLogout, children, title, subtitle, actions }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -63,7 +64,7 @@ const AdminLayout = ({ user, onLogout, children, title, subtitle, actions }) => 
       <aside className={`admin-sidebar ${sidebarOpen ? 'open' : ''}`}>
         <div className="admin-sidebar-header">
           <Link to="/admin" className="admin-sidebar-brand">
-            LBXSUITE <span>Admin</span>
+            LBXSUITE<span> ADMIN</span>
           </Link>
         </div>
 
@@ -87,49 +88,17 @@ const AdminLayout = ({ user, onLogout, children, title, subtitle, actions }) => 
         </nav>
 
         <div className="admin-sidebar-footer">
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '10px',
-            padding: '8px 12px',
-            marginBottom: '8px',
-          }}>
-            <div style={{
-              width: '32px',
-              height: '32px',
-              borderRadius: '50%',
-              background: 'var(--admin-accent-bg)',
-              border: '1px solid var(--admin-accent-border)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'var(--admin-accent)',
-              fontSize: '12px',
-              fontWeight: '700',
-            }}>
-              {user?.username?.charAt(0).toUpperCase() || 'A'}
-            </div>
-            <div>
-              <div style={{ fontSize: '13px', fontWeight: '600', color: 'var(--admin-text)' }}>
-                {user?.username || 'Admin'}
-              </div>
-              <div style={{ fontSize: '11px', color: 'var(--admin-text-muted)' }}>
-                Administrator
-              </div>
-            </div>
-          </div>
-
           <Link
             to="/"
             className="admin-sidebar-link"
             target="_blank"
             style={{ fontSize: '12px' }}
           >
-            <ChevronRight size={14} />
+            <ExternalLink size={14} />
             View Live Site
           </Link>
 
-          <button onClick={handleLogout} className="admin-sidebar-link" style={{ color: 'var(--admin-accent)' }}>
+          <button onClick={() => setShowLogoutConfirm(true)} className="admin-sidebar-link" style={{ color: 'var(--admin-accent)' }}>
             <LogOut size={18} />
             Sign Out
           </button>
@@ -158,6 +127,33 @@ const AdminLayout = ({ user, onLogout, children, title, subtitle, actions }) => 
           {children}
         </div>
       </main>
+
+      {/* Logout Confirmation Modal */}
+      {showLogoutConfirm && (
+        <div className="admin-modal-overlay" onClick={() => setShowLogoutConfirm(false)}>
+          <div className="admin-modal" onClick={e => e.stopPropagation()}>
+            <div className="admin-modal-header">
+              <span className="admin-modal-title">Confirm Sign Out</span>
+              <button onClick={() => setShowLogoutConfirm(false)} style={{ background: 'none', border: 'none', color: 'var(--admin-text-muted)', cursor: 'pointer' }}>
+                <X size={18} />
+              </button>
+            </div>
+            <div className="admin-modal-body">
+              <p style={{ fontSize: '14px', color: 'var(--admin-text-secondary)', lineHeight: 1.6 }}>
+                Are you sure you want to sign out of the LBXSUITE admin portal? You will need to enter your credentials to access the dashboard again.
+              </p>
+            </div>
+            <div className="admin-modal-footer">
+              <button className="admin-btn admin-btn-secondary" onClick={() => setShowLogoutConfirm(false)}>
+                Cancel
+              </button>
+              <button className="admin-btn admin-btn-primary" onClick={handleLogout}>
+                Sign Out
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

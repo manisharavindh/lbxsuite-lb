@@ -21,7 +21,7 @@ const testimonialsRow1 = [
   {
     name: "Subhhashree",
     avatar: profileImg,
-    text: "We weren’t sure at first, but the final video exceeded expectations—clean, professional, and well-crafted. Despite multiple revisions, everything was delivered on time. Truly impressed and highly recommended!",
+    text: "We weren’t sure at first, but the final videos are clean, professional, and well crafted. Despite multiple revisions, everything was delivered on time. Truly impressed and highly recommended!",
     role: "Chairperson, RAS'26",
     rating: 5
   },
@@ -108,7 +108,7 @@ const TestimonialCard = ({ name, avatar, text, role, rating = 5 }) => (
       </div>
     </div>
 
-    <p className="text-[#A9A9A9] font-sans text-[10px] sm:text-[12px] md:text-[13px] leading-[1.5] sm:leading-[1.65] md:leading-relaxed mb-3 md:mb-5 flex-grow">
+    <p className="text-[#A9A9A9] font-sans text-[10px] sm:text-[12px] md:text-[13px] leading-[1.5] sm:leading-[1.65] md:leading-relaxed mb-3 md:mb-5 flex-grow line-clamp-3">
       {text}
     </p>
 
