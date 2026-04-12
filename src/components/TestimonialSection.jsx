@@ -14,7 +14,7 @@ const testimonialsRow1 = [
   {
     name: "Deepika Ramanathan",
     avatar: profileImg,
-    text: "I'm not a tech person at all, but they were so patient. The final site looks so premium — my friends thought I spent lakhs on it.",
+    text: "I'm not a tech person at all, but they were so patient. The final site looks so premium, my friends thought I spent lakhs on it.",
     role: "Boutique Owner, Coimbatore",
     rating: 4.5
   },
