@@ -5,63 +5,63 @@ const profileImg = "https://i.pinimg.com/236x/a0/4d/84/a04d849cf591c2f980548b982
 
 const testimonialsRow1 = [
   {
-    name: "Praneeth",
+    name: "Karthik Shanmugam",
     avatar: profileImg,
-    text: "The LbxSuite team took our vision and turned it into a beautifully crafted, highly functional website.",
-    role: "Founder & CEO, Nexchain AI",
-    rating: 4.5
-  },
-  {
-    name: "Varshith Merugu",
-    avatar: profileImg,
-    text: "From design to launch, LbxSuite made the entire process seamless. Our website now truly reflects our brand's identity.",
-    role: "Founder, WassupMediaCo",
-    rating: 3.5
-  },
-  {
-    name: "Suhair Rahman",
-    avatar: profileImg,
-    text: "LbxSuite transformed our website into a sleek, high-performance platform. Our clients love the new experience.",
-    role: "Founder @ SpainAcademy",
+    text: "Was skeptical after two bad agency experiences. But they actually listened, understood our audience, and our enquiries jumped 40% in month one.",
+    role: "Startup Founder, Chennai",
     rating: 5
   },
   {
-    name: "Alicia Pohl",
+    name: "Deepika Ramanathan",
     avatar: profileImg,
-    text: "The team helped us kickstart our agency in Germany with ease. Unmatched attention to detail.",
-    role: "Founder, AECreatives",
+    text: "I'm not a tech person at all, but they were so patient. The final site looks so premium — my friends thought I spent lakhs on it.",
+    role: "Boutique Owner, Coimbatore",
+    rating: 4.5
+  },
+  {
+    name: "Arun Prakash M.",
+    avatar: profileImg,
+    text: "500+ products and the site still loads fast on 4G. That matters for our tier-2 city customers. Genuinely recommend if you care about performance.",
+    role: "E-Commerce Entrepreneur, Madurai",
+    rating: 5
+  },
+  {
+    name: "Priya Venkatesh",
+    avatar: profileImg,
+    text: "Didn't think a website would help my coaching institute much. Now parents call saying they found us on Google. Worth every rupee.",
+    role: "Education Consultant, Trichy",
     rating: 4.5
   }
 ];
 
 const testimonialsRow2 = [
   {
-    name: "Ruby Liza",
+    name: "Senthil Kumar R.",
     avatar: profileImg,
-    text: "Our e-commerce platform now runs smoother and faster than ever. LbxSuite's expertise made a real difference.",
-    role: "Founder, RLSM",
-    rating: 3.5
-  },
-  {
-    name: "Khushi",
-    avatar: profileImg,
-    text: "LbxSuite revamped our e-commerce store, and sales have never been better. The site is now faster and more user-friendly.",
-    role: "Founder, Khushiva",
-    rating: 5
-  },
-  {
-    name: "Satvik",
-    avatar: profileImg,
-    text: "Their work quality when it comes to building complex applications is top-tier. They know exactly what works in the industry.",
-    role: "Founder, TechForge",
+    text: "Our old site looked like it was from 2010. After the redesign and SEO setup, we actually show up on Google now. Night and day difference.",
+    role: "Business Owner, Salem",
     rating: 4.5
   },
   {
-    name: "David M.",
+    name: "Kavitha Sundaram",
     avatar: profileImg,
-    text: "Collaborating with LbxSuite was the best decision we made. Fast delivery, pristine code, and fantastic support.",
-    role: "CTO, Innovate Labs",
+    text: "Had a product launch deadline and they delivered two days EARLY. The landing page converted really well during launch week.",
+    role: "D2C Brand Founder, Chennai",
     rating: 5
+  },
+  {
+    name: "Murugan Selvam",
+    avatar: profileImg,
+    text: "Built our booking system from scratch. My staff learned it in one day — zero customer complaints since. That says it all.",
+    role: "Resort Owner, Kodaikanal",
+    rating: 5
+  },
+  {
+    name: "Lakshmi Narayanan",
+    avatar: profileImg,
+    text: "They didn't just build and disappear. Three months later, had a small issue — fixed same day. Already referred two friends.",
+    role: "Textile Exporter, Erode",
+    rating: 4.5
   }
 ];
 
