@@ -36,7 +36,7 @@ const testimonialsRow1 = [
 
 const testimonialsRow2 = [
   {
-    name: "Senthil Kumar R.",
+    name: "Senthil Kumar",
     avatar: profileImg,
     text: "Our old site looked like it was from 2010. After the redesign and SEO setup, we actually show up on Google now. Night and day difference.",
     role: "Business Owner, Salem",

@@ -23,22 +23,22 @@ const faqs = [
     question: "Do you build MVPs or just full-scale products?",
     answer: "We partner with businesses at all stages. Whether you are an early-stage startup looking for a rapid, nimble MVP to validate your product-market fit, or an established enterprise requiring a complex, scalable platform, we have the technical chops to deliver."
   },
-  // {
-  //   question: "Do you provide post-launch support?",
-  //   answer: "Absolutely. A product launch is just the beginning. We offer dedicated maintenance, uptime monitoring, performance optimization, and continuous improvement retainers to ensure your system remains secure and evolves with your users' needs."
-  // },
-  // {
-  //   question: "What if I need ongoing updates and changes?",
-  //   answer: "We offer flexible retainer options designed to fit your unique requirements. This can include regular content updates, the introduction of new features, continuous design improvements, and proactive architectural scaling to support business growth."
-  // },
-  // {
-  //   question: "Do you work with startups or only established businesses?",
-  //   answer: "We work with both heavily funded startups and established corporate tier businesses. Each client receives a tailored approach that fits their operational velocity, risk profile, and strategic objectives."
-  // },
-  // {
-  //   question: "What platforms do you build on?",
-  //   answer: "We engineer solutions based on modern, robust technology stacks. Typically, our core stack includes React, Next.js, Node.js, and headless CMS platforms. However, we are technology-agnostic and select the best tools based exclusively on what the project demands for supreme performance."
-  // }
+  {
+    question: "Do you provide post-launch support?",
+    answer: "Absolutely. A product launch is just the beginning. We offer dedicated maintenance, uptime monitoring, performance optimization, and continuous improvement retainers to ensure your system remains secure and evolves with your users' needs."
+  },
+  {
+    question: "What if I need ongoing updates and changes?",
+    answer: "We offer flexible retainer options designed to fit your unique requirements. This can include regular content updates, the introduction of new features, continuous design improvements, and proactive architectural scaling to support business growth."
+  },
+  {
+    question: "Do you work with startups or only established businesses?",
+    answer: "We work with both heavily funded startups and established corporate tier businesses. Each client receives a tailored approach that fits their operational velocity, risk profile, and strategic objectives."
+  },
+  {
+    question: "What platforms do you build on?",
+    answer: "We engineer solutions based on modern, robust technology stacks. Typically, our core stack includes React, Next.js, Node.js, and headless CMS platforms. However, we are technology-agnostic and select the best tools based exclusively on what the project demands for supreme performance."
+  }
 ];
 
 const QAItem = ({ question, answer }) => {
