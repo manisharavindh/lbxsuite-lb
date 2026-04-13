@@ -135,13 +135,13 @@ const GiveawaysPage = () => {
 
         {/* ============ NEWSLETTER CTA ============ */}
         <section className="w-full bg-[#141414] px-6 md:px-12">
-          <div className="max-w-[1400px] mx-auto border-y border-white/10 py-20 md:py-28 px-4 md:px-12 lg:px-0">
+          <div className="max-w-[1400px] mx-auto border-y border-white/10 py-20 md:py-28 px-4">
             <div className="max-w-2xl">
               <h2 className="text-3xl md:text-4xl font-serif text-[#FFFFFF] font-medium mb-3">
-                Stay Tuned
+                Stay Connected
               </h2>
               <p className="text-sm md:text-base font-sans leading-relaxed text-[#A9A9A9] max-w-[600px] mb-8">
-                We have something even bigger cooking behind the scenes. Keep an eye on <a href="https://www.linkedin.com/company/lbxsuite" target="_blank" rel="noopener noreferrer" className="text-[#FF5555] hover:text-white underline transition-colors">LinkedIn</a>, or drop your email below so you never miss our next massive drop.
+                We have something even bigger cooking behind the scenes. Keep an eye on <a href="https://www.linkedin.com/company/lbxsuite" target="_blank" rel="noopener noreferrer" className="text-[#FF5555] hover:text-white underline transition-colors">LinkedIn</a>, or drop your email below so you never miss out on any updates.
               </p>
               <form
                 onSubmit={handleSubscribe}

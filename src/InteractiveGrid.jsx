@@ -9,10 +9,10 @@ const InteractiveGrid = () => {
 
     const ctx = canvas.getContext('2d', { alpha: true });
 
-    const gridSize = 30; // Updated from 36px to 30px
-    const gap = 0; // Removed gap to allow perfect cell-filling
-    const opacity = 0.04; // Increased opacity to make the grid lines properly visible
+    const gridSize = 30;
+    const opacity = 0.04;
     const parallaxFactor = 0.4;
+    const DECAY_MS = 800;
 
     let width, height, columns, rows;
     let scrollY = window.scrollY;
@@ -20,6 +20,11 @@ const InteractiveGrid = () => {
 
     // Track active/hovered cells for fading effect
     const activeCells = new Map();
+
+    // Previous grid cell for interpolation
+    let prevCol = null;
+    let prevRow = null;
+    let lastMoveTime = 0;
 
     const init = () => {
       width = window.innerWidth;
@@ -48,7 +53,45 @@ const InteractiveGrid = () => {
       scrollY = window.scrollY;
     };
 
-    const onMouseMove = (e) => {
+    // Bresenham line algorithm to get all grid cells between two points
+    const getLineCells = (c0, r0, c1, r1) => {
+      const cells = [];
+      let dc = Math.abs(c1 - c0);
+      let dr = Math.abs(r1 - r0);
+      const sc = c0 < c1 ? 1 : -1;
+      const sr = r0 < r1 ? 1 : -1;
+      let err = dc - dr;
+      let c = c0;
+      let r = r0;
+
+      while (true) {
+        cells.push([c, r]);
+        if (c === c1 && r === r1) break;
+        const e2 = 2 * err;
+        if (e2 > -dr) { err -= dr; c += sc; }
+        if (e2 < dc) { err += dc; r += sr; }
+      }
+      return cells;
+    };
+
+    // Activate a cell and its 4 cardinal neighbors
+    const activateCell = (c, r, now) => {
+      activeCells.set(`${c},${r}`, now);
+
+      // Light up immediate neighbors to create a slight glow radius
+      const neighbors = [[c - 1, r], [c + 1, r], [c, r - 1], [c, r + 1]];
+      for (let i = 0; i < neighbors.length; i++) {
+        const nc = neighbors[i][0];
+        const nr = neighbors[i][1];
+        const key = `${nc},${nr}`;
+        if (!activeCells.has(key) || (now - activeCells.get(key) > 500)) {
+          // Set neighbors to an older timestamp so they appear dimmer
+          activeCells.set(key, now - 400);
+        }
+      }
+    };
+
+    const onPointerMove = (e) => {
       const rect = canvas.getBoundingClientRect();
       const mouseX = e.clientX - rect.left;
       const mouseY = e.clientY - rect.top;
@@ -60,23 +103,40 @@ const InteractiveGrid = () => {
 
       const now = performance.now();
 
-      // Store current time for the hovered cell
-      activeCells.set(`${c},${r}`, now);
+      // If significant time has passed since the last mouse move event (> 100ms), 
+      // assume the mouse left the window or rested, and prevent interpolation jumping.
+      if (now - lastMoveTime > 100) {
+        prevCol = null;
+        prevRow = null;
+      }
+      lastMoveTime = now;
 
-      // Light up immediate neighbors to create a slight glow radius
-      const neighbors = [[c - 1, r], [c + 1, r], [c, r - 1], [c, r + 1]];
-      neighbors.forEach(([nc, nr]) => {
-        const key = `${nc},${nr}`;
-        if (!activeCells.has(key) || (now - activeCells.get(key) > 500)) {
-          // Set neighbors to an older timestamp so they appear dimmer
-          activeCells.set(key, now - 400);
+      if (prevCol !== null && prevRow !== null && (prevCol !== c || prevRow !== r)) {
+        // Interpolate all cells along the path from previous to current
+        const pathCells = getLineCells(prevCol, prevRow, c, r);
+        const totalCells = pathCells.length;
+        for (let i = 0; i < totalCells; i++) {
+          // Stagger timestamps slightly along the trail for a natural flow
+          const trailTime = now - ((totalCells - 1 - i) * 12);
+          activateCell(pathCells[i][0], pathCells[i][1], trailTime);
         }
-      });
+      } else {
+        activateCell(c, r, now);
+      }
+
+      prevCol = c;
+      prevRow = r;
+    };
+
+    const onPointerLeave = () => {
+      prevCol = null;
+      prevRow = null;
     };
 
     window.addEventListener('resize', onResize);
     window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('pointermove', onPointerMove);
+    document.addEventListener('mouseleave', onPointerLeave);
 
     const draw = (time) => {
       if (!time) time = performance.now();
@@ -118,8 +178,8 @@ const InteractiveGrid = () => {
       for (const [key, timestamp] of activeCells.entries()) {
         const age = time - timestamp;
 
-        // Remove old cells (decay time: 800ms)
-        if (age > 800) {
+        // Remove old cells
+        if (age > DECAY_MS) {
           activeCells.delete(key);
           continue;
         }
@@ -130,9 +190,9 @@ const InteractiveGrid = () => {
 
         const cellX = c * gridSize;
         const cellY = r * gridSize - pixelOffset;
-        const baseBoxSize = gridSize; // no structural gap needed for overlap effect
+        const baseBoxSize = gridSize;
 
-        const intensity = Math.max(0, 1 - (age / 800));
+        const intensity = Math.max(0, 1 - (age / DECAY_MS));
 
         // Scale from 1.0 to 1.08 based on intensity to keep the overlap constrained and subtle
         const scale = 1.0 + (intensity * 0.08);
@@ -182,7 +242,8 @@ const InteractiveGrid = () => {
     return () => {
       window.removeEventListener('resize', onResize);
       window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('pointermove', onPointerMove);
+      document.removeEventListener('mouseleave', onPointerLeave);
       clearTimeout(resizeTimeout);
       cancelAnimationFrame(rafId);
     };

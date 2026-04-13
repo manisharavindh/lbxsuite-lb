@@ -18,9 +18,9 @@ const Hero = () => {
 
           {/* Right Top Arrow */}
           <div className="absolute right-0 top-[18%] lg:top-[20%] z-20">
-            <div className="w-16 h-16 flex justify-center items-center group cursor-pointer hover:scale-110 transition-transform" data-track="Hero — Arrow Icon">
+            <a href="#contact" className="w-16 h-16 flex justify-center items-center group cursor-pointer hover:scale-110 transition-transform" data-track="Hero — Arrow Icon">
               <ArrowUpRight size={56} className="text-[#fff] group-hover:text-[#fff] transition-colors lg:w-[64px] lg:h-[64px]" strokeWidth={2.5} />
-            </div>
+            </a>
           </div>
 
           {/* Center Main Staggered Typography */}

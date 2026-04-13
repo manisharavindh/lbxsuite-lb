@@ -1,7 +1,6 @@
 import React from 'react';
 import { Star, StarHalf } from 'lucide-react';
-
-const profileImg = "https://i.pinimg.com/236x/a0/4d/84/a04d849cf591c2f980548b982f461401.jpg"
+import profileImg from "/user.webp"
 
 const testimonialsRow1 = [
   {
@@ -21,7 +20,7 @@ const testimonialsRow1 = [
   {
     name: "Subhhashree",
     avatar: profileImg,
-    text: "We weren’t sure at first, but the final videos are clean, professional, and well crafted. Despite multiple revisions, everything was delivered on time. Truly impressed and highly recommended!",
+    text: "We weren’t sure at first, but the final videos were clean, professional, and well crafted. Despite multiple revisions, everything was delivered on time. Truly impressed and highly recommended!",
     role: "Chairperson, RAS'26",
     rating: 5
   },

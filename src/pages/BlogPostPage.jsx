@@ -67,26 +67,26 @@ const BlogPostPage = () => {
           date: new Date(data.published_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
           readTime: data.read_time,
           featured: data.featured,
-          tags: data.tags?.filter(t => !t.startsWith('__link:') && !t.startsWith('__social:')) || [],
+          tags: data.tags?.filter(t => !t.startsWith('__link:') && !t.startsWith('__social:') && !t.startsWith('__authorlinks:')) || [],
           authorLinks: (() => {
-              const authorsLinksTag = data.tags?.find(t => t.startsWith('__authorlinks:'));
-              if (authorsLinksTag) {
-                  try { return JSON.parse(authorsLinksTag.replace('__authorlinks:', '')); } catch(e) { return []; }
-              }
-              // migrate from old
-              const oldSocialTag = data.tags?.find(t => t.startsWith('__social:'));
-              let loadedLinks = [];
-              if (oldSocialTag) {
-                  try {
-                      const parsed = JSON.parse(oldSocialTag.replace('__social:', ''));
-                      ['twitter', 'linkedin', 'instagram', 'facebook'].forEach(key => {
-                          if (parsed[`${key}_enabled`] && parsed[key] && parsed[key] !== 'true') {
-                              loadedLinks.push(parsed[key]);
-                          }
-                      });
-                  } catch(e) {}
-              }
-              return loadedLinks;
+            const authorsLinksTag = data.tags?.find(t => t.startsWith('__authorlinks:'));
+            if (authorsLinksTag) {
+              try { return JSON.parse(authorsLinksTag.replace('__authorlinks:', '')); } catch (e) { return []; }
+            }
+            // migrate from old
+            const oldSocialTag = data.tags?.find(t => t.startsWith('__social:'));
+            let loadedLinks = [];
+            if (oldSocialTag) {
+              try {
+                const parsed = JSON.parse(oldSocialTag.replace('__social:', ''));
+                ['twitter', 'linkedin', 'instagram', 'facebook'].forEach(key => {
+                  if (parsed[`${key}_enabled`] && parsed[key] && parsed[key] !== 'true') {
+                    loadedLinks.push(parsed[key]);
+                  }
+                });
+              } catch (e) { }
+            }
+            return loadedLinks;
           })(),
           content: data.content || []
         };
@@ -379,7 +379,7 @@ const BlogPostPage = () => {
             </div>
 
             {/* Author Bio */}
-            <div className="mt-12 mb-20 md:mb-28 bg-[#1a1a1a] rounded-xl border border-white/[0.06] p-7 md:p-9 flex items-start gap-5">
+            {/* <div className="mt-12 mb-20 md:mb-28 rounded border border-white/[0.06] p-7 md:p-9 flex items-start gap-5">
               <div className="w-12 h-12 rounded-full bg-[#FF5555]/12 flex items-center justify-center text-[#FF5555] text-[13px] font-bold font-sans shrink-0">
                 {post.author.split(' ').map((n) => n[0]).join('')}
               </div>
@@ -390,7 +390,7 @@ const BlogPostPage = () => {
                   Building the future of digital experiences at LbxSuite. Passionate about autonomous AI systems, high-performance web engineering, and thoughtful design.
                 </p>
               </div>
-            </div>
+            </div> */}
           </div>{/* end left column */}
 
           {/* ═══ RIGHT: sticky sidebar ═══
@@ -449,7 +449,7 @@ const BlogPostPage = () => {
                   </h2>
                 </div>
                 <Link
-                  to="/blog"
+                  to="/blog#filter-bar"
                   className="hidden md:flex items-center gap-2 text-[11px] font-sans font-bold tracking-[0.1em] uppercase text-[#888] hover:text-[#FF5555] transition-colors duration-300"
                 >
                   View All
@@ -515,7 +515,7 @@ const BlogPostPage = () => {
 
               <div className="md:hidden mt-10 text-center">
                 <Link
-                  to="/blog"
+                  to="/blog#filter-bar"
                   className="inline-flex items-center gap-2 text-[11px] font-sans font-bold tracking-[0.1em] uppercase text-[#888] hover:text-[#FF5555] transition-colors duration-300"
                   data-track="Blog Post — View All Articles"
                 >
