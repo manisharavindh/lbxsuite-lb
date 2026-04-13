@@ -31,6 +31,13 @@ const testimonialsRow1 = [
     text: "Didn't think a website would help my coaching institute much. Now parents call saying they found us on Google. Worth every rupee.",
     role: "Education Consultant, Trichy",
     rating: 4.5
+  },
+  {
+    name: "Aravind Govindarajan",
+    avatar: profileImg,
+    text: "The UI/UX is truly world-class. Our dashboard is now so intuitive that our training time dropped by half. Highly professional team!",
+    role: "Tech Lead, Madurai",
+    rating: 5
   }
 ];
 
@@ -62,6 +69,13 @@ const testimonialsRow2 = [
     text: "They didn't just build and disappear. Three months later, had a small issue fixed same day. Already referred two friends.",
     role: "Textile Exporter, Erode",
     rating: 4.5
+  },
+  {
+    name: "Meera Krishnan",
+    avatar: profileImg,
+    text: "They built our Shopify store with custom features we couldn't find anywhere else. Sales doubling every month. Couldn't be happier!",
+    role: "E-commerce Founder, Tirunelveli",
+    rating: 5
   }
 ];
 
