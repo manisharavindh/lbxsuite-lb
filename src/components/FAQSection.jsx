@@ -5,49 +5,35 @@ import { Plus } from 'lucide-react';
 const faqs = [
   {
     question: "Do you handle everything from branding to website and e-commerce development?",
-    answer: "Yes, we are a full-service digital agency. We take care of everything from the initial brand identity definition to custom web and e-commerce solutions. Our approach ensures a cohesive and powerful digital presence from end to end."
+    answer: "Yes. We’re a full-stack shop, so you’re not juggling three different agencies pointing fingers when something breaks. One team, one point of contact, one clear timeline. Branding, design, development, launch, all handled."
   },
   {
     question: "What's your process for delivering a project?",
-    answer: "Our proven methodology starts with a deep-dive discovery phase to understand your business goals. We then move through UX/UI design, agile development, and rigorous quality assurance before finally launching the product. Transparency and communication are prioritized at every step."
+    answer: "We don’t just jump into building. First, we understand your business and what actually matters. Then we design, build, test, and launch everything properly. You’ll always know what’s happening, what’s next, and where things stand. No black box."
   },
   {
     question: "How long does a typical project take?",
-    answer: "The timeline depends on the scope and complexity of your requirements. A straightforward landing page or marketing site might take 3 to 6 weeks, while a comprehensive web application or large e-commerce platform can span several months. We always provide a detailed timeline after our initial consultation."
+    answer: "Depends on what you’re building. A simple site? A few weeks. Something more complex like a full platform? A couple of months. Either way, we’ll give you a clear, realistic timeline upfront and stick to it."
   },
   {
     question: "Do you provide marketing services as well?",
-    answer: "Our core expertise lies in designing and building exceptionally engineered digital products. While we don't manage ongoing digital marketing campaigns (like PPC or social media management), we build websites highly optimized for SEO and fully integrated with your marketing technology stack."
+    answer: "Yeah, but not in the “we run your ads” sense. We build everything with marketing in mind, fast, SEO-ready, and fully integrated with your tools. So when you do market, it actually works."
   },
   {
     question: "Do you build MVPs or just full-scale products?",
-    answer: "We partner with businesses at all stages. Whether you are an early-stage startup looking for a rapid, nimble MVP to validate your product-market fit, or an established enterprise requiring a complex, scalable platform, we have the technical chops to deliver."
+    answer: "Both. If you need a fast MVP to test an idea, we’ll help you move quickly without overbuilding. If you’re scaling and need something solid and future-proof, we do that too."
   },
-  // {
-  //   question: "Do you provide post-launch support?",
-  //   answer: "Absolutely. A product launch is just the beginning. We offer dedicated maintenance, uptime monitoring, performance optimization, and continuous improvement retainers to ensure your system remains secure and evolves with your users' needs."
-  // },
-  // {
-  //   question: "What if I need ongoing updates and changes?",
-  //   answer: "We offer flexible retainer options designed to fit your unique requirements. This can include regular content updates, the introduction of new features, continuous design improvements, and proactive architectural scaling to support business growth."
-  // },
-  // {
-  //   question: "Do you work with startups or only established businesses?",
-  //   answer: "We work with both heavily funded startups and established corporate tier businesses. Each client receives a tailored approach that fits their operational velocity, risk profile, and strategic objectives."
-  // },
-  // {
-  //   question: "What platforms do you build on?",
-  //   answer: "We engineer solutions based on modern, robust technology stacks. Typically, our core stack includes React, Next.js, Node.js, and headless CMS platforms. However, we are technology-agnostic and select the best tools based exclusively on what the project demands for supreme performance."
-  // }
+  {
+    question: "Do you provide post-launch support?",
+    answer: "Of course. Launch isn’t the finish line, it’s the starting point. We stick around for maintenance, improvements, and keeping everything running smoothly as you grow."
+  },
 ];
 
-const QAItem = ({ question, answer }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
+const QAItem = ({ question, answer, isOpen, onToggle }) => {
   return (
     <div className="border-b border-[#272727]">
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={onToggle}
         className="w-full flex justify-between items-center py-6 md:py-8 text-left focus:outline-none group cursor-pointer"
         data-track={`FAQ — ${question.substring(0, 60)}`}
       >
@@ -82,6 +68,12 @@ const QAItem = ({ question, answer }) => {
 };
 
 const FAQSection = () => {
+  const [openIndex, setOpenIndex] = useState(null);
+
+  const handleToggle = (index) => {
+    setOpenIndex(openIndex === index ? null : index);
+  };
+
   return (
     <section id="faq" className="relative z-10 w-full bg-[#141414] pt-28 md:pt-32">
       <div className="max-w-[1400px] mx-auto px-6 md:px-12 relative z-10">
@@ -91,7 +83,13 @@ const FAQSection = () => {
 
         <div className="flex flex-col md:mx-0">
           {faqs.map((faq, index) => (
-            <QAItem key={index} question={faq.question} answer={faq.answer} />
+            <QAItem 
+              key={index} 
+              question={faq.question} 
+              answer={faq.answer} 
+              isOpen={openIndex === index}
+              onToggle={() => handleToggle(index)}
+            />
           ))}
         </div>
       </div>

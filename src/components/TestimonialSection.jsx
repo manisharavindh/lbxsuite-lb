@@ -120,6 +120,13 @@ const TestimonialCard = ({ name, avatar, text, role, rating = 5 }) => (
 );
 
 const TestimonialSection = () => {
+  // Repeat data enough times so the marquee strip is always wider than
+  // even ultra-wide viewports. 4 copies = 2 identical halves; the CSS
+  // animation translates -50% which seamlessly loops the first half out
+  // while the second half scrolls in.
+  const row1Items = [...testimonialsRow1, ...testimonialsRow1, ...testimonialsRow1, ...testimonialsRow1];
+  const row2Items = [...testimonialsRow2, ...testimonialsRow2, ...testimonialsRow2, ...testimonialsRow2];
+
   return (
     <section className="relative w-full bg-[#141414] overflow-hidden z-10 pt-28 md:pt-32">
       <div className="max-w-[1400px] mx-auto px-6 md:px-12 relative z-10 mb-8 md:mb-10">
@@ -130,19 +137,19 @@ const TestimonialSection = () => {
 
       <div className="relative w-full flex flex-col gap-3 md:gap-5">
 
-        {/* Row 1 - Left to Right (Reverse) */}
+        {/* Row 1 — scrolls right-to-left (reverse) */}
         <div className="group flex w-max pr-3 md:pr-5">
           <div className="flex gap-3 md:gap-5 min-w-max pr-3 md:pr-5 animate-marquee-reverse group-hover:[animation-play-state:paused]">
-            {[...testimonialsRow1, ...testimonialsRow1].map((testimonial, idx) => (
+            {row1Items.map((testimonial, idx) => (
               <TestimonialCard key={`row1-${idx}`} {...testimonial} />
             ))}
           </div>
         </div>
 
-        {/* Row 2 - Right to Left */}
+        {/* Row 2 — scrolls left-to-right */}
         <div className="group flex w-max pr-3 md:pr-5" style={{ '--marquee-duration': '55s' }}>
           <div className="flex gap-3 md:gap-5 min-w-max pr-3 md:pr-5 animate-marquee group-hover:[animation-play-state:paused]">
-            {[...testimonialsRow2, ...testimonialsRow2].map((testimonial, idx) => (
+            {row2Items.map((testimonial, idx) => (
               <TestimonialCard key={`row2-${idx}`} {...testimonial} />
             ))}
           </div>

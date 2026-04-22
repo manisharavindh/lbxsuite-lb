@@ -1,12 +1,13 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
-  Save, ArrowLeft, Upload, X, Image, Type, AlignLeft,
-  Quote, List, Heading2, Heading3, Bold, Italic, Link as LinkIcon,
-  Eye, Trash2, Plus, GripVertical, ChevronDown, ChevronUp
+  Save, ArrowLeft, Upload, X, Link as LinkIcon,
+  Eye, Plus, ChevronDown, ChevronUp
 } from 'lucide-react';
 import AdminLayout from './AdminLayout';
 import { postsAPI } from './api';
+import RichTextEditor from './RichTextEditor';
+import { normalizeContent, isBlockFormat } from './contentConverter';
 
 const CATEGORIES = [
   'Artificial Intelligence',
@@ -40,7 +41,7 @@ const AdminPostEditor = ({ user, onLogout }) => {
     read_time: '5 min read',
     featured: false,
     tags: [],
-    content: [],
+    content: '',  // Now stored as HTML string
     status: 'draft',
   });
 
@@ -50,9 +51,7 @@ const AdminPostEditor = ({ user, onLogout }) => {
   const [tagInput, setTagInput] = useState('');
   const [toasts, setToasts] = useState([]);
   const [autoSlug, setAutoSlug] = useState(true);
-  const [addBlockType, setAddBlockType] = useState(null);
-  const [newBlockText, setNewBlockText] = useState('');
-  const [newBlockItems, setNewBlockItems] = useState(['']);
+  const [convertedFromBlocks, setConvertedFromBlocks] = useState(false);
   const fileInputRef = useRef(null);
 
   const [authorLinks, setAuthorLinks] = useState([]);
@@ -88,6 +87,21 @@ const AdminPostEditor = ({ user, onLogout }) => {
       }
       setAuthorLinks(loadedLinks.slice(0, 3));
 
+      // Parse content — handle both old block format and new HTML format
+      let rawContent = post.content;
+      if (typeof rawContent === 'string') {
+        try {
+          rawContent = JSON.parse(rawContent);
+        } catch { /* not JSON, keep as string */ }
+      }
+
+      // Detect and auto-convert old block format
+      const wasBlocks = isBlockFormat(rawContent);
+      const htmlContent = normalizeContent(rawContent);
+      if (wasBlocks) {
+        setConvertedFromBlocks(true);
+      }
+
       setForm({
         title: post.title || '',
         slug: post.slug || '',
@@ -99,7 +113,7 @@ const AdminPostEditor = ({ user, onLogout }) => {
         read_time: post.read_time || '',
         featured: post.featured || false,
         tags: post.tags?.filter(t => !t.startsWith('__link:') && !t.startsWith('__social:') && !t.startsWith('__authorlinks:')) || [],
-        content: typeof post.content === 'string' ? JSON.parse(post.content) : (post.content || []),
+        content: htmlContent,
         status: post.status || 'draft',
       });
       setAutoSlug(false);
@@ -163,6 +177,10 @@ const AdminPostEditor = ({ user, onLogout }) => {
         await postsAPI.update(id, payload);
         addToast('Post saved successfully!');
         if (newStatus) setForm(prev => ({ ...prev, status: newStatus }));
+        if (convertedFromBlocks) {
+          setConvertedFromBlocks(false);
+          addToast('Content converted from blocks to rich text');
+        }
       }
     } catch (err) {
       addToast(err.message || 'Failed to save post', 'error');
@@ -182,45 +200,6 @@ const AdminPostEditor = ({ user, onLogout }) => {
 
   const removeTag = (tag) => {
     updateField('tags', form.tags.filter(t => t !== tag));
-  };
-
-  // Content blocks
-  const addContentBlock = () => {
-    if (!addBlockType) return;
-
-    let block;
-    if (addBlockType === 'list') {
-      block = { type: 'list', items: newBlockItems.filter(i => i.trim()) };
-    } else {
-      block = { type: addBlockType, text: newBlockText.trim() };
-    }
-
-    if (block.type === 'list' && block.items.length === 0) return;
-    if (block.type !== 'list' && !block.text) return;
-
-    updateField('content', [...form.content, block]);
-    setAddBlockType(null);
-    setNewBlockText('');
-    setNewBlockItems(['']);
-  };
-
-  const removeContentBlock = (index) => {
-    updateField('content', form.content.filter((_, i) => i !== index));
-  };
-
-  const moveContentBlock = (index, direction) => {
-    const newContent = [...form.content];
-    const newIndex = index + direction;
-    if (newIndex < 0 || newIndex >= newContent.length) return;
-    [newContent[index], newContent[newIndex]] = [newContent[newIndex], newContent[index]];
-    updateField('content', newContent);
-  };
-
-  const blockTypeIcons = {
-    paragraph: AlignLeft,
-    heading: Heading2,
-    quote: Quote,
-    list: List,
   };
 
   if (loading) {
@@ -285,7 +264,7 @@ const AdminPostEditor = ({ user, onLogout }) => {
               <div className="admin-field" style={{ marginBottom: 0 }}>
                 <label className="admin-label">
                   Slug
-                  {autoSlug && <span style={{ color: 'var(--admin-text-muted)', fontWeight: 400, textTransform: 'none', letterSpacing: 0 }}> — auto-generated</span>}
+                  {autoSlug && <span style={{ color: 'var(--admin-text-muted)', fontWeight: 400, textTransform: 'none', letterSpacing: 0 }}> auto-generated</span>}
                 </label>
                 <input
                   type="text"
@@ -314,154 +293,30 @@ const AdminPostEditor = ({ user, onLogout }) => {
             </div>
           </div>
 
-          {/* Content Blocks */}
+          {/* Rich Text Editor */}
           <div className="admin-card">
             <div className="admin-card-header">
-              <span className="admin-card-title">Content Blocks</span>
-              <span style={{ fontSize: '12px', color: 'var(--admin-text-muted)' }}>
-                {form.content.length} block{form.content.length !== 1 ? 's' : ''}
-              </span>
-            </div>
-            <div className="admin-card-body">
-              {form.content.length > 0 ? (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '16px' }}>
-                  {form.content.map((block, i) => {
-                    const Icon = blockTypeIcons[block.type] || AlignLeft;
-                    return (
-                      <div key={i} className="admin-content-block">
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', alignItems: 'center' }}>
-                          <button
-                            onClick={() => moveContentBlock(i, -1)}
-                            className="admin-btn admin-btn-ghost"
-                            style={{ padding: '2px', opacity: i === 0 ? 0.3 : 1 }}
-                            disabled={i === 0}
-                          >
-                            <ChevronUp size={12} />
-                          </button>
-                          <GripVertical size={12} style={{ color: 'var(--admin-text-muted)' }} />
-                          <button
-                            onClick={() => moveContentBlock(i, 1)}
-                            className="admin-btn admin-btn-ghost"
-                            style={{ padding: '2px', opacity: i === form.content.length - 1 ? 0.3 : 1 }}
-                            disabled={i === form.content.length - 1}
-                          >
-                            <ChevronDown size={12} />
-                          </button>
-                        </div>
-                        <span className="admin-content-block-type">
-                          <Icon size={12} style={{ display: 'inline', marginRight: '4px', verticalAlign: '-2px' }} />
-                          {block.type}
-                        </span>
-                        <span className="admin-content-block-text">
-                          {block.type === 'list' ? block.items?.join(' • ') : block.text}
-                        </span>
-                        <div className="admin-content-block-actions">
-                          <button
-                            onClick={() => removeContentBlock(i)}
-                            className="admin-btn admin-btn-ghost admin-btn-sm"
-                            style={{ color: 'var(--admin-accent)' }}
-                          >
-                            <Trash2 size={12} />
-                          </button>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              ) : (
-                <div className="admin-empty" style={{ padding: '32px' }}>
-                  <p className="admin-empty-text">No content blocks yet. Add blocks below.</p>
-                </div>
-              )}
-
-              {/* Add Block UI */}
-              {addBlockType ? (
-                <div style={{
-                  padding: '16px',
-                  background: 'var(--admin-surface-2)',
-                  borderRadius: 'var(--admin-radius)',
-                  border: '1px solid var(--admin-border)',
+              <span className="admin-card-title">Content</span>
+              {convertedFromBlocks && (
+                <span style={{
+                  fontSize: '11px',
+                  color: 'var(--admin-warning)',
+                  background: 'var(--admin-warning-bg)',
+                  padding: '3px 10px',
+                  borderRadius: '2px',
+                  border: '1px solid rgba(245, 158, 11, 0.2)',
+                  fontWeight: 600,
                 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                    <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--admin-accent)', textTransform: 'uppercase' }}>
-                      Add {addBlockType}
-                    </span>
-                    <button onClick={() => setAddBlockType(null)} className="admin-btn admin-btn-ghost admin-btn-sm">
-                      <X size={14} />
-                    </button>
-                  </div>
-
-                  {addBlockType === 'list' ? (
-                    <div>
-                      {newBlockItems.map((item, i) => (
-                        <div key={i} style={{ display: 'flex', gap: '8px', marginBottom: '6px' }}>
-                          <input
-                            type="text"
-                            className="admin-input"
-                            placeholder={`List item ${i + 1}...`}
-                            value={item}
-                            onChange={(e) => {
-                              const items = [...newBlockItems];
-                              items[i] = e.target.value;
-                              setNewBlockItems(items);
-                            }}
-                          />
-                          {newBlockItems.length > 1 && (
-                            <button
-                              onClick={() => setNewBlockItems(newBlockItems.filter((_, j) => j !== i))}
-                              className="admin-btn admin-btn-ghost admin-btn-sm"
-                            >
-                              <X size={14} />
-                            </button>
-                          )}
-                        </div>
-                      ))}
-                      <button
-                        onClick={() => setNewBlockItems([...newBlockItems, ''])}
-                        className="admin-btn admin-btn-ghost admin-btn-sm"
-                        style={{ marginTop: '4px' }}
-                      >
-                        <Plus size={12} /> Add Item
-                      </button>
-                    </div>
-                  ) : (
-                    <textarea
-                      className="admin-textarea"
-                      placeholder={`Enter ${addBlockType} text...`}
-                      value={newBlockText}
-                      onChange={(e) => setNewBlockText(e.target.value)}
-                      rows={addBlockType === 'paragraph' ? 4 : 2}
-                      autoFocus
-                    />
-                  )}
-
-                  <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '12px' }}>
-                    <button onClick={() => setAddBlockType(null)} className="admin-btn admin-btn-secondary admin-btn-sm">
-                      Cancel
-                    </button>
-                    <button onClick={addContentBlock} className="admin-btn admin-btn-primary admin-btn-sm">
-                      <Plus size={14} /> Add Block
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-                  {[
-                    { type: 'paragraph', label: 'Paragraph', icon: AlignLeft },
-                    { type: 'heading', label: 'Heading', icon: Heading2 },
-                    { type: 'quote', label: 'Quote', icon: Quote },
-                    { type: 'list', label: 'List', icon: List },
-                  ].map((bt) => (
-                    <button
-                      key={bt.type}
-                      onClick={() => { setAddBlockType(bt.type); setNewBlockText(''); setNewBlockItems(['']); }}
-                      className="admin-btn admin-btn-secondary admin-btn-sm"
-                    >
-                      <bt.icon size={14} /> {bt.label}
-                    </button>
-                  ))}
-                </div>
+                  Auto-converted from blocks — save to persist
+                </span>
               )}
+            </div>
+            <div className="admin-card-body" style={{ padding: 0 }}>
+              <RichTextEditor
+                content={form.content}
+                onChange={(html) => updateField('content', html)}
+                placeholder="Start writing your blog post content..."
+              />
             </div>
           </div>
         </div>
@@ -507,55 +362,71 @@ const AdminPostEditor = ({ user, onLogout }) => {
           <div className="admin-card">
             <div className="admin-card-header">
               <span className="admin-card-title">Cover Image</span>
-            </div>
-            <div className="admin-card-body">
-              {form.cover_image ? (
-                <div className="admin-upload-preview">
-                  <img src={form.cover_image} alt="Cover" />
-                  <button
-                    onClick={() => updateField('cover_image', '')}
-                    className="admin-upload-preview-remove"
-                  >
-                    <X size={14} />
-                  </button>
-                </div>
-              ) : (
-                <div
-                  className="admin-upload-zone"
-                  onClick={() => fileInputRef.current?.click()}
-                >
-                  {uploading ? (
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-                      <div className="admin-spinner admin-spinner-lg" />
-                      <span style={{ fontSize: '12px', color: 'var(--admin-text-muted)' }}>Compressing...</span>
-                    </div>
-                  ) : (
-                    <>
-                      <div className="admin-upload-zone-icon"><Upload size={24} /></div>
-                      <p className="admin-upload-zone-text">Click to upload</p>
-                      <p className="admin-upload-zone-hint">Auto-compressed to WebP</p>
-                    </>
-                  )}
-                </div>
-              )}
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                onChange={handleImageUpload}
-                style={{ display: 'none' }}
-              />
-              <div className="admin-field" style={{ marginTop: '12px', marginBottom: 0 }}>
-                <label className="admin-label">Or paste URL</label>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', fontSize: '12px', color: 'var(--admin-text-muted)' }}>
+                <span>{form.cover_image !== false ? 'Enabled' : 'Disabled'}</span>
                 <input
-                  type="text"
-                  className="admin-input"
-                  placeholder="/uploads/image.webp"
-                  value={form.cover_image}
-                  onChange={(e) => updateField('cover_image', e.target.value)}
+                  type="checkbox"
+                  checked={form.cover_image !== false}
+                  onChange={(e) => {
+                    if (!e.target.checked) {
+                      updateField('cover_image', false);
+                    } else {
+                      updateField('cover_image', '');
+                    }
+                  }}
+                  style={{ accentColor: 'var(--admin-accent)' }}
                 />
-              </div>
+              </label>
             </div>
+            {form.cover_image !== false && (
+              <div className="admin-card-body">
+                {form.cover_image ? (
+                  <div className="admin-upload-preview">
+                    <img src={form.cover_image} alt="Cover" />
+                    <button
+                      onClick={() => updateField('cover_image', '')}
+                      className="admin-upload-preview-remove"
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
+                ) : (
+                  <div
+                    className="admin-upload-zone"
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    {uploading ? (
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                        <div className="admin-spinner admin-spinner-lg" />
+                        <span style={{ fontSize: '12px', color: 'var(--admin-text-muted)' }}>Compressing...</span>
+                      </div>
+                    ) : (
+                      <>
+                        <p className="admin-upload-zone-text">Click to upload</p>
+                        <p className="admin-upload-zone-hint">Auto-compressed to WebP</p>
+                      </>
+                    )}
+                  </div>
+                )}
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  style={{ display: 'none' }}
+                />
+                <div className="admin-field" style={{ marginTop: '12px', marginBottom: 0 }}>
+                  <label className="admin-label">Or paste URL</label>
+                  <input
+                    type="text"
+                    className="admin-input"
+                    placeholder="/uploads/image.webp"
+                    value={form.cover_image || ''}
+                    onChange={(e) => updateField('cover_image', e.target.value)}
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Metadata */}

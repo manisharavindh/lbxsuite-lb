@@ -88,7 +88,8 @@ const BlogPostPage = () => {
             }
             return loadedLinks;
           })(),
-          content: data.content || []
+          content: data.content || '',
+          contentIsHtml: typeof data.content === 'string' && !data.content.startsWith('['),
         };
         setPost(mappedPost);
         setLoading(false);
@@ -101,12 +102,65 @@ const BlogPostPage = () => {
       });
   }, [slug]);
 
+  // Determine if content is HTML or old block format
+  const contentIsHtml = React.useMemo(() => {
+    if (!post) return false;
+    // New HTML format: string that isn't a JSON array
+    if (typeof post.content === 'string') {
+      try {
+        const parsed = JSON.parse(post.content);
+        if (Array.isArray(parsed)) return false;
+      } catch { /* not JSON, it's HTML */ }
+      return true;
+    }
+    return false;
+  }, [post]);
+
+  // Parse content blocks for old format
+  const contentBlocks = React.useMemo(() => {
+    if (!post || contentIsHtml) return [];
+    if (Array.isArray(post.content)) return post.content;
+    if (typeof post.content === 'string') {
+      try {
+        const parsed = JSON.parse(post.content);
+        if (Array.isArray(parsed)) return parsed;
+      } catch { /* ignore */ }
+    }
+    return [];
+  }, [post, contentIsHtml]);
+
   const headings = React.useMemo(() => {
     if (!post) return [];
-    return post.content
+
+    if (contentIsHtml && typeof post.content === 'string') {
+      // Extract headings from HTML string
+      const regex = /<h([23])[^>]*>(.*?)<\/h[23]>/gi;
+      const results = [];
+      let match;
+      while ((match = regex.exec(post.content)) !== null) {
+        const text = match[2].replace(/<[^>]*>/g, ''); // strip inner HTML tags
+        results.push({ text, id: toId(text) });
+      }
+      return results;
+    }
+
+    // Old block format
+    return contentBlocks
       .filter((b) => b.type === 'heading')
       .map((b) => ({ text: b.text, id: toId(b.text) }));
-  }, [post]);
+  }, [post, contentIsHtml, contentBlocks]);
+
+  // Process HTML to inject heading IDs for scroll-spy
+  const processedHtml = React.useMemo(() => {
+    if (!contentIsHtml || typeof post?.content !== 'string') return '';
+    return post.content.replace(/<h([23])([^>]*)>(.*?)<\/h[23]>/gi, (match, level, attrs, inner) => {
+      const text = inner.replace(/<[^>]*>/g, '');
+      const id = toId(text);
+      // Don't add id if one already exists
+      if (/\bid=/.test(attrs)) return match;
+      return `<h${level}${attrs} id="${id}">${inner}</h${level}>`;
+    });
+  }, [contentIsHtml, post]);
 
   // Scroll-spy
   useEffect(() => {
@@ -339,27 +393,39 @@ const BlogPostPage = () => {
             </div>
 
             {/* Cover image — same width as the article column */}
-            <div className="mb-12">
-              <div className="w-full aspect-[16/9] rounded-xl overflow-hidden border border-white/[0.06]">
-                <img
-                  src={post.coverImage}
-                  alt={post.title}
-                  className="w-full h-full object-cover"
-                />
+            {post.coverImage && post.coverImage !== 'false' && (
+              <div className="mb-12">
+                <div className="w-full aspect-[16/9] rounded-xl overflow-hidden border border-white/[0.06]">
+                  <img
+                    src={post.coverImage}
+                    alt={post.title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
               </div>
-            </div>
+            )}
 
             {/* ── Article body ── */}
 
-            {/* Lead paragraph */}
-            {post.content[0]?.type === 'paragraph' && (
-              <p className="text-[1.125rem] md:text-[1.25rem] font-sans text-[#E0E0E0] leading-[1.8] mb-10 tracking-[0.003em]">
-                {post.content[0].text}
-              </p>
-            )}
+            {contentIsHtml ? (
+              /* New HTML content from rich text editor */
+              <div
+                className="blog-html-content"
+                dangerouslySetInnerHTML={{ __html: processedHtml }}
+              />
+            ) : (
+              <>
+                {/* Lead paragraph */}
+                {contentBlocks[0]?.type === 'paragraph' && (
+                  <p className="text-[1.125rem] md:text-[1.25rem] font-sans text-[#E0E0E0] leading-[1.8] mb-10 tracking-[0.003em]">
+                    {contentBlocks[0].text}
+                  </p>
+                )}
 
-            {/* Rest of content blocks */}
-            {post.content.slice(1).map((block, i) => renderBlock(block, i + 1))}
+                {/* Rest of content blocks */}
+                {contentBlocks.slice(1).map((block, i) => renderBlock(block, i + 1))}
+              </>
+            )}
 
             {/* Divider + Tags */}
             <div className="mt-16 pt-8 border-t border-white/[0.06]">
