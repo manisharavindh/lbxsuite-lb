@@ -92,6 +92,9 @@ const InteractiveGrid = () => {
     };
 
     const onPointerMove = (e) => {
+      // Disable hover effect on mobile screens and touch inputs
+      if (window.innerWidth < 768 || e.pointerType === 'touch') return;
+
       const rect = canvas.getBoundingClientRect();
       const mouseX = e.clientX - rect.left;
       const mouseY = e.clientY - rect.top;

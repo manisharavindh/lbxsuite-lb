@@ -84,7 +84,7 @@ const GiveawaysPage = () => {
               <p className="text-sm md:text-base font-sans leading-relaxed text-[#A9A9A9] max-w-[700px] mb-6">
                 The algorithm has spoken. Out of all the entries, the script calculated the probabilities and picked the top 7 profiles to receive a fully custom, free portfolio from LbxSuite.
               </p>
-              <div className="inline-flex items-center justify-center px-4 py-2 border border-[#FF5555]/30 bg-[#141414] text-[#FF5555] text-[11px] lg:text-xs uppercase tracking-[0.15em] font-sans font-medium">
+              <div className="inline-flex items-center justify-center px-4 py-2 border border-[#FF5555]/30 bg-[#141414] text-[#FF5555] text-[11px] lg:text-xs uppercase tracking-[0.15em] font-sans font-medium rounded">
                 This giveaway has ended
               </div>
             </div>

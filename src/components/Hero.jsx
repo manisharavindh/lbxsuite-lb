@@ -12,7 +12,7 @@ const Hero = () => {
           {/* Left Studio Text */}
           <div className="absolute left-0 top-1/2 -translate-y-1/2 w-32 pb-12">
             <p className="text-[11px] lg:text-xs uppercase tracking-[0.15em] leading-[1.6] text-[#A9A9A9] font-sans font-medium">
-              Creative<br />studio
+              Growth<br />Partner
             </p>
           </div>
 
@@ -37,11 +37,10 @@ const Hero = () => {
 
               <div className="w-full flex items-center justify-end mr-[-20%] lg:mr-[-40%] mt-[-1%] relative">
                 <span className="font-sans font-medium text-[9.5vw] lg:text-[10.5vw] xl:text-[11.5rem] font-light uppercase tracking-wider leading-[0.8] relative z-10 shrink-0 text-[#FFFFFF] pt-2">Agency</span>
-                <div className="w-[180px] lg:w-[260px] shrink-0 ml-4 lg:ml-8 mt-4 lg:mt-8 flex flex-col items-start">
+                <div className="w-[280px] lg:w-[300px] shrink-0 ml-4 lg:ml-8 mt-4 lg:mt-8 flex flex-col items-start">
                   <p className="text-[11px] lg:text-[14px] font-sans text-[#A9A9A9] leading-relaxed font-medium mb-6">
-                    The first full-stack Web3 creative agency integrating AI technology to deliver best-in-class client experience.
+                    Build. Launch. Dominate. From ground zero to full-scale growth, we turn raw ideas into brands that own their space.
                   </p>
-
                   {/* Funnel Element */}
                   <AnimatedButton href="#contact" size="sm" className="shadow-lg" data-track="Hero — Book an Intro Call CTA">
                     Book an Intro Call
@@ -63,7 +62,7 @@ const Hero = () => {
 
           <div className="w-full max-w-[300px] text-center mt-10 flex flex-col items-center">
             <p className="text-[13px] sm:text-[14px] font-sans text-[#A9A9A9] leading-[1.6] font-medium mb-6">
-              The first full-stack Web3 creative agency integrating AI technology to deliver best-in-class client experience.
+              Build. Launch. Dominate. From ground zero to full-scale growth, we turn raw ideas into brands that own their space.
             </p>
             <AnimatedButton href="#contact" size="md" data-track="Hero Mobile — Book an Intro Call CTA">
               Book an Intro Call

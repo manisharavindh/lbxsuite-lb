@@ -9,12 +9,24 @@ import AnimatedButton from '../components/AnimatedButton';
 const toId = (text) =>
   text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 
+const decodeHtmlEntities = (text) => {
+  return text
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&amp;#39;/g, "'")
+    .replace(/&amp;amp;/g, '&');
+};
+
 const BlogPostPage = () => {
   const { slug } = useParams();
   const [blogPosts, setBlogPosts] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
   const [copied, setCopied] = React.useState(false);
   const [activeId, setActiveId] = React.useState('');
+  const rafObserverRef = React.useRef(null);
 
   useEffect(() => {
     fetch('/api/admin/posts/public/list')
@@ -27,7 +39,6 @@ const BlogPostPage = () => {
           id: post.slug,
           title: post.title,
           excerpt: post.excerpt,
-          coverImage: post.image_url,
           category: post.category || 'General',
           author: post.author,
           authorRole: post.author_role,
@@ -60,7 +71,6 @@ const BlogPostPage = () => {
           id: data.slug,
           title: data.title,
           excerpt: data.excerpt,
-          coverImage: data.image_url,
           category: data.category || 'General',
           author: data.author,
           authorRole: data.author_role,
@@ -89,7 +99,7 @@ const BlogPostPage = () => {
             return loadedLinks;
           })(),
           content: data.content || '',
-          contentIsHtml: typeof data.content === 'string' && !data.content.startsWith('['),
+          // contentIsHtml: typeof data.content === 'string' && !data.content.startsWith('['),
         };
         setPost(mappedPost);
         setLoading(false);
@@ -133,11 +143,12 @@ const BlogPostPage = () => {
     if (!post) return [];
 
     if (contentIsHtml && typeof post.content === 'string') {
+      const decoded = decodeHtmlEntities(post.content);
       // Extract headings from HTML string
       const regex = /<h([23])[^>]*>(.*?)<\/h[23]>/gi;
       const results = [];
       let match;
-      while ((match = regex.exec(post.content)) !== null) {
+      while ((match = regex.exec(decoded)) !== null) {
         const text = match[2].replace(/<[^>]*>/g, ''); // strip inner HTML tags
         results.push({ text, id: toId(text) });
       }
@@ -153,32 +164,66 @@ const BlogPostPage = () => {
   // Process HTML to inject heading IDs for scroll-spy
   const processedHtml = React.useMemo(() => {
     if (!contentIsHtml || typeof post?.content !== 'string') return '';
-    return post.content.replace(/<h([23])([^>]*)>(.*?)<\/h[23]>/gi, (match, level, attrs, inner) => {
+
+    // Decode any double-encoded HTML entities before injecting
+    const decoded = decodeHtmlEntities(post.content);
+
+    return decoded.replace(/<h([23])([^>]*)>(.*?)<\/h[23]>/gi, (match, level, attrs, inner) => {
       const text = inner.replace(/<[^>]*>/g, '');
       const id = toId(text);
-      // Don't add id if one already exists
       if (/\bid=/.test(attrs)) return match;
       return `<h${level}${attrs} id="${id}">${inner}</h${level}>`;
     });
   }, [contentIsHtml, post]);
 
-  // Scroll-spy
+  // Scroll-spy — runs after paint so injected heading IDs exist in the DOM
   useEffect(() => {
     if (!headings.length) return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) setActiveId(e.target.id);
-        });
-      },
-      { rootMargin: '-15% 0px -70% 0px' }
-    );
-    headings.forEach(({ id }) => {
-      const el = document.getElementById(id);
-      if (el) observer.observe(el);
+
+    const raf = requestAnimationFrame(() => {
+      const handleScroll = () => {
+        // Adjust this offset depending on how tall your fixed navbar/header is
+        const offset = 140; 
+        
+        let current = headings[0]?.id;
+        
+        for (const { id } of headings) {
+          const el = document.getElementById(id);
+          if (el) {
+            const rect = el.getBoundingClientRect();
+            // If the element has passed the offset, it is the active section
+            if (rect.top <= offset) {
+              current = id;
+            } else {
+              break;
+            }
+          }
+        }
+
+        // Automatically highlight the last item if scrolled to the very bottom
+        const scrolledToBottom = window.innerHeight + Math.round(window.scrollY) >= document.documentElement.scrollHeight - 20;
+        if (scrolledToBottom && headings.length > 0) {
+          current = headings[headings.length - 1].id;
+        }
+
+        if (current) setActiveId(current);
+      };
+
+      window.addEventListener('scroll', handleScroll, { passive: true });
+      handleScroll(); // Set correct active item on first load
+
+      rafObserverRef.current = {
+        disconnect: () => {
+          window.removeEventListener('scroll', handleScroll);
+        }
+      };
     });
-    return () => observer.disconnect();
-  }, [headings, slug]);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      rafObserverRef.current?.disconnect();
+    };
+  }, [headings, slug, processedHtml]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -392,18 +437,6 @@ const BlogPostPage = () => {
               </div>
             </div>
 
-            {/* Cover image — same width as the article column */}
-            {post.coverImage && post.coverImage !== 'false' && (
-              <div className="mb-12">
-                <div className="w-full aspect-[16/9] rounded-xl overflow-hidden border border-white/[0.06]">
-                  <img
-                    src={post.coverImage}
-                    alt={post.title}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              </div>
-            )}
 
             {/* ── Article body ── */}
 

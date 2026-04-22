@@ -1,90 +1,59 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Globe, Sparkles, PenTool, Film, ArrowRight } from 'lucide-react';
-import BorderGlow from './BorderGlow';
 
 const ServicesGrid = () => {
   const services = [
     {
-      id: "web",
-      title: "Web Development",
-      body: "Custom architectures built for scale. From high-converting landing pages to personal portfolios.",
-      category: "Development",
-      icon: Globe
+      title: "Website & Landing Page",
+      subtitle: "Built to convert, not just look good",
+      body: "If your pages aren’t converting, they’re costing you money. We design and build high-performance websites that grab attention fast, guide users clearly, and turn clicks into actual revenue. No fluff, just results."
     },
     {
-      id: "ai",
       title: "Agentic AI Solutions",
-      body: "We implement intelligent, autonomous systems to automate complex workflows and decision-making.",
-      category: "Artificial Intelligence",
-      icon: Sparkles
+      subtitle: "Do more without hiring more",
+      body: "Manual work slows you down and eats into margins. We build AI systems that handle real tasks automatically, consistently, and at scale. Less overhead, faster execution, and more room to grow."
     },
     {
-      id: "branding",
       title: "Branding",
-      body: "Crafting memorable identities through logo design, visual language, and brand strategy.",
-      category: "Design",
-      icon: PenTool
-    },
-    {
-      id: "video",
-      title: "Video Editing",
-      body: "Cinematic narratives, dynamic motion graphics, and high-retention cuts that convert.",
-      category: "Video Production",
-      icon: Film
+      subtitle: "Look premium, charge premium",
+      body: "If your brand feels generic, you’ll always compete on price. We create sharp, high-impact identities that position you as the obvious choice so you can stand out, build trust fast, and charge what you’re worth."
     }
   ];
 
   return (
-    <section id="services" className="relative z-10 w-full bg-[#141414] shadow-[-10px_-10px_30px_#141414] pt-20 md:pt-28">
-      <div className="max-w-[1400px] mx-auto px-6 md:px-12 relative z-10">
-        <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif text-[#FFFFFF] leading-tight font-medium mb-6 md:mb-8">Our Expertise</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 ">
+    <section id="services" className="relative z-10 w-full bg-[#141414] shadow-[-10px_-10px_30px_#141414] pt-16 md:pt-24">
+      <div className="max-w-[1200px] mx-auto px-6 md:px-12 relative z-10">
+        <h2 className="text-[2rem] md:text-[3rem] font-sans text-white font-medium mb-10 md:mb-12 tracking-tight">
+          Our Expertise
+        </h2>
+
+        <div className="flex flex-col">
           {services.map((service, index) => (
-            <Link
+            <div
               key={index}
-              to={`/services/${service.id}`}
-              className="block h-full no-underline"
-              style={{ textDecoration: 'none' }}
-              data-track={`Services — ${service.title} Card`}
+              className="relative group py-8 md:py-12 grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-0 cursor-default"
             >
-              <BorderGlow
-                className="h-full transition-colors"
-                backgroundColor="#141414"
-                glowColor="358 100 67"
-                colors={['#FF5555', '#FF8888', '#FF2222']}
-                borderRadius={4}
-              >
-                <div className="relative p-6 xl:p-8 flex flex-col h-full w-full group overflow-hidden cursor-pointer">
-                  <div className="relative z-10 w-12 h-12 rounded-full bg-[#FF5555]/10 flex items-center justify-center mb-6 text-[#FF5555]">
-                    <service.icon size={20} strokeWidth={2} />
-                  </div>
+              <div className="absolute top-0 left-0 w-full h-[1px] bg-white/[0.08]" />
 
-                  <h3 className="relative z-10 text-xl xl:text-2xl font-serif text-[#FFFFFF] leading-tight mb-4">
-                    {service.title}
-                  </h3>
-                  <p className="relative z-10 text-sm font-sans leading-relaxed text-[#A9A9A9] mb-12 flex-grow">
-                    {service.body}
-                  </p>
-
-                  <div className="relative z-10 mt-auto pt-6 border-t border-[#FFFFFF]/10">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-sans font-semibold text-[#FF5555] tracking-wide">
-                        Explore more
-                      </span>
-                      <span className="w-8 h-8 rounded-full border border-[#FF5555]/40 flex items-center justify-center text-[#FF5555] transition-colors duration-300 group-hover:bg-[#FF5555] group-hover:text-white group-hover:border-[#FF5555]">
-                        <ArrowRight size={14} strokeWidth={2.5} />
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </BorderGlow>
-            </Link>
+              <div className="md:col-span-5 lg:col-span-5">
+                <h3 className="text-xl md:text-[1.35rem] font-sans font-normal text-white tracking-wide transition-colors duration-500">
+                  {service.title}
+                </h3>
+              </div>
+              <div className="md:col-span-7 lg:col-span-6 lg:col-start-6 flex flex-col gap-2">
+                <h4 className="text-[1.05rem] md:text-[1.1rem] font-semibold font-sans text-white">
+                  {service.subtitle}
+                </h4>
+                <p className="text-[0.95rem] md:text-[1rem] font-sans text-[#CDCDCD] leading-[1.85]">
+                  {service.body}
+                </p>
+              </div>
+            </div>
           ))}
         </div>
       </div>
     </section>
   );
 };
+
 export default ServicesGrid;
 

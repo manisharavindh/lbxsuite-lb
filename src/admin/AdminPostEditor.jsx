@@ -34,7 +34,6 @@ const AdminPostEditor = ({ user, onLogout }) => {
     title: '',
     slug: '',
     excerpt: '',
-    cover_image: '',
     category: 'General',
     author: 'Manish Aravindh',
     author_role: 'Co-Founder & CTO',
@@ -106,7 +105,6 @@ const AdminPostEditor = ({ user, onLogout }) => {
         title: post.title || '',
         slug: post.slug || '',
         excerpt: post.excerpt || '',
-        cover_image: post.cover_image || '',
         category: post.category || 'General',
         author: post.author || '',
         author_role: post.author_role || '',
@@ -141,21 +139,7 @@ const AdminPostEditor = ({ user, onLogout }) => {
     });
   };
 
-  const handleImageUpload = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
 
-    setUploading(true);
-    try {
-      const result = await postsAPI.uploadImage(file);
-      updateField('cover_image', result.url);
-      addToast('Image uploaded & compressed');
-    } catch (err) {
-      addToast('Image upload failed', 'error');
-    } finally {
-      setUploading(false);
-    }
-  };
 
   const handleSave = async (newStatus) => {
     if (!form.title || !form.slug) {
@@ -358,76 +342,7 @@ const AdminPostEditor = ({ user, onLogout }) => {
             </div>
           </div>
 
-          {/* Cover Image */}
-          <div className="admin-card">
-            <div className="admin-card-header">
-              <span className="admin-card-title">Cover Image</span>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', fontSize: '12px', color: 'var(--admin-text-muted)' }}>
-                <span>{form.cover_image !== false ? 'Enabled' : 'Disabled'}</span>
-                <input
-                  type="checkbox"
-                  checked={form.cover_image !== false}
-                  onChange={(e) => {
-                    if (!e.target.checked) {
-                      updateField('cover_image', false);
-                    } else {
-                      updateField('cover_image', '');
-                    }
-                  }}
-                  style={{ accentColor: 'var(--admin-accent)' }}
-                />
-              </label>
-            </div>
-            {form.cover_image !== false && (
-              <div className="admin-card-body">
-                {form.cover_image ? (
-                  <div className="admin-upload-preview">
-                    <img src={form.cover_image} alt="Cover" />
-                    <button
-                      onClick={() => updateField('cover_image', '')}
-                      className="admin-upload-preview-remove"
-                    >
-                      <X size={14} />
-                    </button>
-                  </div>
-                ) : (
-                  <div
-                    className="admin-upload-zone"
-                    onClick={() => fileInputRef.current?.click()}
-                  >
-                    {uploading ? (
-                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-                        <div className="admin-spinner admin-spinner-lg" />
-                        <span style={{ fontSize: '12px', color: 'var(--admin-text-muted)' }}>Compressing...</span>
-                      </div>
-                    ) : (
-                      <>
-                        <p className="admin-upload-zone-text">Click to upload</p>
-                        <p className="admin-upload-zone-hint">Auto-compressed to WebP</p>
-                      </>
-                    )}
-                  </div>
-                )}
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  style={{ display: 'none' }}
-                />
-                <div className="admin-field" style={{ marginTop: '12px', marginBottom: 0 }}>
-                  <label className="admin-label">Or paste URL</label>
-                  <input
-                    type="text"
-                    className="admin-input"
-                    placeholder="/uploads/image.webp"
-                    value={form.cover_image || ''}
-                    onChange={(e) => updateField('cover_image', e.target.value)}
-                  />
-                </div>
-              </div>
-            )}
-          </div>
+
 
           {/* Metadata */}
           <div className="admin-card">
