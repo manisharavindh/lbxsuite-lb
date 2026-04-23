@@ -10,42 +10,81 @@ const TermsConditionsPage = () => {
   return (
     <div className="min-h-screen flex flex-col bg-[#141414] text-white font-sans selection:bg-[#FF5555] selection:text-[#FFFFFF]">
       <Navbar />
-      
+
       <main className="flex-grow pt-32 pb-24 px-6 md:px-12 w-full max-w-4xl mx-auto">
         <h1 className="text-4xl md:text-5xl font-black mb-8">Terms of Service</h1>
-        
+
         <div className="space-y-8 text-[#A9A9A9] leading-relaxed">
+
           <section>
             <h2 className="text-2xl font-bold text-white mb-4">1. Acceptance of Terms</h2>
-            <p>By accessing or using the services provided by LbxSuite, you agree to be bound by these Terms of Service. If you do not agree to all the terms and conditions, then you may not access the website or use any services.</p>
+            <p>
+              By accessing or using the services provided by LbxSuite, you agree to be bound
+              by these Terms of Service. If you do not agree to all the terms and conditions,
+              then you may not access the website or use any services.
+            </p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-white mb-4">2. Description of Service</h2>
-            <p>LbxSuite provides an AI-powered creative agency platform offering digital experience solutions. We reserve the right to modify or discontinue, temporarily or permanently, the Service (or any part thereof) with or without notice.</p>
+            <h2 className="text-2xl font-bold text-white mb-4">2. What We Do</h2>
+            <p>
+              LbxSuite is a digital and consulting agency focused on building high-impact
+              brand identities, digital experiences, and technology solutions. Our work
+              is designed to go beyond visuals, we create systems that drive conversions,
+              streamline operations, and elevate how your brand is perceived in the market.
+            </p>
+            <p className="mt-3">
+              We may update, modify, or discontinue any part of our services at any time,
+              based on evolving business or technical requirements.
+            </p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-white mb-4">3. User Conduct</h2>
-            <p>You agree not to use the Service to:</p>
+            <h2 className="text-2xl font-bold text-white mb-4">3. Responsible Use</h2>
+            <p>You agree to use our website and services responsibly. This includes not:</p>
             <ul className="list-disc pl-6 mt-2 space-y-2">
-              <li>Upload, post, transmit or otherwise make available any Content that is unlawful, harmful, threatening, abusive, harassing, or otherwise objectionable.</li>
-              <li>Interfere with or disrupt the Service or servers or networks connected to the Service.</li>
-              <li>Violate any applicable local, state, national or international law.</li>
+              <li>Using the platform for unlawful, harmful, or abusive activities</li>
+              <li>Attempting to interfere with or disrupt our systems or infrastructure</li>
+              <li>Violating any applicable local, national, or international laws</li>
             </ul>
+            <p className="mt-3">
+              We reserve the right to suspend or restrict access if misuse is identified.
+            </p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-white mb-4">4. Intellectual Property Rights</h2>
-            <p>The Service and its original content, features, and functionality are and will remain the exclusive property of LbxSuite and its licensors. Our trademarks and trade dress may not be used in connection with any product or service without the prior written consent of LbxSuite.</p>
+            <h2 className="text-2xl font-bold text-white mb-4">4. Ownership & Intellectual Property</h2>
+            <p>
+              All content, designs, systems, and materials created by LbxSuite remain our
+              intellectual property unless otherwise agreed upon in writing.
+            </p>
+            <p className="mt-3">
+              You may not copy, reproduce, distribute, or reuse any part of our work,
+              branding, or systems without prior written permission.
+            </p>
           </section>
 
           <section>
             <h2 className="text-2xl font-bold text-white mb-4">5. Limitation of Liability</h2>
-            <p>In no event shall LbxSuite, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from your access to or use of or inability to access or use the Service.</p>
+            <p>
+              While we aim to deliver high-quality and impactful solutions, LbxSuite is
+              not liable for any indirect or consequential damages, including loss of
+              revenue, data, or business opportunities arising from the use of our services.
+            </p>
           </section>
-          
-          <p className="text-sm mt-12 pt-8 border-t border-[#272727]">Last updated: April 2, 2026</p>
+
+          <section>
+            <h2 className="text-2xl font-bold text-white mb-4">6. Updates to These Terms</h2>
+            <p>
+              We may revise these Terms of Service from time to time. Continued use of
+              our website or services after changes are made constitutes your acceptance
+              of the updated terms.
+            </p>
+          </section>
+
+          <p className="text-sm mt-12 pt-8 border-t border-[#272727]">
+            Last updated: April 2026
+          </p>
         </div>
       </main>
 

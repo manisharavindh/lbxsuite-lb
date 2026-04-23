@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 
-const InteractiveGrid = () => {
+const InteractiveGrid = ({ easterEgg = false }) => {
   const canvasRef = useRef(null);
 
   useEffect(() => {
@@ -214,8 +214,25 @@ const InteractiveGrid = () => {
 
         ctx.globalAlpha = intensity * 0.9;
 
+        // Default colors
+        let frontFace = '#FF5655';
+        let rightFace = '#b33c3b';
+        let bottomFace = '#8c2f2e';
+
+        // Apply easter egg full spectrum rotating hues
+        if (easterEgg) {
+          // Uses coordinates and time to continuously cycle through the full 360 degree color wheel
+          // Creates a stunning, completely multi-colored rainbow effect
+          const hue = Math.floor((c * 5 + r * 5 + time * 0.06)) % 360;
+
+          // Adjusted saturation and lightness to match the "soft" pastel-like intensity of the original #FF5655 accent
+          frontFace = `hsl(${hue}, 90%, 68%)`;
+          rightFace = `hsl(${hue}, 55%, 48%)`;
+          bottomFace = `hsl(${hue}, 50%, 38%)`;
+        }
+
         // Draw Right Face (isometric 3D side)
-        ctx.fillStyle = '#b33c3b'; // darker red
+        ctx.fillStyle = rightFace;
         ctx.beginPath();
         ctx.moveTo(rectX + currentBoxSize, rectY);
         ctx.lineTo(rectX + currentBoxSize + depth, rectY + depth);
@@ -224,7 +241,7 @@ const InteractiveGrid = () => {
         ctx.fill();
 
         // Draw Bottom Face (isometric 3D side)
-        ctx.fillStyle = '#8c2f2e'; // even darker red
+        ctx.fillStyle = bottomFace;
         ctx.beginPath();
         ctx.moveTo(rectX, rectY + currentBoxSize);
         ctx.lineTo(rectX + depth, rectY + currentBoxSize + depth);
@@ -233,7 +250,7 @@ const InteractiveGrid = () => {
         ctx.fill();
 
         // Draw Front Face (main color)
-        ctx.fillStyle = '#FF5655';
+        ctx.fillStyle = frontFace;
         ctx.fillRect(rectX, rectY, Math.max(0, currentBoxSize), Math.max(0, currentBoxSize));
       }
 
@@ -250,7 +267,7 @@ const InteractiveGrid = () => {
       clearTimeout(resizeTimeout);
       cancelAnimationFrame(rafId);
     };
-  }, []);
+  }, [easterEgg]);
 
   return (
     <canvas
